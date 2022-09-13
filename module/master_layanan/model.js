@@ -1,18 +1,15 @@
 const { DataTypes } = require('sequelize');
 const {sq} =  require('../../config/connection');
 
-const users = sq.define('users',{
+const master_layanan = sq.define('master_layanan',{
     id:{
         type: DataTypes.STRING,
         primaryKey: true,
     },
-    username:{
+    nama_layanan:{
         type:DataTypes.STRING
     },
-    password:{
-        type:DataTypes.STRING
-    },
-    role:{
+    kode:{
         type:DataTypes.STRING
     }
     
@@ -23,6 +20,6 @@ paranoid:true,
 freezeTableName:true
 });
 
-// users.sync({alter:true})
+// master_layanan.sync({alter:true})
 
-module.exports = users
+module.exports = master_layanan
