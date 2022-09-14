@@ -25,6 +25,10 @@ class Controller{
                         })
                 }
             })
+            .catch(error=>{
+                console.log(error);
+                res.status(500).json({ status: 500, message: "gagal", data: error})
+            })
     }
 
     static login(req, res) {

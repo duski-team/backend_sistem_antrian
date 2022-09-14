@@ -10,5 +10,6 @@ router.use("/master_kualifikasi",require('../module/master_kualifikasi/route'))
 router.use("/master_poliklinik",require('../module/master_poliklinik/route'))
 router.use("/master_bank",require('../module/master_bank/route'))
 router.use("/master_dokter",require('../module/master_dokter/route'))
+router.use("/jadwal_dokter",require('../module/jadwal_dokter/route'))
 
 module.exports = router;

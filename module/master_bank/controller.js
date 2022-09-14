@@ -23,6 +23,10 @@ class Controller{
                 })
             }
         })
+        .catch(error=>{
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error})
+        })
     }
 
     static update(req,res){
@@ -45,6 +49,7 @@ class Controller{
 
         try {
             let data =await sq.query(`select * from master_bank ml where ml."deletedAt" isnull`,s)
+            console.log(data);
             res.status(200).json({ status: 200, message: "sukses",data})
         } catch (error) {
             console.log(error);
