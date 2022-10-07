@@ -7,7 +7,7 @@ const booking = sq.define('booking',{
         primaryKey: true,
     },
     tanggal_booking:{
-        type:DataTypes.STRING
+        type:DataTypes.DATE
     },
     jenis_booking:{
         type:DataTypes.STRING   //Mobile atau Onsite
