@@ -38,9 +38,37 @@ class Controller{
     }
 
     static async list(req,res){
-        const{tanggal_awal,tanggal_akhir}=req.body
+        const{tanggal_awal,tanggal_akhir,halaman,jumlah}=req.body
 
-        let data = await sq.query(`select * from booking b where b."deletedAt" isnull`)
+        try {
+            let isi = '';
+            let offset = (+halaman -1) * jumlah;
+            let offset2 = +halaman * jumlah;
+            let sisa = true;
+
+            if(tanggal_awal){
+                isi+=` and b.tanggal_booking >= ${tanggal_awal} `
+            }
+            if(tanggal_akhir){
+                isi+=` and b.tanggal_booking <= ${tanggal_akhir} `
+            }
+
+            let data = await sq.query(`select * from booking b where b."deletedAt" isnull ${isi} order by b.id desc limit ${jumlah} offset ${offset}`,s)
+            let data2 = await sq.query(`select * from booking b where b."deletedAt" isnull ${isi} order by b.id desc limit ${jumlah} offset ${offset2}`,s)
+
+            let jml = await sq.query(`select count(*) from booking b where b."deletedAt" isnull ${isi} `,s)
+
+            if(data2.length==0){
+                sisa = false
+            }
+
+            res.status(200).json({status:200,message:"sukses",data,count:jml[0].total,sisa,jumlah,halaman});  
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ status: 500, message: "gagal", data: error})
+        }
+
+       
     }
 
 }
