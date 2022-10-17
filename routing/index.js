@@ -12,5 +12,6 @@ router.use("/master_bank",require('../module/master_bank/route'))
 router.use("/master_dokter",require('../module/master_dokter/route'))
 router.use("/jadwal_dokter",require('../module/jadwal_dokter/route'))
 router.use("/booking",require('../module/booking/route'))
+router.use('/antrianList',require('../module/antrian_list/route'))
 
 module.exports = router;
