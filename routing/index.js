@@ -12,6 +12,10 @@ router.use("/master_bank",require('../module/master_bank/route'))
 router.use("/master_dokter",require('../module/master_dokter/route'))
 router.use("/jadwal_dokter",require('../module/jadwal_dokter/route'))
 router.use("/booking",require('../module/booking/route'))
-router.use('/antrianList',require('../module/antrian_list/route'))
+router.use('/antrian_list',require('../module/antrian_list/route'))
+router.use("/jenis_antrian",require('../module/jenis_antrian/route'))
+router.use("/master_loket",require('../module/master_loket/route'))
+router.use("/antrian_loket",require('../module/antrian_loket/route'))
+
 
 module.exports = router;
