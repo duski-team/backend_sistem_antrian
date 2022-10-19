@@ -67,7 +67,7 @@ class Controller{
 
             let jml = await sq.query(`select count(*) from antrian_loket al join jenis_antrian ja on ja.id = al.jenis_antrian_id where al."deletedAt" isnull ${isi} `,s)
 
-            res.status(200).json({ status: 200, message: "sukses",data})
+            res.status(200).json({ status: 200, message: "sukses",data,jml:jml[0].count})
         } catch (error) {
             console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error})
