@@ -43,7 +43,7 @@ class Controller{
     }
 
     static async list(req,res){
-        const{tanggal_awal,tanggal_akhir,jenis_antrian_id,halaman,jumlah}=req.body
+        const{tanggal_awal,tanggal_akhir,jenis_antrian_id,halaman,jumlah,status_antrian}=req.body
         let isi = '';
         let offset = (+halaman -1) * jumlah;
         // let offset2 = +halaman * jumlah;
@@ -59,6 +59,9 @@ class Controller{
             }
             if(jenis_antrian_id){
                 isi+= ` and al.jenis_antrian_id = '${jenis_antrian_id}'`
+            }
+            if(status_antrian){
+                isi+= ` and al.status_antrian = ${status_antrian}`
             }
 
 
