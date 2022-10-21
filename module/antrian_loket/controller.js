@@ -32,8 +32,12 @@ class Controller{
         const{id,status_antrian,master_loket_id}=req.body
         antrian_loket.update({master_loket_id,status_antrian},{where:{
             id
-        }})  .then(hasil=>{
-            res.status(200).json({ status: 200, message: "sukses"})
+        },
+        returning:true,
+        plain:true
+    
+    })  .then(hasil=>{
+            res.status(200).json({ status: 200, message: "sukses",hasil:hasil[1]})
         })
         .catch(error=>{
             console.log(error);
