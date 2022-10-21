@@ -36,8 +36,9 @@ class Controller{
         returning:true,
         plain:true
     
-    })  .then(hasil=>{
-            res.status(200).json({ status: 200, message: "sukses",hasil:hasil[1]})
+    })  .then(async hasil=>{
+        let data = await sq.query(`select al.id as antrian_loket_id,* from antrian_loket al join jenis_antrian ja on ja.id = al.jenis_antrian_id left join master_loket ml on ml.id = al.master_loket_id where al."deletedAt" isnull and al.id = '${id}'`,s)
+            res.status(200).json({ status: 200, message: "sukses",hasil:data[0]})
         })
         .catch(error=>{
             console.log(error);
@@ -70,7 +71,7 @@ class Controller{
 
 
 
-            let data = await sq.query(`select al.id as antrian_loket_id,* from antrian_loket al join jenis_antrian ja on ja.id = al.jenis_antrian_id where al."deletedAt" isnull ${isi} order by al."nomor_antrian_loket" asc limit ${jumlah} offset ${offset} `,s)
+            let data = await sq.query(`select al.id as antrian_loket_id,* from antrian_loket al join jenis_antrian ja on ja.id = al.jenis_antrian_id left join master_loket ml on ml.id = al.master_loket_id where al."deletedAt" isnull ${isi} order by al."nomor_antrian_loket" asc limit ${jumlah} offset ${offset} `,s)
 
             let jml = await sq.query(`select count(*) from antrian_loket al join jenis_antrian ja on ja.id = al.jenis_antrian_id where al."deletedAt" isnull ${isi} `,s)
 
