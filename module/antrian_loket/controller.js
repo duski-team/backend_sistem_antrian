@@ -60,7 +60,7 @@ class Controller{
                 isi+= ` and al.tanggal_antrian_loket >= '${tanggal_awal}'`
             }
             if(tanggal_akhir){
-                isi+= ` and al.tanggal_antrian_loket >= '${tanggal_akhir}'`
+                isi+= ` and al.tanggal_antrian_loket <= '${tanggal_akhir}'`
             }
             if(jenis_antrian_id){
                 isi+= ` and al.jenis_antrian_id = '${jenis_antrian_id}'`
