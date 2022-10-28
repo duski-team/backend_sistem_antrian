@@ -4,8 +4,10 @@ const morgan = require('morgan')
 const cors = require('cors')
 const routing = require('./routing/index')
 const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server,{cors:'*'});
 const antrian_loket= require('./module/antrian_loket/model')
+
+
 
 io.on('connection', function(socket) { 
 	// console.log(socket);
