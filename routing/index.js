@@ -17,6 +17,7 @@ router.use("/jenis_antrian",require('../module/jenis_antrian/route'))
 router.use("/master_loket",require('../module/master_loket/route'))
 router.use("/antrian_loket",require('../module/antrian_loket/route'))
 router.use("/purworejo",require('../module/purworejo/route'))
+router.use("/member",require('../module/member/route'))
 
 
 module.exports = router;
