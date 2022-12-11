@@ -14,7 +14,7 @@ const config = {
 class Controller{
 
     static register(req,res){
-        const{pasien_id,user_id}= req.body
+        const{pasien_id}= req.body
 
         member.findAll({where:{
             pasien_id
@@ -24,7 +24,7 @@ class Controller{
                 res.status(200).json({ status: 200, message: "gagal, pasien tersebut sudah terdaftar"})
             }
             else{
-               await member.create({id:uuid_v4(),pasien_id,user_id})
+               await member.create({id:uuid_v4(),pasien_id,user_id:req.dataUsers.id})
                 .then(data=>{
                     res.status(200).json({ status: 200, message: "sukses", data})
                 })
