@@ -39,9 +39,9 @@ class Controller{
     }
 
     static async cekPasien(req,res){
-        const{NIK}=req.params
+        const{no}=req.params
         try {
-            let kirim = await axios.get(purworejo+"/get-pasien?no="+NIK,config)
+            let kirim = await axios.get(purworejo+"/get-pasien?no="+no,config)
             res.status(200).json({ status: 200, message: "sukses",data:kirim.data})
         } catch (error) {
             console.log(error.response.status);
@@ -69,8 +69,43 @@ class Controller{
         })
     }
 
-    static async listMember(req,res){
-        //butuh IN pada query
+    static deleteMember(req,res){
+        const{no_rm_pasien}=req.body
+        member.destroy({where:{
+            no_rm_pasien,
+            user_id:req.dataUsers.id
+        }})
+        .then(hasil=>{
+            res.status(200).json({ status: 200, message: "sukses"})
+        })
+        .catch(error=>{
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error})
+        })
+    }
+
+    static async listMemberByUserId(req,res){
+        const{user_id}=req.params
+
+        try {
+        let data=[]
+        let membernya= await sq.query(`select no_rm_pasien from member m where m.user_id='${user_id}' and m."deletedAt" isnull`,s)
+
+        for(let i=0;i<membernya.length;i++){
+            let kirim = await axios.get(purworejo+"/get-pasien?no="+membernya[i].no_rm_pasien,config)
+            data.push(kirim.data.data[0])
+        }
+
+        res.status(200).json({ status: 200, message: "sukses",data:data})
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error})
+        }
+
+        
+
+
+
     }
 
 }
