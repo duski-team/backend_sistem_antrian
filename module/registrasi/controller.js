@@ -11,12 +11,14 @@ const config = {
 class Controller{
 
     static async register(req,res){
-        const{noRm,idPoli,idDokter,noTelp,idCaraMasuk,ketCaraMasuk,penanggungjawabNama,penanggungjawabHubungan,idJaminan,noBpjs,kelompokBpjs,kelasBpjs,diagAwal,noRujukan,asalRujukan,tglRujukan,idFaskes}=req.body
+        const{noRm,idPoli,idDokter,noTelp,idCaraMasuk,ketCaraMasuk,penanggungjawabNama,penanggungjawabHubungan,idJaminan,noBpjs,kelompokBpjs,kelasBpjs,diagAwal,noRujukan,asalRujukan,tglRujukan,idFaskes,namaFaskes,tujuanKunjungan,flagProcedure,kdPenunjang,assesmentPelayanan}=req.body
+        console.log(req.body);
 
         try {
-            let kirim = await axios.post(purworejo+"/reg-rajal",req.body,config)
-            res.status(200).json({ status: 200, message: "sukses",data:kirim.data})
+            let kirim = await axios.post(purworejo+"/reg-rajal",{noRm,idPoli,idDokter,noTelp,idCaraMasuk,ketCaraMasuk,penanggungjawabNama,penanggungjawabHubungan,idJaminan,noBpjs,kelompokBpjs,kelasBpjs,diagAwal,noRujukan,asalRujukan,tglRujukan,idFaskes,namaFaskes,tujuanKunjungan,flagProcedure,kdPenunjang,assesmentPelayanan},config)
+            res.status(200).json({ status: 200, message: "sukses"})
         } catch (error) {
+            console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error}) 
         }
     }

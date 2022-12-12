@@ -14,17 +14,17 @@ const config = {
 class Controller{
 
     static register(req,res){
-        const{pasien_id}= req.body
+        const{no_rm_pasien}= req.body
 
         member.findAll({where:{
-            pasien_id
+            no_rm_pasien
         }})
         .then(async hasilnya=>{
             if(hasilnya.length){
                 res.status(200).json({ status: 200, message: "gagal, pasien tersebut sudah terdaftar"})
             }
             else{
-               await member.create({id:uuid_v4(),pasien_id,user_id:req.dataUsers.id})
+               await member.create({id:uuid_v4(),no_rm_pasien,user_id:req.dataUsers.id})
                 .then(data=>{
                     res.status(200).json({ status: 200, message: "sukses", data})
                 })
@@ -56,8 +56,8 @@ class Controller{
     }
 
     static update(req,res){
-        const{pasien_id,user_id,id}= req.body
-        member.update({pasien_id,user_id},{where:{
+        const{no_rm_pasien,user_id,id}= req.body
+        member.update({no_rm_pasien,user_id},{where:{
             id
         }})
         .then(hasil=>{

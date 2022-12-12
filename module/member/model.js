@@ -7,8 +7,8 @@ const member = sq.define('member',{
         type: DataTypes.STRING,
         primaryKey: true,
     },
-    pasien_id:{
-        type:DataTypes.INTEGER
+    no_rm_pasien:{
+        type:DataTypes.STRING
     }
     
     
