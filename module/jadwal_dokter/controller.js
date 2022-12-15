@@ -117,8 +117,8 @@ class Controller{
     }
 
     static async syncJadwal(req,res){
-        let curdate= moment().format('YYYY-MM-DD')
-       
+        // let curdate= moment().format('YYYY-MM-DD')
+        let curdate= moment().add(1,'d').format('YYYY-MM-DD')
         try {
             let kirim = await axios.get(purworejo+"/get-jadwal-per-tgl?tgl="+curdate,config)
             let datanya = kirim.data.data
@@ -145,6 +145,76 @@ class Controller{
             res.status(200).json({ status: 200, message: "sukses",data:bulknya})
         } catch (error) {
             console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error})
+        }
+    }
+
+    static async listDokterByTanggalPoli(req,res){
+        const{poli_id,tanggal}=req.body
+        try {
+            // let tanggal= moment().format('YYYY-MM-DD')
+            let data1 = await axios.get(purworejo+"/get-dokter",config)
+            let dokternya = data1.data.data
+            let data2 = await axios.get(purworejo+"/get-jadwal-per-tgl?tgl="+tanggal,config)
+            let jadwalnya = data2.data.data
+
+            let hasilnya =[]
+
+            for(let i=0;i<jadwalnya.length;i++){
+                if(poli_id==jadwalnya[i].idPoli){
+                    for(let j=0;j<dokternya.length;j++){
+                        if(jadwalnya[i].idDokter== dokternya[j].id){
+                            let ada = false
+                            for(let k=0;k<hasilnya.length;k++){
+                                if(dokternya[j].id==hasilnya[k].id){
+                                    ada ==true
+                                }
+                            }
+                            if(ada==false){
+                                hasilnya.push(dokternya[j])
+                            }
+                        }
+                    }
+                }
+               
+            }
+
+            res.status(200).json({ status: 200, message: "sukses",data:hasilnya})
+
+        } catch (error) {
+            res.status(500).json({ status: 500, message: "gagal", data: error})
+        }
+    }
+
+
+    static async listJadwalByDokterTanggalPoli(req,res){
+        const{dokter_id,poli_id,tanggal}=req.body
+        try {
+
+            let data =await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and jd.dokter_id = '${dokter_id}' and poli_id = '${poli_id}' and date(waktu_mulai)='${tanggal}'`,s)
+            let kirim = await axios.get(purworejo+"/get-poli",config)
+            let polinya = kirim.data.data
+            let kirim2 = await axios.get(purworejo+"/get-dokter",config)
+            let dokternya = kirim2.data.data
+
+            for(let i=0;i<data.length;i++){
+                for(let j=0;j<polinya.length;j++){
+                    if(data[i].poli_id==polinya[j].id){
+                        data[i].nama_poli=polinya[j].nama
+                    }
+                }
+            }
+
+            for(let i=0;i<data.length;i++){
+                for(let j=0;j<dokternya.length;j++){
+                    if(data[i].dokter_id==dokternya[j].id){
+                        data[i].nama_dokter=dokternya[j].nama
+                    }
+                }
+            }
+            res.status(200).json({ status: 200, message: "sukses",data:data})
+            
+        } catch (error) {
             res.status(500).json({ status: 500, message: "gagal", data: error})
         }
     }
