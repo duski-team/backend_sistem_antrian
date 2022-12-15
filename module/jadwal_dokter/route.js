@@ -6,4 +6,5 @@ router.post('/register',authentification, Controller.register)
 router.post('/update',authentification, Controller.update)
 router.post('/list',Controller.list)
 router.post('/delete',authentification,Controller.delete)
+router.post('/syncJadwal',Controller.syncJadwal)
 module.exports = router

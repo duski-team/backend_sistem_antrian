@@ -23,6 +23,16 @@ const jadwal_dokter = sq.define('jadwal_dokter',{
         type:DataTypes.INTEGER,
         defaultValue:0
     },
+    kuota_mobile:{
+        type:DataTypes.INTEGER,
+        defaultValue:0
+    },
+    dokter_id:{
+        type:DataTypes.STRING
+    },
+    poli_id:{
+        type:DataTypes.STRING
+    }
     // kuota_VIP:{
     //     type:DataTypes.INTEGER,
     //     defaultValue:0
@@ -34,14 +44,14 @@ paranoid:true,
 freezeTableName:true
 });
 
-jadwal_dokter.belongsTo(master_poliklinik,{foreignKey:"master_poliklinik_id"})
-master_poliklinik.hasMany(jadwal_dokter,{foreignKey:"master_poliklinik_id"})
+// jadwal_dokter.belongsTo(master_poliklinik,{foreignKey:"master_poliklinik_id"})
+// master_poliklinik.hasMany(jadwal_dokter,{foreignKey:"master_poliklinik_id"})
 
-jadwal_dokter.belongsTo(master_dokter,{foreignKey:"master_dokter_id"})
-master_dokter.hasMany(jadwal_dokter,{foreignKey:"master_dokter_id"})
+// jadwal_dokter.belongsTo(master_dokter,{foreignKey:"master_dokter_id"})
+// master_dokter.hasMany(jadwal_dokter,{foreignKey:"master_dokter_id"})
 
-jadwal_dokter.belongsTo(master_layanan,{foreignKey:"master_layanan_id"})
-master_layanan.hasMany(jadwal_dokter,{foreignKey:"master_layanan_id"})
+// jadwal_dokter.belongsTo(master_layanan,{foreignKey:"master_layanan_id"})
+// master_layanan.hasMany(jadwal_dokter,{foreignKey:"master_layanan_id"})
 
 // jadwal_dokter.sync({alter:true})
 

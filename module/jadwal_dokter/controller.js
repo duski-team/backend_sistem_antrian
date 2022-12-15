@@ -4,6 +4,13 @@ const { v4: uuid_v4 } = require("uuid");
 const { QueryTypes } = require('sequelize');
 const s = {type:QueryTypes.SELECT}
 
+const purworejo = 'http://103.121.123.87/rsudapi/reg'
+const token = 'agAW4AUAgjOtCMwIxcKnGjkDj6jj64vr'
+const axios = require('axios');
+const moment = require('moment');
+const config = {
+    headers: { Authorization: `Bearer ${token}`,'Content-Type': 'application/json' }
+};
 
 class Controller{
 
@@ -108,6 +115,41 @@ class Controller{
         })
 
     }
+
+    static async syncJadwal(req,res){
+        let curdate= moment().format('YYYY-MM-DD')
+       
+        try {
+            let kirim = await axios.get(purworejo+"/get-jadwal-per-tgl?tgl="+curdate,config)
+            let datanya = kirim.data.data
+            let  bulknya=[]
+            // console.log(kirim.data.data);
+            for (let i = 0; i < datanya.length; i++) {
+                let awal = moment(datanya[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
+                let akhir = moment(datanya[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
+                if(datanya[i].isCuti==0){
+                    // console.log(curdate+" "+awal);
+                    bulknya.push({
+                        id:uuid_v4(),
+                        waktu_mulai:curdate+" "+awal,
+                        waktu_selesai:curdate+" "+akhir,
+                        kuota:datanya[i].kuota,
+                        kuota_mobile:datanya[i].kuotaOnline,
+                        dokter_id:datanya[i].idDokter,
+                        poli_id:datanya[i].idPoli
+                    })
+                }
+                
+            }
+            await jadwal_dokter.bulkCreate(bulknya)
+            res.status(200).json({ status: 200, message: "sukses",data:bulknya})
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error})
+        }
+    }
+
+
 
 }
 
