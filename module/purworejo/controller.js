@@ -37,6 +37,20 @@ class Controller{
         }
       
     }
+    static async rujukan(req,res){
+        const{noRujukan,tipe}=req.body
+        let tambahan=''
+        if(tipe){
+            tambahan +=`&tipe=${tipe}`
+        }
+        try {
+            let kirim = await axios.get(purworejo+"/get-no-rujukan?noRujukan="+noRujukan+tambahan,config)
+            res.status(200).json({ status: 200, message: "sukses",data:kirim.data})
+        } catch (error) {
+            res.status(500).json({ status: 500, message: "gagal", data: error})
+        }
+      
+    }
 
     
 
