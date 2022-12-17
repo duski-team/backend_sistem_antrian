@@ -117,8 +117,8 @@ class Controller{
     }
 
     static async syncJadwal(req,res){
-        // let curdate= moment().format('YYYY-MM-DD')
-        let curdate= moment().add(1,'d').format('YYYY-MM-DD')
+        let curdate= moment().format('YYYY-MM-DD')
+        // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
         try {
             let kirim = await axios.get(purworejo+"/get-jadwal-per-tgl?tgl="+curdate,config)
             let datanya = kirim.data.data
@@ -155,15 +155,16 @@ class Controller{
             // let tanggal= moment().format('YYYY-MM-DD')
             let data1 = await axios.get(purworejo+"/get-dokter",config)
             let dokternya = data1.data.data
-            let data2 = await axios.get(purworejo+"/get-jadwal-per-tgl?tgl="+tanggal,config)
-            let jadwalnya = data2.data.data
+            let data2 = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(jd.waktu_mulai)='${tanggal}'`,s)
+            let jadwalnya = data2
 
+            // console.log(jadwalnya.length);
             let hasilnya =[]
 
             for(let i=0;i<jadwalnya.length;i++){
-                if(poli_id==jadwalnya[i].idPoli){
+                if(poli_id==jadwalnya[i].poli_id){
                     for(let j=0;j<dokternya.length;j++){
-                        if(jadwalnya[i].idDokter== dokternya[j].id){
+                        if(jadwalnya[i].dokter_id== dokternya[j].id){
                             let ada = false
                             for(let k=0;k<hasilnya.length;k++){
                                 if(dokternya[j].id==hasilnya[k].id){
@@ -182,6 +183,7 @@ class Controller{
             res.status(200).json({ status: 200, message: "sukses",data:hasilnya})
 
         } catch (error) {
+            console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error})
         }
     }
