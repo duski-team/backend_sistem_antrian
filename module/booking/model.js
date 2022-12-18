@@ -12,7 +12,7 @@ const booking = sq.define('booking',{
     jenis_booking:{
         type:DataTypes.STRING   //Mobile atau Onsite
     },
-    rm_id:{
+    no_rm:{
         type:DataTypes.STRING   
     },
     NIK:{
