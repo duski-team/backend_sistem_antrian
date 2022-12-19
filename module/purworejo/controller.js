@@ -52,6 +52,48 @@ class Controller{
       
     }
 
+    static async detailsPasienBPJS(req,res){
+        const{no_peserta,tanggal}=req.body
+        let tambahan=''
+        if(tanggal){
+            tambahan +=`&tgl=${tanggal}`
+        }
+        try {
+            let kirim = await axios.get(purworejo+"/get-pasien-bpjs?noPeserta="+no_peserta+tambahan,config)
+            res.status(200).json({ status: 200, message: "sukses",data:kirim.data})
+        } catch (error) {
+            res.status(500).json({ status: 500, message: "gagal", data: error})
+        }
+      
+    }
+
+    static async detailsDataKontrol(req,res){
+        const{noSuratKontrol}=req.params
+        try {
+            
+            let kirim = await axios.get(purworejo+"/get-data-kontrol?noSuratKontrol="+noSuratKontrol,config)
+            res.status(200).json({ status: 200, message: "sukses",data:kirim.data})
+        } catch (error) {
+            res.status(500).json({ status: 500, message: "gagal", data: error})
+        }
+      
+    }
+
+    static async listRujukan(req,res){
+        const{noPeserta,type}=req.body
+        let tambahan=''
+        if(type){
+            tambahan +=`&type=${type}`
+        }
+        try {
+            let kirim = await axios.get(purworejo+"/get-list-rujukan?noPeserta="+noPeserta,config)
+            res.status(200).json({ status: 200, message: "sukses",data:kirim.data})
+        } catch (error) {
+            res.status(500).json({ status: 500, message: "gagal", data: error})
+        }
+      
+    }
+
     
 
 }
