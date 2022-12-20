@@ -37,6 +37,7 @@ class Controller{
         }
       
     }
+
     static async rujukan(req,res){
         const{noRujukan,tipe}=req.body
         let tambahan=''
@@ -94,8 +95,21 @@ class Controller{
       
     }
 
-    
-
+    static async getKontrol(req,res){
+        const{noBpjs,idPoli}=req.body
+        try {
+            let kirim = await axios.post(purworejo+"/get-kontrol",{noBpjs,idPoli},config)
+            
+            res.status(200).json({ status: 200, message: "sukses",data:kirim.data})
+        } catch (error) {
+            if(error.response.status==404){
+                res.status(200).json({ status: 200, message: "data tidak ada"})
+            }
+            else{
+                res.status(500).json({ status: 500, message: "gagal", data: error.code})
+            }
+        }
+    }
 }
 
 

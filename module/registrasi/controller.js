@@ -34,6 +34,18 @@ class Controller{
         }
     }
 
+    static async registerSEP(req,res){
+        const{idDaftar}=req.body
+
+        try {
+            let kirim = await axios.post(purworejo+"/create-sep-apm",{idDaftar},config)
+
+             res.status(200).json({ status: 200, message: "sukses",data:kirim.data})
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error}) 
+        }
+    }
 }
 
 

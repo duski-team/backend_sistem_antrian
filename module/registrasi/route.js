@@ -4,6 +4,7 @@ const authentification = require('../../middleware/authentification')
 
 
 router.post('/register',Controller.register)
+router.post('/registerSEP',Controller.registerSEP)
 
 
 module.exports = router

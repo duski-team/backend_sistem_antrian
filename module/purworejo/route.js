@@ -10,5 +10,6 @@ router.get('/rujukan',Controller.rujukan)
 router.post('/detailsPasienBPJS',Controller.detailsPasienBPJS)
 router.get('/detailsDataKontrol/:noSuratKontrol',Controller.detailsDataKontrol)
 router.post('/listRujukan',Controller.listRujukan)
+router.post('/getKontrol',Controller.getKontrol)
 
 module.exports = router
