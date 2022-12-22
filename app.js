@@ -17,7 +17,7 @@ io.on('connection', function(socket) {
 	  });
 
 	socket.on('panggil',async (asd)=>{
-		let data = await antrian_loket.update({master_loket_id:asd.master_loket_id,status_antrian:1},{
+		let data = await antrian_loket.update({master_loket_id:asd.master_loket_id,status_antrian:asd.status_antrian},{
 			where:{
 				id:asd.id
 			}
