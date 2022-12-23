@@ -6,7 +6,7 @@ const routing = require('./routing/index')
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, { cors: '*' });
 
-const antrian_loket = require('./module/antrian_loket/model')
+const antrian_loket = require('./module/antrian_list/model')
 const booking = require('./module/booking/model');
 const { sq } = require("./config/connection");
 const { v4: uuid_v4 } = require("uuid");
@@ -87,11 +87,11 @@ io.on('connection', function (socket) {
 	})
 
 	socket.on('registerAntrianLoket', async (asd) => {
-		const { tanggal_antrian_loket, jenis_antrian_id } = asd
+		const { tanggal_antrian_loket, jenis_antrian_id,master_loket_id } = asd
 
 		try {
 			let jumlah = await sq.query(`select count(*) from antrian_loket al where al.tanggal_antrian_loket ='${tanggal_antrian_loket}' and jenis_antrian_id ='${jenis_antrian_id}' `, s)
-			let data_antrian = await antrian_loket.create({ id: uuid_v4(), tanggal_antrian_loket, jenis_antrian_id, nomor_antrian_loket: +jumlah[0].count + 1 })
+			let data_antrian = await antrian_loket.create({ id: uuid_v4(), tanggal_antrian_loket, jenis_antrian_id, nomor_antrian_loket: +jumlah[0].count + 1,master_loket_id })
 
 			io.emit("refresh_antrian_loket", data_antrian);
 		} catch (error) {
@@ -103,7 +103,7 @@ io.on('connection', function (socket) {
 		const { id, status_antrian, master_loket_id } = asd
 
 		try {
-			let data_antrian = await antrian_loket.update({ master_loket_id, status_antrian }, { where: { id }, returning: true, plain: true }) 
+			let data_antrian = await antrian_loket.update({ master_loket_id, status_antrian,master_loket_id }, { where: { id }, returning: true, plain: true }) 
 			let cek_data = await sq.query(`select al.id as antrian_loket_id, * from antrian_loket al join jenis_antrian ja on ja.id = al.jenis_antrian_id left join master_loket ml on ml.id = al.master_loket_id where al."deletedAt" isnull and al.id = '${id}'`,s)
 			
 			io.emit("refresh_antrian_loket_update", cek_data[0]);
