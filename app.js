@@ -24,7 +24,11 @@ io.on('connection', function(socket) {
 		})
 		.then(hasil=>{
 			console.log("asdasdasd");
-			io.emit("refresh","ale ale");
+			if(asd.status_antrian == 0){
+				io.emit("refresh_layar","ale ale");
+			}else{
+				io.emit("refresh_admin","ole ole");
+			}
         })
         .catch(error=>{
 			socket.emit("error",error);
