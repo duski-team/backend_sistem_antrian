@@ -12,6 +12,45 @@ const config = {
     headers: { Authorization: `Bearer ${token}`,'Content-Type': 'application/json' }
 };
 
+const cron = require('node-cron');
+
+function syncJadwal(){
+    cron.schedule('0 1 * * *', async () => {
+        let curdate= moment().format('YYYY-MM-DD')
+        // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
+        try {
+            let kirim = await axios.get(purworejo+"/get-jadwal-per-tgl?tgl="+curdate,config)
+            let datanya = kirim.data.data
+            let  bulknya=[]
+            // console.log(kirim.data.data);
+            for (let i = 0; i < datanya.length; i++) {
+                let awal = moment(datanya[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
+                let akhir = moment(datanya[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
+                if(datanya[i].isCuti==0){
+                    // console.log(curdate+" "+awal);
+                    bulknya.push({
+                        id:uuid_v4(),
+                        waktu_mulai:curdate+" "+awal,
+                        waktu_selesai:curdate+" "+akhir,
+                        kuota:datanya[i].kuota,
+                        kuota_mobile:datanya[i].kuotaOnline,
+                        dokter_id:datanya[i].idDokter,
+                        poli_id:datanya[i].idPoli
+                    })
+                }
+                
+            }
+            await jadwal_dokter.bulkCreate(bulknya)
+        } catch (error) {
+            console.log(error);
+        }
+      },{
+        scheduled: true,
+        timezone: "Asia/Jakarta"
+      });
+}
+syncJadwal()
+
 class Controller{
 
     static register(req,res){
