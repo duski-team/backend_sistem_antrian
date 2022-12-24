@@ -24,7 +24,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('panggil', async (asd) => {
-		let data = await antrian_loket.update({ master_loket_id: asd.master_loket_id, status_antrian: asd.status_antrian }, {
+		let data = await antrian_list.update({ master_loket_id: asd.master_loket_id, status_antrian: asd.status_antrian }, {
 			where: {
 				id: asd.id
 			}
@@ -91,7 +91,7 @@ io.on('connection', function (socket) {
 
 		try {
 			let jumlah = await sq.query(`select count(*) from antrian_loket al where al.tanggal_antrian_loket ='${tanggal_antrian_loket}' and jenis_antrian_id ='${jenis_antrian_id}' `, s)
-			let data_antrian = await antrian_loket.create({ id: uuid_v4(), tanggal_antrian_loket, jenis_antrian_id, nomor_antrian_loket: +jumlah[0].count + 1, master_loket_id })
+			let data_antrian = await antrian_list.create({ id: uuid_v4(), tanggal_antrian_loket, jenis_antrian_id, nomor_antrian_loket: +jumlah[0].count + 1, master_loket_id })
 
 			io.emit("refresh_antrian_loket", data_antrian);
 		} catch (error) {
@@ -103,24 +103,10 @@ io.on('connection', function (socket) {
 		const { id, status_antrian, master_loket_id } = asd
 
 		try {
-			let data_antrian = await antrian_loket.update({ master_loket_id, status_antrian, master_loket_id }, { where: { id }, returning: true, plain: true })
+			let data_antrian = await antrian_list.update({ master_loket_id, status_antrian }, { where: { id }, returning: true, plain: true })
 			let cek_data = await sq.query(`select al.id as antrian_loket_id, * from antrian_loket al join jenis_antrian ja on ja.id = al.jenis_antrian_id left join master_loket ml on ml.id = al.master_loket_id where al."deletedAt" isnull and al.id = '${id}'`, s)
 
 			io.emit("refresh_antrian_loket_update", cek_data[0]);
-		} catch (error) {
-			socket.emit("error", error);
-		}
-	})
-
-	socket.on('registerLoket', async (asd) => {
-		const { tanggal_antrian, is_master, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id } = asd
-
-		try {
-			const antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tanggal_antrian}' and initial = '${initial}'`, s)
-
-			let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
-
-			io.emit("refresh_register_loket", hasil);
 		} catch (error) {
 			socket.emit("error", error);
 		}
