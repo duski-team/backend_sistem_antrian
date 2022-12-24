@@ -21,24 +21,30 @@ class Controller {
     static register(req, res) {
         const { username, password, role } = req.body;
         let encryptedPassword = bcrypt.hashPassword(password);
-        users.findAll({ where: { username } })
-            .then((data) => {
-                if (data.length) {
-                    res.status(200).json({ status: 200, message: "username sudah terdaftar" });
-                } else {
-                    users.create({ id: uuid_v4(), username, password: encryptedPassword, role }, { returning: true })
-                        .then((respon) => {
-                            res.status(200).json({ status: 200, message: "sukses", data: respon });
-                        })
-                        .catch((err) => {
-                            res.status(500).json({ status: 500, message: "gagal", data: err });
-                        })
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                res.status(500).json({ status: 500, message: "gagal", data: error })
-            })
+        users.findAll({ where: { username } }).then((data) => {
+            if (data.length) {
+                res.status(200).json({ status: 200, message: "username sudah terdaftar" });
+            } else {
+                let y = uuid_v4()
+                let kode = y.substring(y.length - 4, y.length).toUpperCase()
+                users.create({ id: uuid_v4(), username, password: encryptedPassword, role, kode_otp: kode, otp_time: moment().add(60, 'm').toDate() }, { returning: true }).then(async (respon) => {
+                    let fieldheader = `RSUD RAA TJOKRONEGORO PURWOREJO <br> Gunakan kode dibawah ini untuk verifikasi : <br> OTP : <b>${kode}</b>`
+                    await mg.messages.create(mg_domain, {
+                        from: mg_email,
+                        to: [username],
+                        subject: "OTP RSUD RAA TJOKRONEGORO PURWOREJO",
+                        text: " ",
+                        html: fieldheader
+                    })
+                    res.status(200).json({ status: 200, message: "sukses", data: respon });
+                }).catch((err) => {
+                    res.status(500).json({ status: 500, message: "gagal", data: err });
+                })
+            }
+        }).catch(error => {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        })
     }
 
     static login(req, res) {
@@ -67,13 +73,11 @@ class Controller {
             } else {
                 res.status(200).json({ status: 200, message: "username Tidak Terdaftar" });
             }
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
         })
-            .catch((err) => {
-                console.log(err);
-                res.status(500).json({ status: 500, message: "gagal", data: err });
-            })
     }
-
 
     static update(req, res) {
         const { id, role } = req.body
@@ -88,6 +92,22 @@ class Controller {
                 console.log(error);
                 res.status(500).json({ status: 500, message: "gagal", data: error })
             })
+    }
+
+    static verifikasiOTP(req, res) {
+        const { username, kode_otp } = req.body
+        users.findAll({ where: { username, kode_otp } }).then((data) => {
+            if (data.length) {
+                users.update({ user_status: 1 }, { where: { username } }).then((data2) => {
+                    res.status(200).json({ status: 200, message: "sukses" })
+                })
+            } else {
+                res.status(200).json({ status: 200, message: "username Tidak Terdaftar" });
+            }
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        })
     }
 
     static async list(req, res) {
@@ -133,7 +153,7 @@ class Controller {
             } else {
                 let y = uuid_v4()
                 let kode = y.substring(y.length - 4, y.length).toUpperCase()
-                users.update({ kode_otp: k, otp_time: moment().add(60, 'm').toDate() }, { where: { username } }).then(async data6 => {
+                users.update({ kode_otp: kode, otp_time: moment().add(60, 'm').toDate() }, { where: { username } }).then(async data6 => {
 
                     let fieldheader = `RSUD RAA TJOKRONEGORO PURWOREJO <br> gunakan data sebagai berikut untuk mengganti password : <br> OTP : <b>${kode}</b>`
                     await mg.messages.create(mg_domain, {
