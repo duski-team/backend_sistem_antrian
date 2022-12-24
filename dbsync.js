@@ -14,6 +14,7 @@ require("fs").readdirSync(normalizedPath).forEach(function (file) {
 koneksi.sync({ alter: true }).then(() => {
     console.log('Database Berhasil di Sinkronisasi')
     console.log('disconnecting...')
+    process.exit(0)
 }).catch(e => {
     console.log(e)
 });

@@ -3,6 +3,7 @@ const {sq} =  require('../../config/connection');
 const booking = require('../booking/model')
 const jadwal_dokter= require('../jadwal_dokter/model')
 const master_loket= require('../master_loket/model')
+const jenisAntrian= require('../jenis_antrian/model')
 
 const antrian_list = sq.define('antrian_list',{
     id:{
@@ -42,7 +43,6 @@ const antrian_list = sq.define('antrian_list',{
     poli_id:{
         type:DataTypes.INTEGER
     }
-    
 },
 {
 paranoid:true,
@@ -57,6 +57,9 @@ jadwal_dokter.hasMany(antrian_list,{foreignKey:"jadwal_dokter_id"})
 
 antrian_list.belongsTo(master_loket,{foreignKey:"master_loket_id"})
 master_loket.hasMany(antrian_list,{foreignKey:"master_loket_id"})
+
+jenisAntrian.belongsTo(master_loket,{foreignKey:"jenis_antrian_id"})
+master_loket.hasMany(jenisAntrian,{foreignKey:"jenis_antrian_id"})
 
 // antrian_list.sync({alter:true})
 
