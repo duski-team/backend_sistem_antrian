@@ -43,7 +43,7 @@ io.on('connection', function (socket) {
 
 	})
 
-	socket.on('registerDenganRM', async (asd) => {
+	socket.on('registerLoket', async (asd) => {
 		const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, rm_id, tanggal_antrian, poli_layanan, initial, jadwal_dokter_id, poli_id } = asd
 
 		const t = await sq.transaction();

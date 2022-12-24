@@ -73,9 +73,11 @@ class Controller{
     }
 
     static async list(req,res){
-
+        const {tanggal_antrian,poli_layanan,initial,is_cancel,status_antrian,jadwal_dokter_id,booking_id,poli_id,master_loket_id,jenis_antrian_id} = req.body;
+        
         try {
             let isi = ''
+
             if(tanggal_antrian){
                 isi+=`and date(al.tanggal_antrian)='${tanggal_antrian}' `
             }
@@ -88,10 +90,82 @@ class Controller{
             if(is_cancel){
                 isi+=`and al.is_cancel = ${is_cancel} `
             }
+            if(is_process){
+                isi+=`and al.is_process = '${is_process}' `
+            }
+            if(status_antrian){
+                isi+=`and al.status_antrian = ${status_antrian} `
+            }
+            if(jadwal_dokter_id){
+                isi+=`and al.jadwal_dokter_id = '${jadwal_dokter_id}' `
+            }
+            if(booking_id){
+                isi+=`and al.booking_id = '${booking_id}' `
+            }
+            if(poli_id){
+                isi+=`al.poli_id = '${poli_id}' `
+            }
+            if(master_loket_id){
+                isi+=`and al.master_loket_id = '${master_loket_id}' `
+            }
+            if(jenis_antrian_id){
+                isi+=`and al.jenis_antrian_id = '${jenis_antrian_id}' `
+            }
+
+            let data =  await sq.query(`select al.id as antrian_list_id,* from antrian_list al left join jadwal_dokter jd on jd.id = al.jadwal_dokter_id left join master_loket ml on ml.id = al.master_loket_id left join booking b on b.id = al.booking_id left join jenis_antrian ja on ja.id = al.jenis_antrian_id where al."deletedAt" isnull ${isi} order by al."sequence"`,s)
+
+            res.status(200).json({ status: 200, message: "sukses",data})
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error})
+        }
+    }
+    
+    static async listHalaman(req,res){
+        const {halaman,jumlah,tanggal_antrian,poli_layanan,initial,is_cancel,status_antrian,jadwal_dokter_id,booking_id,poli_id,master_loket_id,jenis_antrian_id} = req.body;
+        
+        try {
+            let isi = ''
+            let offset = (+halaman -1) * jumlah;
+
+            if(tanggal_antrian){
+                isi+=`and date(al.tanggal_antrian)='${tanggal_antrian}' `
+            }
+            if(poli_layanan){
+                isi+=`and al.poli_layanan = '${poli_layanan}' `
+            }
+            if(initial){
+                isi+=`and al.initial = '${initial}' `
+            }
             if(is_cancel){
                 isi+=`and al.is_cancel = ${is_cancel} `
             }
-            let data =  await sq.query(`select al.id as antrian_list_id,* from antrian_list al left join jadwal_dokter jd on jd.id = al.jadwal_dokter_id left join master_loket ml on ml.id = al.master_loket_id left join booking b on b.id = al.booking_id where al."deletedAt" isnull ${isi}`)
+            if(is_process){
+                isi+=`and al.is_process = '${is_process}' `
+            }
+            if(status_antrian){
+                isi+=`and al.status_antrian = ${status_antrian} `
+            }
+            if(jadwal_dokter_id){
+                isi+=`and al.jadwal_dokter_id = '${jadwal_dokter_id}' `
+            }
+            if(booking_id){
+                isi+=`and al.booking_id = '${booking_id}' `
+            }
+            if(poli_id){
+                isi+=`al.poli_id = '${poli_id}' `
+            }
+            if(master_loket_id){
+                isi+=`and al.master_loket_id = '${master_loket_id}' `
+            }
+            if(jenis_antrian_id){
+                isi+=`and al.jenis_antrian_id = '${jenis_antrian_id}' `
+            }
+
+            let data =  await sq.query(`select al.id as antrian_list_id,* from antrian_list al left join jadwal_dokter jd on jd.id = al.jadwal_dokter_id left join master_loket ml on ml.id = al.master_loket_id left join booking b on b.id = al.booking_id left join jenis_antrian ja on ja.id = al.jenis_antrian_id where al."deletedAt" isnull ${isi} order by al."sequence" limit ${jumlah} offset ${offset}`,s)
+            let jml =  await sq.query(`select count(*) as total from antrian_list al left join jadwal_dokter jd on jd.id = al.jadwal_dokter_id left join master_loket ml on ml.id = al.master_loket_id left join booking b on b.id = al.booking_id left join jenis_antrian ja on ja.id = al.jenis_antrian_id where al."deletedAt" isnull ${isi}`,s)
+
+            res.status(200).json({ status: 200, message: "sukses",data,jml:jml[0].total})
         } catch (error) {
             console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error})
