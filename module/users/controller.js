@@ -67,11 +67,11 @@ class Controller {
                             id: data[0].id,
                         });
                     } else {
-                        res.status(200).json({ status: 200, message: "Password Salah" });
+                        res.status(200).json({ status: 200, message: "password salah" });
                     }
                 }
             } else {
-                res.status(200).json({ status: 200, message: "username Tidak Terdaftar" });
+                res.status(200).json({ status: 200, message: "username tidak terdaftar" });
             }
         }).catch((err) => {
             console.log(err);
@@ -102,7 +102,7 @@ class Controller {
                     res.status(200).json({ status: 200, message: "sukses" })
                 })
             } else {
-                res.status(200).json({ status: 200, message: "username Tidak Terdaftar" });
+                res.status(200).json({ status: 200, message: "username tidak terdaftar" });
             }
         }).catch((err) => {
             console.log(err);
@@ -183,7 +183,7 @@ class Controller {
                     res.status(200).json({ status: 200, message: "sukses" })
                 })
             } else if (hasil1[0].otp_time < waktu) {
-                res.status(200).json({ status: 201, message: "kode OTP Kadaluarsa" })
+                res.status(200).json({ status: 201, message: "kode OTP kadaluarsa" })
             } else {
                 res.status(200).json({ status: 201, message: "kode OTP salah" })
             }
