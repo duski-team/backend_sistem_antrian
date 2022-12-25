@@ -92,7 +92,7 @@ io.on('connection', function (socket) {
 
 		try {
 			let jumlah = await sq.query(`select count(*) from antrian_loket al where al.tanggal_antrian_loket ='${tanggal_antrian_loket}' and jenis_antrian_id ='${jenis_antrian_id}' `, s)
-			let data_antrian = await antrian_list.create({ id: uuid_v4(), tanggal_antrian_loket, jenis_antrian_id, nomor_antrian_loket: +jumlah[0].count + 1, master_loket_id })
+			let data_antrian = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: asd.tanggal_antrian_loket, jenis_antrian_id: asd.jenis_antrian_id, antrian_no: +jumlah[0].count + 1, master_loket_id })
 
 			io.emit("refresh_antrian_loket", data_antrian);
 		} catch (error) {
