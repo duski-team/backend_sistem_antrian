@@ -5,8 +5,8 @@ const cors = require('cors')
 const routing = require('./routing/index')
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, { cors: '*' });
+const moment = require('moment');
 
-const antrian_loket = require('./module/antrian_list/model')
 const booking = require('./module/booking/model');
 const { sq } = require("./config/connection");
 const { v4: uuid_v4 } = require("uuid");
@@ -74,6 +74,7 @@ io.on('connection', function (socket) {
 
 			io.emit("refresh_antrian_loket", hasil);
 		} catch (error) {
+			console.log(error);
 			socket.emit("error", error);
 		}
 	})
