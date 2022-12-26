@@ -30,7 +30,7 @@ const antrian_list = sq.define('antrian_list',{
     },
     is_cancel:{
         type:DataTypes.SMALLINT, 
-        default:0
+        defaultValue : 0
     },
     is_process:{
         type:DataTypes.SMALLINT,  //0: belum di proses, 1: sudah di proses
