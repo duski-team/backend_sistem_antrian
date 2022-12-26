@@ -68,8 +68,8 @@ io.on('connection', function (socket) {
 		const { tanggal_antrian, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id } = asd
 
 		try {
-			const antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tanggal_antrian}' and initial = '${initial}'`, s)
-
+			let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
+			const antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and initial = '${initial}'`, s)
             let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master:1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
 
 			io.emit("refresh_antrian_loket", hasil);
