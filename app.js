@@ -43,28 +43,6 @@ io.on('connection', function (socket) {
 
 	})
 
-	socket.on('registerLoket', async (asd) => {
-		const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, rm_id, tanggal_antrian, poli_layanan, initial, jadwal_dokter_id, poli_id } = asd
-
-		const t = await sq.transaction();
-
-		try {
-			let nomernya = await sq.query(`select count(*) from antrian_list al where date(al.tanggal_antrian) = '${tanggal_antrian}'and poli_id =${poli_id} and initial = '${initial}' and is_master=1`, s)
-			let nomer_antrian = +nomernya[0].count + 1
-			const sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tanggal_antrian}' and poli_id =${poli_id} `, s)
-			let idBooking = uuid_v4()
-
-			await booking.create({ id: idBooking, tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, rm_id }, { transaction: t })
-			let antrian = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, jadwal_dokter_id, poli_id, booking_id: idBooking }, { transaction: t })
-
-			await t.commit();
-			io.emit("refresh_loket", antrian);
-		} catch (error) {
-			await t.rollback();
-			socket.emit("error", error);
-		}
-	})
-
 	socket.on('registerTanpaRM', async (asd) => {
 		const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, tanggal_antrian, poli_layanan, initial, jadwal_dokter_id, poli_id } = asd
 
@@ -86,15 +64,15 @@ io.on('connection', function (socket) {
 		}
 	})
 
-	
 	socket.on('registerAntrianLoket', async (asd) => {
-		const { tanggal_antrian_loket, jenis_antrian_id, master_loket_id } = asd
+		const { tanggal_antrian, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id } = asd
 
 		try {
-			let jumlah = await sq.query(`select count(*) from antrian_loket al where al.tanggal_antrian_loket ='${tanggal_antrian_loket}' and jenis_antrian_id ='${jenis_antrian_id}' `, s)
-			let data_antrian = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: asd.tanggal_antrian_loket, jenis_antrian_id: asd.jenis_antrian_id, antrian_no: +jumlah[0].count + 1, master_loket_id })
+			const antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tanggal_antrian}' and initial = '${initial}'`, s)
 
-			io.emit("refresh_antrian_loket", data_antrian);
+            let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master:1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
+
+			io.emit("refresh_antrian_loket", hasil);
 		} catch (error) {
 			socket.emit("error", error);
 		}
