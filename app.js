@@ -60,6 +60,7 @@ io.on('connection', function (socket) {
 			io.emit("refresh_mobile", data_booking);
 		} catch (error) {
 			await t.rollback();
+			console.log(error);
 			socket.emit("error", error);
 		}
 	})
@@ -88,6 +89,7 @@ io.on('connection', function (socket) {
 
 			io.emit("refresh_antrian_loket_update", cek_data[0]);
 		} catch (error) {
+			console.log(error);
 			socket.emit("error", error);
 		}
 	})
@@ -97,16 +99,17 @@ io.on('connection', function (socket) {
 
 		try {
 			let nomer_antrian = ''
+			let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
 
 			if (antrian_no) {
 				nomer_antrian = antrian_no
 			}
 			else {
-				let nomernya = await sq.query(`select count(*) from antrian_list al where date(al.tanggal_antrian) = '${tanggal_antrian}'and poli_id =${poli_id} and initial = '${initial}' and is_master=1`, s)
+				let nomernya = await sq.query(`select count(*) from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and poli_id =${poli_id} and initial = '${initial}' and is_master=1`, s)
 				nomer_antrian = +nomernya[0].count + 1
 			}
 
-			const sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tanggal_antrian}' and poli_id =${poli_id} `, s);
+			const sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id =${poli_id} `, s);
 
 			// console.log(nomer_antrian,sequence[0].count);
 
@@ -114,6 +117,7 @@ io.on('connection', function (socket) {
 
 			io.emit("refresh_register_mandiri", data_reg);
 		} catch (error) {
+			console.log(error);
 			socket.emit("error", error);
 		}
 	})
