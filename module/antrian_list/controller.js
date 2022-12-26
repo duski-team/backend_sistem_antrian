@@ -7,12 +7,12 @@ const s = { type: QueryTypes.SELECT }
 class Controller {
 
     static async registerLoket(req, res) {
-        const { tanggal_antrian, is_master, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id } = req.body
+        const { tanggal_antrian, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id } = req.body
 
         try {
             const antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tanggal_antrian}' and initial = '${initial}'`, s)
 
-            let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
+            let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master:1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
 
             res.status(200).json({ status: 200, message: "sukses", data: hasil })
         } catch (error) {
