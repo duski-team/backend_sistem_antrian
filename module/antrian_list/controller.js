@@ -24,7 +24,7 @@ class Controller {
     }
 
     static async registerMandiri(req, res) {
-        const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = req.body
+        const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = req.body
 
         try {
             let nomer_antrian = ''
@@ -42,14 +42,14 @@ class Controller {
 
             // console.log(nomer_antrian,sequence[0].count);
 
-            if (id) {
-                await antrian_list.update({ status_antrian: 1 }, { where: { id } })
-                res.status(200).json({ status: 200, message: "sukses" })
+            if (id_antrian_list) {
+                await antrian_list.update({ status_antrian: 1 }, { where: { id: id_antrian_list } })
+                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id })
+                res.status(200).json({ status: 200, message: "sukses", data: hasil })
             } else {
                 let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id })
                 res.status(200).json({ status: 200, message: "sukses", data: hasil })
             }
-
         } catch (error) {
             console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error })
