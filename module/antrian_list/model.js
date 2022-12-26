@@ -38,7 +38,7 @@ const antrian_list = sq.define('antrian_list',{
     },
     status_antrian:{
         type:DataTypes.SMALLINT,
-        defaultValue:0     //0: belum selesai, 1: selesai
+        defaultValue:0     //0: belum selesai  1: selesai  
     },
     poli_id:{
         type:DataTypes.INTEGER

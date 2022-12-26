@@ -65,6 +65,7 @@ class Controller {
                             message: "sukses",
                             token: jwt.generateToken(dataToken),
                             id: data[0].id,
+                            username: data[0].username
                         });
                     } else {
                         res.status(200).json({ status: 200, message: "password salah" });
