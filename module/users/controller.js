@@ -155,7 +155,7 @@ class Controller {
                 let kode = y.substring(y.length - 4, y.length).toUpperCase()
                 users.update({ kode_otp: kode, otp_time: moment().add(60, 'm').toDate() }, { where: { username } }).then(async data6 => {
 
-                    let fieldheader = `RSUD RAA TJOKRONEGORO PURWOREJO <br> gunakan data sebagai berikut untuk mengganti password : <br> OTP : <b>${kode}</b>`
+                    let fieldheader = `RSUD RAA TJOKRONEGORO PURWOREJO <br> Gunakan kode dibawah ini untuk verifikasi : <br> OTP : <b>${kode}</b>`
                     await mg.messages.create(mg_domain, {
                         from: mg_email,
                         to: [username],
