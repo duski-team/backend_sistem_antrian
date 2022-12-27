@@ -24,23 +24,17 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('panggil', async (asd) => {
-		let data = await antrian_list.update({ master_loket_id: asd.master_loket_id, status_antrian: asd.status_antrian }, {
-			where: {
-				id: asd.id
+		const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = asd
+		let data = await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id } }).then(hasil => {
+			console.log("asdasdasd");
+			if (status_antrian == 0) {
+				io.emit("refresh_layar", asd);
+			} else {
+				io.emit("refresh_admin", asd);
 			}
+		}).catch(error => {
+			socket.emit("error", error);
 		})
-			.then(hasil => {
-				console.log("asdasdasd");
-				if (asd.status_antrian == 0) {
-					io.emit("refresh_layar", asd);
-				} else {
-					io.emit("refresh_admin", asd);
-				}
-			})
-			.catch(error => {
-				socket.emit("error", error);
-			})
-
 	})
 
 	socket.on('registerTanpaRM', async (asd) => {
@@ -71,7 +65,7 @@ io.on('connection', function (socket) {
 		try {
 			let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
 			const antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and initial = '${initial}'`, s)
-            let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master:1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
+			let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
 
 			io.emit("refresh_antrian_loket", hasil);
 		} catch (error) {
