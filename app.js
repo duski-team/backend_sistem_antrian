@@ -80,20 +80,6 @@ io.on('connection', function (socket) {
 		}
 	})
 
-	socket.on('updateAntrianLoket', async (asd) => {
-		const { id, status_antrian, master_loket_id } = asd
-
-		try {
-			let data_antrian = await antrian_list.update({ master_loket_id, status_antrian }, { where: { id }, returning: true, plain: true })
-			let cek_data = await sq.query(`select al.id as antrian_loket_id, * from antrian_loket al join jenis_antrian ja on ja.id = al.jenis_antrian_id left join master_loket ml on ml.id = al.master_loket_id where al."deletedAt" isnull and al.id = '${id}'`, s)
-
-			io.emit("refresh_antrian_loket_update", cek_data[0]);
-		} catch (error) {
-			console.log(error);
-			socket.emit("error", error);
-		}
-	})
-
 	socket.on('registerMandiri', async (asd) => {
 		const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, antrian_list_id, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = asd
 

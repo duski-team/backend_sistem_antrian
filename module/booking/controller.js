@@ -4,6 +4,7 @@ const { v4: uuid_v4 } = require("uuid");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT }
 const antrian_list = require('../antrian_list/model')
+var QRCode = require('qrcode')
 
 
 class Controller {
@@ -104,10 +105,20 @@ class Controller {
             console.log(error)
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }
-
-
     }
 
+    static async qr (req,res){
+        try {
+            let text = req.query.text
+            
+            let data = await QRCode.toDataURL(text,{ errorCorrectionLevel: 'H' })
+
+            res.status(200).json({ status: 200, message: "sukses",data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
 }
 
 module.exports = Controller
