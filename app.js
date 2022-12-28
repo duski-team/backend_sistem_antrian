@@ -30,7 +30,7 @@ io.on('connection', function (socket) {
 			if (status_antrian == 0) {
 				io.to(room_id).emit("refresh_layar", asd);
 			} else {
-				io.to(room_id).emit("refresh_admin", asd);
+				io.emit("refresh_admin", asd);
 			}
 		}).catch(error => {
 			socket.emit("error", error);
@@ -106,7 +106,7 @@ io.on('connection', function (socket) {
 		}
 	})
 
-	socket.on('joinRoom', room_id => {
+	socket.on('joinRoom', (room_id) => {
 		socket.join(room_id);
 		console.log(`join ${room_id}`);
 	})
