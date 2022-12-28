@@ -13,7 +13,6 @@ const { v4: uuid_v4 } = require("uuid");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT }
 const antrian_list = require('./module/antrian_list/model')
-const Controller = require("./module/purworejo/controller")
 
 const purworejo = 'http://103.121.123.87/rsudapi/reg'
 const token = 'agAW4AUAgjOtCMwIxcKnGjkDj6jj64vr'
