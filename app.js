@@ -75,7 +75,7 @@ io.on('connection', function (socket) {
 	})
 
 	socket.on('registerMandiri', async (asd) => {
-		const { tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, room_id } = asd
+		const { tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = asd
 
 		try {
 			let nomer_antrian = ''
@@ -98,7 +98,7 @@ io.on('connection', function (socket) {
 			}
 
 			let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id })
-			io.to(room_id).emit("refresh_register_mandiri", hasil);
+			io.emit("refresh_register_mandiri", hasil);
 
 		} catch (error) {
 			console.log(error);
