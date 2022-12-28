@@ -28,9 +28,9 @@ io.on('connection', function (socket) {
 		let data = await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id } }).then(hasil => {
 			console.log("asdasdasd");
 			if (status_antrian == 0) {
-				io.to(poli_id).emit("refresh_layar", asd);
+				io.to(room_id).emit("refresh_layar", asd);
 			} else {
-				io.to(poli_id).emit("refresh_admin", asd);
+				io.to(room_id).emit("refresh_admin", asd);
 			}
 		}).catch(error => {
 			socket.emit("error", error);
@@ -98,7 +98,7 @@ io.on('connection', function (socket) {
 			}
 
 			let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id })
-			io.to(poli_id).emit("refresh_register_mandiri", hasil);
+			io.to(room_id).emit("refresh_register_mandiri", hasil);
 
 		} catch (error) {
 			console.log(error);
@@ -106,14 +106,14 @@ io.on('connection', function (socket) {
 		}
 	})
 
-	socket.on('joinPoli', poli_id => {
-		socket.join(poli_id);
-		console.log(`join ${poli_id}`);
+	socket.on('joinRoom', room_id => {
+		socket.join(room_id);
+		console.log(`join ${room_id}`);
 	})
 
-	socket.on('leavePoli', (poli_id) => {
-		socket.leave(poli_id);
-		console.log(`leave ${poli_id}`);
+	socket.on('leaveRoom', (room_id) => {
+		socket.leave(room_id);
+		console.log(`leave ${room_id}`);
 	})
 });
 
