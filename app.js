@@ -13,6 +13,14 @@ const { v4: uuid_v4 } = require("uuid");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT }
 const antrian_list = require('./module/antrian_list/model')
+const Controller = require("./module/purworejo/controller")
+
+const purworejo = 'http://103.121.123.87/rsudapi/reg'
+const token = 'agAW4AUAgjOtCMwIxcKnGjkDj6jj64vr'
+const axios = require('axios')
+const config = {
+    headers: { Authorization: `Bearer ${token}`,'Content-Type': 'application/json' }
+};
 
 
 
@@ -25,9 +33,19 @@ io.on('connection', function (socket) {
 
 	socket.on('panggil', async (asd, room_id) => {
 		const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = asd
-		let data = await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id } }).then(hasil => {
+		let data = await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id } }).then(async hasil => {
 			console.log("asdasdasd");
 			if (status_antrian == 0) {
+				if (jadwal_dokter_id) {
+					let jadwal_dokter = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
+					let kirim = await axios.get(purworejo+"/get-dokter",config)
+					let data_dokter = kirim.data.data 
+					for (let i = 0; i < data_dokter.length; i++) {
+						if (data_dokter[i].id == jadwal_dokter[0].dokter_id) {
+							asd.nama_dokter = data_dokter[i].nama
+						}
+					}
+				}
 				io.to(room_id).emit("refresh_layar", asd);
 			} else {
 				io.emit("refresh_admin", asd);
