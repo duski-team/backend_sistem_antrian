@@ -23,7 +23,7 @@ io.on('connection', function (socket) {
 		console.log('ada yang disconnect');
 	});
 
-	socket.on('panggil', async (asd) => {
+	socket.on('panggil', async (asd, room_id) => {
 		const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = asd
 		let data = await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id } }).then(hasil => {
 			console.log("asdasdasd");
