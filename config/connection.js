@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize');
 
 const sq = new Sequelize('SistemAntrian','postgres','Grafika9', {
-    host: 'Serova.id',
+    host: '8.215.33.60',
     port: 8000,
     dialect: 'postgres',
     logging:false,

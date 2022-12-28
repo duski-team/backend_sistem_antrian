@@ -17,7 +17,7 @@ const antrian_list = require('./module/antrian_list/model')
 
 
 io.on('connection', function (socket) {
-	console.log(socket.id);
+	// console.log(socket.id);
 	console.log('ada yang connect');
 	socket.on('disconnect', () => {
 		console.log('ada yang disconnect');
