@@ -12,7 +12,7 @@ class Controller {
     static registerDenganRM(req, res) {
         const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, rm_id, tanggal_antrian, poli_layanan, initial, jadwal_dokter_id, poli_id } = req.body
 
-        booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, rm_id })
+        booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm: rm_id })
             .then(async hasil => {
                 let nomernya = await sq.query(`select count(*) from antrian_list al where date(al.tanggal_antrian) = '${tanggal_antrian}'and poli_id =${poli_id} and initial = '${initial}' and is_master=1`, s)
                 let nomer_antrian = +nomernya[0].count + 1
@@ -31,7 +31,6 @@ class Controller {
                         console.log(error);
                         res.status(500).json({ status: 500, message: "gagal", data: error })
                     })
-                res.status(200).json({ status: 200, message: "sukses", data: hasil })
             })
     }
 
@@ -107,13 +106,61 @@ class Controller {
         }
     }
 
-    static async qr (req,res){
+    static async qr(req, res) {
         try {
             let text = req.query.text
-            
-            let data = await QRCode.toDataURL(text,{ errorCorrectionLevel: 'H' })
 
-            res.status(200).json({ status: 200, message: "sukses",data })
+            let data = await QRCode.toDataURL(text, { errorCorrectionLevel: 'H' })
+
+            res.status(200).json({ status: 200, message: "sukses", data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
+
+    static async listBookingByUserId(req, res) {
+        let { user_id } = req.body
+        try {
+            let data = await sq.query(`select m.id as "member_id", b.id as "booking_id", * from "member" m join users u on u.id = m.user_id left join booking b on b.no_rm = m.no_rm_pasien where m."deletedAt" isnull and u."deletedAt" isnull and u.id = '${user_id}'`, s)
+
+            let hasil = []
+            let data_user = {
+                user_id: data[0].user_id,
+                username: data[0].username,
+                password: data[0].password,
+                role: data[0].role,
+                user_status: data[0].user_status,
+                otp_time: data[0].otp_time,
+                kode_otp: data[0].kode_otp,
+                data_member: []
+            }
+            for (let i = 0; i < data.length; i++) {
+                let dm = {
+                    member_id: data[i].member_id,
+                    no_rm_pasien: data[i].no_rm_pasien,
+                    data_booking: []
+                }
+                if (data[i].no_rm_pasien == data[i].no_rm) {
+                    dm.data_booking.push({
+                        booking_id: data[i].booking_id,
+                        tanggal_booking: data[i].tanggal_booking,
+                        jenis_booking: data[i].jenis_booking,
+                        NIK: data[i].NIK, 
+                        nama_booking: data[i].nama_booking,
+                        no_hp_booking: data[i].no_hp_booking,
+                        no_rujukan: data[i].no_rujukan,
+                        no_kontrol: data[i].no_kontrol,
+                        is_verified: data[i].is_verified,
+                        is_registered: data[i].is_registered,
+                        status_booking: data[i].status_booking,
+                        no_rm: data[i].no_rm
+                    })
+                }
+                data_user.data_member.push(dm)
+            }
+            hasil.push(data_user)
+            res.status(200).json({ status: 200, message: "sukses", data: hasil })
         } catch (error) {
             console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error })
