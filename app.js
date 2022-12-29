@@ -32,9 +32,12 @@ io.on('connection', function (socket) {
 
 	socket.on('panggil', async (asd, room_id) => {
 		const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = asd
-		let data = await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id } }).then(async hasil => {
-			console.log("asdasdasd");
+		try {
+			let data = await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id } })
+
 			if (status_antrian == 0) {
+				let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
+				let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id = ${poli_id} and status_antrian in (0,1)`, s);
 				if (jadwal_dokter_id) {
 					let jadwal_dokter = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
 					let kirim = await axios.get(purworejo+"/get-dokter",config)
@@ -45,13 +48,15 @@ io.on('connection', function (socket) {
 						}
 					}
 				}
+				asd.sisa_antrian = sisa[0].total
 				io.to(room_id).emit("refresh_layar", asd);
-			} else {
+			}else{
 				io.emit("refresh_admin", asd);
 			}
-		}).catch(error => {
+		} catch (error) {
+			console.log(error);
 			socket.emit("error", error);
-		})
+		}
 	})
 
 	socket.on('registerTanpaRM', async (asd) => {
@@ -83,6 +88,7 @@ io.on('connection', function (socket) {
 			let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
 			const antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and initial = '${initial}'`, s)
 			let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
+			hasil.sisa_antrian = sisa[0].total
 
 			io.emit("refresh_antrian_loket", hasil);
 		} catch (error) {
