@@ -34,8 +34,10 @@ io.on('connection', function (socket) {
 		const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = asd
 		let data = await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id } }).then(async hasil => {
 			// console.log("asdasdasd");
-			if (status_antrian == 0) {
+			if (poli_layanan == 1) {
 				if (jadwal_dokter_id) {
+					const sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id = ${poli_id} and status_antrian in (0,1)`, s);
+					asd.sisa_antrian = sisa[0].total
 					let jadwal_dokter = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
 					let kirim = await axios.get(purworejo+"/get-dokter",config)
 					let data_dokter = kirim.data.data 
@@ -86,7 +88,7 @@ io.on('connection', function (socket) {
 
 			let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
 			hasil.sisa_antrian = sisa[0].total
-			
+
 			io.emit("refresh_antrian_loket", hasil);
 		} catch (error) {
 			console.log(error);
