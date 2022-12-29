@@ -14,15 +14,15 @@ const config = {
 };
 let sha1 = require('sha1');
 
-sha1("message");
-
-
 class Controller {
 
     static registerDenganRM(req, res) {
         const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, rm_id, tanggal_antrian, poli_layanan, initial, jadwal_dokter_id, poli_id } = req.body
 
-        booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm: rm_id })
+        let k = sha1("registerDenganRM");
+        let kode_booking = k.substring(k.length - 6).toUpperCase();
+        
+        booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm: rm_id, kode_booking })
             .then(async hasil => {
                 let nomernya = await sq.query(`select count(*) from antrian_list al where date(al.tanggal_antrian) = '${tanggal_antrian}'and poli_id =${poli_id} and initial = '${initial}' and is_master=1`, s)
                 let nomer_antrian = +nomernya[0].count + 1
@@ -50,7 +50,10 @@ class Controller {
         const t = await sq.transaction();
 
         try {
-            let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking }, { transaction: t })
+            let k = sha1("registerTanpaRM");
+            let kode_booking = k.substring(k.length - 6).toUpperCase();
+
+            let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking }, { transaction: t })
             let nomernya = await sq.query(`select count(*) from antrian_list al where date(al.tanggal_antrian) = '${tanggal_antrian}'and poli_id =${poli_id} and initial = '${initial}' and is_master = 1`, s)
             let nomer_antrian = +nomernya[0].count + 1
             const sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tanggal_antrian}' and poli_id =${poli_id} `, s)
@@ -145,7 +148,7 @@ class Controller {
 							data[i].nama_dokter = data_dokter[j].nama
 						}
 					}
-                    
+
                     data[i].profil = data_pasien.data.data[0]
                 }
             }
