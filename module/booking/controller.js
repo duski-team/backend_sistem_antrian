@@ -6,6 +6,13 @@ const s = { type: QueryTypes.SELECT }
 const antrian_list = require('../antrian_list/model')
 var QRCode = require('qrcode')
 
+const purworejo = 'http://103.121.123.87/rsudapi/reg'
+const token = 'agAW4AUAgjOtCMwIxcKnGjkDj6jj64vr'
+const axios = require('axios');
+const config = {
+    headers: { Authorization: `Bearer ${token}`,'Content-Type': 'application/json' }
+};
+
 
 class Controller {
 
@@ -122,45 +129,16 @@ class Controller {
     static async listBookingByUserId(req, res) {
         let { user_id } = req.body
         try {
-            let data = await sq.query(`select m.id as "member_id", b.id as "booking_id", * from "member" m join users u on u.id = m.user_id left join booking b on b.no_rm = m.no_rm_pasien where m."deletedAt" isnull and u."deletedAt" isnull and u.id = '${user_id}'`, s)
+            let data = await sq.query(`select u.id as "user_id", m.id as "member_id", b.id as "booking_id", m.user_id as "user_id_member", * from users u left join "member" m on m.user_id = u.id left join booking b on b.no_rm = m.no_rm_pasien left join antrian_list al on al.booking_id = b.id left join jadwal_dokter jd on jd.id = al.jadwal_dokter_id where u."deletedAt" isnull and u.id = '${user_id}'`, s) 
 
-            let hasil = []
-            let data_user = {
-                user_id: data[0].user_id,
-                username: data[0].username,
-                password: data[0].password,
-                role: data[0].role,
-                user_status: data[0].user_status,
-                otp_time: data[0].otp_time,
-                kode_otp: data[0].kode_otp,
-                data_member: []
-            }
             for (let i = 0; i < data.length; i++) {
-                let dm = {
-                    member_id: data[i].member_id,
-                    no_rm_pasien: data[i].no_rm_pasien,
-                    data_booking: []
+                let data_pasien = await axios.get(purworejo+"/get-pasien?no="+data[i].no_rm_pasien,config)
+                if (data_pasien.data.data[0].noRm == data[i].no_rm_pasien) {
+                    data[i].profil = data_pasien.data.data[0]
                 }
-                if (data[i].no_rm_pasien == data[i].no_rm) {
-                    dm.data_booking.push({
-                        booking_id: data[i].booking_id,
-                        tanggal_booking: data[i].tanggal_booking,
-                        jenis_booking: data[i].jenis_booking,
-                        NIK: data[i].NIK, 
-                        nama_booking: data[i].nama_booking,
-                        no_hp_booking: data[i].no_hp_booking,
-                        no_rujukan: data[i].no_rujukan,
-                        no_kontrol: data[i].no_kontrol,
-                        is_verified: data[i].is_verified,
-                        is_registered: data[i].is_registered,
-                        status_booking: data[i].status_booking,
-                        no_rm: data[i].no_rm
-                    })
-                }
-                data_user.data_member.push(dm)
             }
-            hasil.push(data_user)
-            res.status(200).json({ status: 200, message: "sukses", data: hasil })
+
+            res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
             console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error })
