@@ -45,7 +45,7 @@ const booking = sq.define('booking', {
     rm_id: {
         type: DataTypes.STRING
     },
-    flag_bpjs: {
+    flag_layanan: {
         type: DataTypes.INTEGER, // 0: non bpjs || 1: bpjs 
         defaultValue: 0 
     }
