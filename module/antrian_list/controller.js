@@ -12,7 +12,7 @@ class Controller {
 
         try {
             let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
-            const antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and initial = '${initial}'`, s)
+            const antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan =${poli_layanan}`, s)
 
             let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
 
@@ -45,6 +45,7 @@ class Controller {
             if (id_antrian_list) {
                 await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list } })
             }
+            
             let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id })
             res.status(200).json({ status: 200, message: "sukses", data: hasil })
 

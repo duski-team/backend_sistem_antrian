@@ -82,8 +82,8 @@ const koneksi_socket = koneksi_socket => {
 
             try {
                 let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
-                const antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and initial = '${initial}'`, s)
-                let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and initial = '${initial}' and status_antrian in (0,1)`, s);
+                let antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan =${poli_layanan}`, s)
+                let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' poli_layanan =${poli_layanan} and status_antrian in (0,1)`, s);
                 let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
                 hasil.dataValues.sisa_antrian = sisa[0].total
 
