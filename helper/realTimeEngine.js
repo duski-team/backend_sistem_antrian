@@ -69,7 +69,7 @@ const koneksi_socket = koneksi_socket => {
                 let data_antrian = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, jadwal_dokter_id, poli_id, booking_id: data_booking.id }, { transaction: t })
                 await t.commit();
 
-                io.emit("refresh_mobile");
+                io.emit("refresh_mobile", data_booking);
             } catch (error) {
                 await t.rollback();
                 console.log(error);
