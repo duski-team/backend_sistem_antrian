@@ -9,7 +9,7 @@ router.post('/login', Controller.login)
 router.get('/list', authentification, Controller.list)
 router.get('/detailsById/:id', authentification, Controller.detailsById)
 router.post('/delete', authentification, Controller.delete)
-router.post('/kirimOTP', Controller.kirimOTP)
-router.post('/changePasswordOTP', Controller.changePasswordOTP)
+router.post('/resetPassword', Controller.resetPassword)
+router.post('/changePassword', Controller.changePassword)
 
 module.exports = router
