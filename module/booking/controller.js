@@ -160,7 +160,7 @@ class Controller {
         }
     }
 
-    static async listBookingByKodeBooking(req, res) {
+    static async detailsBookingByKodeBooking(req, res) {
         let { kode_booking } = req.params
         try {
             let data = await sq.query(`select b.id as "booking_id", * from booking b join antrian_list al on al.booking_id = b.id where b."deletedAt" isnull and b.kode_booking = '${kode_booking}'`, s)
