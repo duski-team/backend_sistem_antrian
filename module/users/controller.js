@@ -98,9 +98,9 @@ class Controller {
 
     static verifikasiOTP(req, res) {
         const { username, kode_otp } = req.body
-        users.findAll({ where: { username, kode_otp } }).then((data) => {
+        users.findAll({ where: { username, kode_otp } }).then(async (data) => {
             if (data.length) {
-                users.update({ user_status: 1 }, { where: { username } }).then((data2) => {
+                await users.update({ user_status: 1 }, { where: { username } }).then((data2) => {
                     res.status(200).json({ status: 200, message: "sukses" })
                 })
             } else {
@@ -182,12 +182,12 @@ class Controller {
                     let passwordnya = bcrypt.hashPassword(password_baru);
                     await users.update({ password: passwordnya, user_status: 1 }, { where: { username } })
 
-                    res.status(200).json({ status: 200, message: "sukses" })
+                   res.status(200).json({ status: 200, message: "sukses" })
                 } else {
-                    res.status(201).json({ status: 204, message: "password lama salah" })
+                    res.status(200).json({ status: 200, message: "password lama salah" })
                 }
             } else {
-                res.status(201).json({ status: 204, message: "username tidak terdaftar" })
+                res.status(200).json({ status: 200, message: "username tidak terdaftar" })
             }
         }).catch(error => {
             console.log(req.body)
