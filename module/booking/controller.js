@@ -12,7 +12,7 @@ const axios = require('axios');
 const config = {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
 };
-let sha1 = require('sha1');
+const sha1 = require('sha1');
 
 class Controller {
 

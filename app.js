@@ -6,6 +6,7 @@ const routing = require('./routing/index')
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, { cors: '*' });
 const moment = require('moment');
+const sha1 = require('sha1');
 
 const booking = require('./module/booking/model');
 const { sq } = require("./config/connection");
@@ -65,7 +66,9 @@ io.on('connection', function (socket) {
 		const t = await sq.transaction();
 
 		try {
-			let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking }, { transaction: t })
+			let k = sha1("registerTanpaRM");
+            let kode_booking = k.substring(k.length - 6).toUpperCase();
+			let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking }, { transaction: t })
 			let nomernya = await sq.query(`select count(*) from antrian_list al where date(al.tanggal_antrian) = '${tanggal_antrian}'and poli_id =${poli_id} and initial = '${initial}' and is_master = 1`, s)
 			let nomer_antrian = +nomernya[0].count + 1
 			const sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tanggal_antrian}' and poli_id =${poli_id} `, s)
