@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sq } = require('../../config/connection');
+const jadwal_dokter = require('../jadwal_dokter/model')
 
 const booking = sq.define('booking', {
     id: {
@@ -42,18 +43,18 @@ const booking = sq.define('booking', {
     kode_booking: {
         type: DataTypes.STRING
     },
-    rm_id: {
-        type: DataTypes.STRING
-    },
     flag_layanan: {
         type: DataTypes.INTEGER, // 0: non bpjs || 1: bpjs 
-        defaultValue: 0 
+        defaultValue: 0
     }
 },
     {
         paranoid: true,
         freezeTableName: true
     });
+
+booking.belongsTo(jadwal_dokter, { foreignKey: "jadwal_dokter_id" })
+jadwal_dokter.hasMany(booking, { foreignKey: "jadwal_dokter_id" })
 
 // booking.sync({alter:true})
 
