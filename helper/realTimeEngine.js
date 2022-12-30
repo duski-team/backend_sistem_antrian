@@ -54,24 +54,14 @@ const koneksi_socket = koneksi_socket => {
         })
 
         socket.on('registerTanpaRM', async (asd) => {
-            const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, tanggal_antrian, poli_layanan, initial, jadwal_dokter_id, poli_id } = asd
-
-            const t = await sq.transaction();
+            const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, jadwal_dokter_id } = asd
 
             try {
                 let k = sha1(uuid_v4());
                 let kode_booking = k.substring(k.length - 6).toUpperCase();
-                let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking }, { transaction: t })
-                let nomernya = await sq.query(`select count(*) from antrian_list al where date(al.tanggal_antrian) = '${tanggal_antrian}'and poli_id =${poli_id} and initial = '${initial}' and is_master = 1`, s)
-                let nomer_antrian = +nomernya[0].count + 1
-                const sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tanggal_antrian}' and poli_id =${poli_id} `, s)
-
-                let data_antrian = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, jadwal_dokter_id, poli_id, booking_id: data_booking.id }, { transaction: t })
-                await t.commit();
-
+                let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, rm_id, flag_layanan, jadwal_dokter_id })
                 io.emit("refresh_mobile", data_booking);
             } catch (error) {
-                await t.rollback();
                 console.log(error);
                 socket.emit("error", error);
             }
