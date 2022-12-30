@@ -116,6 +116,7 @@ const koneksi_socket = koneksi_socket => {
                 if (id_antrian_list) {
                     await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list } })
                 }
+                let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and initial = '${initial}' and initial = '${poli_id}' and status_antrian in (0,1)`, s);
 
                 let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id })
                 hasil.dataValues.sisa_antrian = sisa[0].total
