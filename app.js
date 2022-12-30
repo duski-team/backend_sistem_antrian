@@ -90,7 +90,7 @@ io.on('connection', function (socket) {
 			const sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and initial = '${initial}' and status_antrian in (0,1)`, s);
 
 			let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
-			hasil.sisa_antrian = sisa[0].total
+			hasil.dataValues.sisa_antrian = sisa[0].total
 
 			io.emit("refresh_antrian_loket", hasil);
 		} catch (error) {
@@ -125,7 +125,7 @@ io.on('connection', function (socket) {
 			}
 
 			let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id })
-			hasil.sisa_antrian = sisa[0].total
+			hasil.dataValues.sisa_antrian = sisa[0].total
 
 			io.emit("refresh_register_mandiri", hasil);
 		} catch (error) {
