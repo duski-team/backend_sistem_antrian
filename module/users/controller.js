@@ -153,7 +153,8 @@ class Controller {
             if (!hasil.length) {
                 res.status(200).json({ status: 201, message: "email tidak terdaftar" })
             } else {
-                users.update({ password }, { where: { username } }).then(async data6 => {
+                let passwordnya = bcrypt.hashPassword(password)
+                users.update({ password: passwordnya }, { where: { username } }).then(async data6 => {
                     let fieldheader = `RSUD RAA TJOKRONEGORO PURWOREJO <br> Gunakan password dibawah ini untuk login : <br> Password : <b>${password}</b>`
                     await mg.messages.create(mg_domain, {
                         from: mg_email,
