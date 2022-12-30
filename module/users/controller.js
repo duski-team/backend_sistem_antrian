@@ -15,6 +15,7 @@ const mg = mailgun.client({ username: 'api', key: process.env.MAILGUN_API_KEY, u
 // const mg = mailgun.client({username: 'api', key: process.env.MAILGUN_API_KEY});
 const mg_domain = process.env.MAILGUN_DOMAIN
 const mg_email = process.env.MAILGUN_EMAIL
+let sha1 = require('sha1');
 
 class Controller {
 
@@ -144,19 +145,17 @@ class Controller {
             })
     }
 
-    static kirimOTP(req, res) {
+    static resetPassword(req, res) {
         const { username } = req.body
-        let x = moment()
+        let k = sha1(uuid_v4());
+        let password = k.substring(k.length - 8).toUpperCase();
         users.findAll({ where: { username } }).then(hasil => {
-            // console.log(hasil[0].dataValues.id);
             if (!hasil.length) {
                 res.status(200).json({ status: 201, message: "email tidak terdaftar" })
             } else {
-                let y = uuid_v4()
-                let kode = y.substring(y.length - 4, y.length).toUpperCase()
-                users.update({ kode_otp: kode, otp_time: moment().add(60, 'm').toDate() }, { where: { username } }).then(async data6 => {
-
-                    let fieldheader = `RSUD RAA TJOKRONEGORO PURWOREJO <br> Gunakan kode dibawah ini untuk verifikasi : <br> OTP : <b>${kode}</b>`
+                let passwordnya = bcrypt.hashPassword(password)
+                users.update({ password: passwordnya }, { where: { username } }).then(async data6 => {
+                    let fieldheader = `RSUD RAA TJOKRONEGORO PURWOREJO <br> Gunakan password dibawah ini untuk login : <br> Password : <b>${password}</b>`
                     await mg.messages.create(mg_domain, {
                         from: mg_email,
                         to: [username],
@@ -173,20 +172,19 @@ class Controller {
         })
     }
 
-    static changePasswordOTP(req, res) {
-        const { username, password_baru, kode_otp } = req.body
-        let waktu = moment()
-        let encryptedPassword = bcrypt.hashPassword(password_baru);
-
-        users.findAll({ where: { username, kode_otp } }).then(hasil1 => {
-            if (hasil1.length && hasil1[0].otp_time > waktu) {
-                users.update({ password: encryptedPassword, user_status: 1 }, { where: { username } }).then(data => {
-                    res.status(200).json({ status: 200, message: "sukses" })
-                })
-            } else if (hasil1[0].otp_time < waktu) {
-                res.status(200).json({ status: 201, message: "kode OTP kadaluarsa" })
+    static changePassword(req, res) {
+        const { username, password_lama, password_baru } = req.body
+        users.findAll({ where: { username } }).then(hasil => {
+            if (hasil.length) {
+                let sama = bcrypt.compare(password_lama, hasil[0].dataValues.password);
+                if (sama) {
+                    let passwordnya = bcrypt.hashPassword(password_baru);
+                    users.update({ password: passwordnya, user_status: 1 }, { where: { username } })
+                } else {
+                    res.status(200).json({ status: 200, message: "password lama salah" })
+                }
             } else {
-                res.status(200).json({ status: 201, message: "kode OTP salah" })
+                res.status(200).json({ status: 200, message: "username tidak terdaftar" })
             }
         }).catch(error => {
             console.log(req.body)
