@@ -147,7 +147,7 @@ class Controller {
 
     static resetPassword(req, res) {
         const { username } = req.body
-        let k = sha1("resetPassword");
+        let k = sha1(uuid_v4());
         let password = k.substring(k.length - 8).toUpperCase();
         users.findAll({ where: { username } }).then(hasil => {
             if (!hasil.length) {

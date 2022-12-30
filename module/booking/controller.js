@@ -19,7 +19,7 @@ class Controller {
     static registerDenganRM(req, res) {
         const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, tanggal_antrian, poli_layanan, initial, jadwal_dokter_id, poli_id } = req.body
 
-        let k = sha1("registerDenganRM");
+        let k = sha1(uuid_v4());
         let kode_booking = k.substring(k.length - 6).toUpperCase();
         
         booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking })
@@ -50,7 +50,7 @@ class Controller {
         const t = await sq.transaction();
 
         try {
-            let k = sha1("registerTanpaRM");
+            let k = sha1(uuid_v4());
             let kode_booking = k.substring(k.length - 6).toUpperCase();
 
             let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking }, { transaction: t })
