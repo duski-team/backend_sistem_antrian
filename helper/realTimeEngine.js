@@ -97,6 +97,8 @@ const koneksi_socket = koneksi_socket => {
         socket.on('registerMandiri', async (asd) => {
             const { tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = asd
 
+            const t = await sq.transaction();
+
             try {
                 let nomer_antrian = ''
                 let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
@@ -109,21 +111,23 @@ const koneksi_socket = koneksi_socket => {
                     nomer_antrian = +nomernya[0].count + 1
                 }
 
-                const sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id =${poli_id} `, s);
+                let sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id =${poli_id} `, s);
+                let sisa = await sq.query(`select count(*)as total from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_id = '${poli_id}' and status_antrian in (0,1)`,s);
 
                 // console.log(nomer_antrian,sequence[0].count);
 
                 if (id_antrian_list) {
-                    await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list } })
+                    await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list },transaction:t })
                 }
-                let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and initial = '${initial}' and initial = '${poli_id}' and status_antrian in (0,1)`, s);
 
-                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id })
+                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id },{transaction:t})
                 hasil.dataValues.sisa_antrian = sisa[0].total
+                await t.commit();
 
                 io.emit("refresh_register_mandiri", hasil);
 
             } catch (error) {
+                await t.rollback();
                 console.log(error);
                 socket.emit("error", error);
             }

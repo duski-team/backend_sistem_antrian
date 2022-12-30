@@ -26,6 +26,8 @@ class Controller {
     static async registerMandiri(req, res) {
         const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = req.body
 
+        const t = await sq.transaction();
+
         try {
             let nomer_antrian = ''
             let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
@@ -38,18 +40,21 @@ class Controller {
                 nomer_antrian = +nomernya[0].count + 1
             }
 
-            const sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id =${poli_id} `, s);
-
+            let sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id =${poli_id} `, s);
+            let sisa = await sq.query(`select count(*)as total from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_id = '${poli_id}' and status_antrian in (0,1)`,s)
             // console.log(nomer_antrian,sequence[0].count);
 
             if (id_antrian_list) {
-                await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list } })
+                await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list },transaction:t })
             }
             
-            let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id })
-            res.status(200).json({ status: 200, message: "sukses", data: hasil })
+            let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id },{transaction:t})
+            hasil.dataValues.sisa_antrian = sisa[0].total
+            await t.commit();
 
+            res.status(200).json({ status: 200, message: "sukses", data: hasil })
         } catch (error) {
+            await t.rollback();
             console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }

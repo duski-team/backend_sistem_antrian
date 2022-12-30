@@ -174,17 +174,20 @@ class Controller {
 
     static changePassword(req, res) {
         const { username, password_lama, password_baru } = req.body
-        users.findAll({ where: { username } }).then(hasil => {
+
+        users.findAll({ where: { username } }).then(async hasil => {
             if (hasil.length) {
                 let sama = bcrypt.compare(password_lama, hasil[0].dataValues.password);
                 if (sama) {
                     let passwordnya = bcrypt.hashPassword(password_baru);
-                    users.update({ password: passwordnya, user_status: 1 }, { where: { username } })
+                    await users.update({ password: passwordnya, user_status: 1 }, { where: { username } })
+
+                    res.status(200).json({ status: 200, message: "sukses" })
                 } else {
-                    res.status(200).json({ status: 200, message: "password lama salah" })
+                    res.status(201).json({ status: 204, message: "password lama salah" })
                 }
             } else {
-                res.status(200).json({ status: 200, message: "username tidak terdaftar" })
+                res.status(201).json({ status: 204, message: "username tidak terdaftar" })
             }
         }).catch(error => {
             console.log(req.body)
