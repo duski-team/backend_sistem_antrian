@@ -16,53 +16,43 @@ const sha1 = require('sha1');
 
 class Controller {
 
-    static registerDenganRM(req, res) {
-        const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, tanggal_antrian, poli_layanan, initial, jadwal_dokter_id, poli_id, rm_id, flag_layanan } = req.body
-
-        let k = sha1(uuid_v4());
-        let kode_booking = k.substring(k.length - 6).toUpperCase();
-        
-        booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, rm_id, flag_layanan })
-            .then(async hasil => {
-                let nomernya = await sq.query(`select count(*) from antrian_list al where date(al.tanggal_antrian) = '${tanggal_antrian}'and poli_id =${poli_id} and initial = '${initial}' and is_master=1`, s)
-                let nomer_antrian = +nomernya[0].count + 1
-
-
-                const sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tanggal_antrian}' and poli_id =${poli_id} `, s)
-                // res.json('oke')
-
-                console.log(nomer_antrian, sequence[0].count);
-
-                antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, jadwal_dokter_id, poli_id, booking_id: hasil.id })
-                    .then(hasil => {
-                        res.status(200).json({ status: 200, message: "sukses", data: hasil })
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        res.status(500).json({ status: 500, message: "gagal", data: error })
-                    })
-            })
-    }
-
-    static async registerTanpaRM(req, res) {
-        const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, tanggal_antrian, poli_layanan, initial, jadwal_dokter_id, poli_id, flag_layanan } = req.body
-
-        const t = await sq.transaction();
+    static async registerDenganRM(req, res) {
+        const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, flag_layanan, jadwal_dokter_id } = req.body
 
         try {
             let k = sha1(uuid_v4());
             let kode_booking = k.substring(k.length - 6).toUpperCase();
+            let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
+            let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}'`, s)
 
-            let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking, flag_layanan }, { transaction: t })
-            let nomernya = await sq.query(`select count(*) from antrian_list al where date(al.tanggal_antrian) = '${tanggal_antrian}'and poli_id = ${poli_id} and initial = '${initial}' and is_master = 1`, s)
-            let nomer_antrian = +nomernya[0].count + 1
-            const sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tanggal_antrian}' and poli_id = ${poli_id} `, s)
-
-            let data_antrian = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, jadwal_dokter_id, poli_id, booking_id: data_booking.id }, { transaction: t })
-            await t.commit();
-            res.status(200).json({ status: 200, message: "sukses", data: data_booking })
+            if (cekJumlah[0].jumlah_booking > cekKuota[0].kuota) {
+                res.status(200).json({ status: 200, message: "kuota penuh" })
+            } else {
+                let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, rm_id, flag_layanan, jadwal_dokter_id })
+                res.status(200).json({ status: 200, message: "sukses", data: data_booking })
+            }
         } catch (error) {
-            await t.rollback();
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
+
+    static async registerTanpaRM(req, res) {
+        const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, jadwal_dokter_id, flag_layanan } = req.body
+
+        try {
+            let k = sha1(uuid_v4());
+            let kode_booking = k.substring(k.length - 6).toUpperCase();
+            let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
+            let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}'`, s)
+
+            if (cekJumlah[0].jumlah_booking > cekKuota[0].kuota) {
+                res.status(200).json({ status: 200, message: "kuota penuh" })
+            } else {
+                let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, rm_id, flag_layanan, jadwal_dokter_id })
+                res.status(200).json({ status: 200, message: "sukses", data: data_booking })
+            }
+        } catch (error) {
             console.log(error);
             console.log(req.body);
             res.status(500).json({ status: 500, message: "gagal", data: error })
@@ -72,18 +62,12 @@ class Controller {
     static update(req, res) {
         const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, id } = req.body
 
-        booking.update({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm }, {
-            where: {
-                id
-            }
+        booking.update({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm }, { where: { id } }).then(hasil => {
+            res.status(200).json({ status: 200, message: "sukses" })
+        }).catch(error => {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
         })
-            .then(hasil => {
-                res.status(200).json({ status: 200, message: "sukses" })
-            })
-            .catch(error => {
-                console.log(error);
-                res.status(500).json({ status: 500, message: "gagal", data: error })
-            })
 
     }
 
@@ -141,13 +125,13 @@ class Controller {
                 let data_pasien = await axios.get(purworejo + "/get-pasien?no=" + data[i].no_rm_pasien, config)
                 if (data_pasien.data.data[0].noRm == data[i].no_rm_pasien) {
 
-                    let kirim = await axios.get(purworejo+"/get-dokter",config)
-					let data_dokter = kirim.data.data 
-					for (let j = 0; j < data_dokter.length; j++) {
-						if (data_dokter[j].id == data[i].dokter_id) {
-							data[i].nama_dokter = data_dokter[j].nama
-						}
-					}
+                    let kirim = await axios.get(purworejo + "/get-dokter", config)
+                    let data_dokter = kirim.data.data
+                    for (let j = 0; j < data_dokter.length; j++) {
+                        if (data_dokter[j].id == data[i].dokter_id) {
+                            data[i].nama_dokter = data_dokter[j].nama
+                        }
+                    }
 
                     data[i].profil = data_pasien.data.data[0]
                 }
