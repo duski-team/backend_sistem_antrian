@@ -78,13 +78,13 @@ const koneksi_socket = koneksi_socket => {
         })
 
         socket.on('registerAntrianLoket', async (asd) => {
-            const { tanggal_antrian, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id } = asd
+            const { tanggal_antrian, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id,booking_id } = asd
 
             try {
                 let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
                 let antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan =${poli_layanan}`, s)
                 let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' poli_layanan =${poli_layanan} and status_antrian in (0,1)`, s);
-                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
+                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id,booking_id })
                 hasil.dataValues.sisa_antrian = sisa[0].total
 
                 io.emit("refresh_antrian_loket", hasil);
@@ -95,7 +95,7 @@ const koneksi_socket = koneksi_socket => {
         })
 
         socket.on('registerMandiri', async (asd) => {
-            const { tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = asd
+            const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id,booking_id } = asd
 
             const t = await sq.transaction();
 
@@ -120,7 +120,7 @@ const koneksi_socket = koneksi_socket => {
                     await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list },transaction:t })
                 }
 
-                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id },{transaction:t})
+                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id,booking_id },{transaction:t})
                 hasil.dataValues.sisa_antrian = sisa[0].total
                 await t.commit();
 
