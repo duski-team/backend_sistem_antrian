@@ -221,6 +221,8 @@ class Controller {
                 for (let j = 0; j < polinya.length; j++) {
                     if (data[i].poli_id == polinya[j].id) {
                         data[i].nama_poli = polinya[j].nama
+                        data[i].kode_antrean = polinya[j].kdAntrean 
+                        data[i].kode_poli_bpjs = polinya[j].kdPoliBpjs
                     }
                 }
             }
