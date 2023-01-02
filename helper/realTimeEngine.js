@@ -74,6 +74,27 @@ const koneksi_socket = koneksi_socket => {
             }
         })
 
+        socket.on('registerTanpaRMMobile', async (asd) => {
+            const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, jadwal_dokter_id, flag_layanan } = asd
+
+            try {
+                let k = sha1(uuid_v4());
+                let kode_booking = k.substring(k.length - 6).toUpperCase();
+                let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
+                let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}'`, s)
+
+                if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
+                    let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking, flag_layanan, jadwal_dokter_id })
+                    io.emit("refresh_mobile", data_booking)
+                } else {
+                    io.emit("kuota_penuh")
+                }
+            } catch (error) {
+                console.log(error);
+                socket.emit("error", error);
+            }
+        })
+
         socket.on('registerAntrianLoket', async (asd) => {
             const { tanggal_antrian, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id, booking_id } = asd
 
@@ -81,6 +102,7 @@ const koneksi_socket = koneksi_socket => {
                 if (booking_id) {
                     let cekBooking = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.booking_id = '${booking_id}'`, s)
                     if (cekBooking.length > 0) {
+                        console.log('data sudah ada');
                         io.emit("data_sudah_ada", cekBooking);
                     } else {
                         let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
@@ -94,7 +116,7 @@ const koneksi_socket = koneksi_socket => {
                 } else {
                     let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
                     let antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan =${poli_layanan}`, s)
-                    let cekNomorAntrian = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.antrian_no = ''`, s)
+                    
                     let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_layanan = ${poli_layanan} and status_antrian in (0,1)`, s);
                     let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
                     hasil.dataValues.sisa_antrian = sisa[0].total
