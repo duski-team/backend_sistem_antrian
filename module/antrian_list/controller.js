@@ -8,13 +8,13 @@ const moment = require('moment');
 class Controller {
 
     static async registerLoket(req, res) {
-        const { tanggal_antrian, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id } = req.body
+        const { tanggal_antrian, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id,booking_id } = req.body
 
         try {
             let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
-            const antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and initial = '${initial}'`, s)
+            const antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan =${poli_layanan}`, s)
 
-            let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
+            let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id,booking_id })
 
             res.status(200).json({ status: 200, message: "sukses", data: hasil })
         } catch (error) {
@@ -24,7 +24,9 @@ class Controller {
     }
 
     static async registerMandiri(req, res) {
-        const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = req.body
+        const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id,booking_id } = req.body
+
+        const t = await sq.transaction();
 
         try {
             let nomer_antrian = ''
@@ -38,27 +40,31 @@ class Controller {
                 nomer_antrian = +nomernya[0].count + 1
             }
 
-            const sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id =${poli_id} `, s);
-
+            let sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id =${poli_id} `, s);
+            let sisa = await sq.query(`select count(*)as total from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_id = '${poli_id}' and status_antrian in (0,1)`,s)
             // console.log(nomer_antrian,sequence[0].count);
 
             if (id_antrian_list) {
-                await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list } })
+                await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list },transaction:t })
             }
-            let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id })
-            res.status(200).json({ status: 200, message: "sukses", data: hasil })
+            
+            let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id,booking_id },{transaction:t})
+            hasil.dataValues.sisa_antrian = sisa[0].total
+            await t.commit();
 
+            res.status(200).json({ status: 200, message: "sukses", data: hasil })
         } catch (error) {
+            await t.rollback();
             console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }
     }
 
     static async update(req, res) {
-        const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = req.body
+        const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id,booking_id } = req.body
 
         try {
-            let hasil = await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, sequence: +sequence[0].count + 1, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id }, returning: true })
+            let hasil = await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id,booking_id }, { where: { id }, returning: true })
 
             res.status(200).json({ status: 200, message: "sukses", data: hasil[1] })
         } catch (error) {
