@@ -48,7 +48,7 @@ class Controller {
             if (cekJumlah[0].jumlah_booking > cekKuota[0].kuota_mobile) {
                 res.status(200).json({ status: 200, message: "kuota penuh" })
             } else {
-                let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, rm_id, flag_layanan, jadwal_dokter_id })
+                let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking, flag_layanan, jadwal_dokter_id })
                 res.status(200).json({ status: 200, message: "sukses", data: data_booking })
             }
         } catch (error) {
@@ -146,7 +146,7 @@ class Controller {
     static async detailsBookingByKodeBooking(req, res) {
         let { kode_booking } = req.params
         try {
-            let data = await sq.query(`select b.id as "booking_id", * from booking b join antrian_list al on al.booking_id = b.id where b."deletedAt" isnull and b.kode_booking = '${kode_booking}'`, s)
+            let data = await sq.query(`select b.id as "booking_id", * from booking b left join antrian_list al on al.booking_id = b.id where b."deletedAt" isnull and b.kode_booking = '${kode_booking}'`, s)
 
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
