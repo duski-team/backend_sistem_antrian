@@ -62,11 +62,11 @@ const koneksi_socket = koneksi_socket => {
                 let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
                 let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}'`, s)
 
-                if (cekJumlah[0].jumlah_booking > cekKuota[0].kuota_mobile) {
-                    io.emit("kuota_penuh")
-                } else {
+                if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
                     let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking, flag_layanan, jadwal_dokter_id })
                     io.emit("refresh_mobile", data_booking)
+                } else {
+                    io.emit("kuota_penuh")
                 }
             } catch (error) {
                 console.log(error);
