@@ -24,11 +24,11 @@ class Controller {
             let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
             let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}'`, s)
 
-            if (cekJumlah[0].jumlah_booking > cekKuota[0].kuota_mobile) {
-                res.status(200).json({ status: 200, message: "kuota penuh" })
-            } else {
+            if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
                 let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, rm_id, flag_layanan, jadwal_dokter_id })
                 res.status(200).json({ status: 200, message: "sukses", data: data_booking })
+            } else {
+                res.status(200).json({ status: 200, message: "kuota penuh" })
             }
         } catch (error) {
             console.log(error);
@@ -45,11 +45,11 @@ class Controller {
             let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
             let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}'`, s)
 
-            if (cekJumlah[0].jumlah_booking > cekKuota[0].kuota_mobile) {
-                res.status(200).json({ status: 200, message: "kuota penuh" })
-            } else {
-                let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, rm_id, flag_layanan, jadwal_dokter_id })
+            if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
+                let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking, flag_layanan, jadwal_dokter_id })
                 res.status(200).json({ status: 200, message: "sukses", data: data_booking })
+            } else {
+                res.status(200).json({ status: 200, message: "kuota penuh" })
             }
         } catch (error) {
             console.log(error);
@@ -146,7 +146,7 @@ class Controller {
     static async detailsBookingByKodeBooking(req, res) {
         let { kode_booking } = req.params
         try {
-            let data = await sq.query(`select b.id as "booking_id", * from booking b join antrian_list al on al.booking_id = b.id where b."deletedAt" isnull and b.kode_booking = '${kode_booking}'`, s)
+            let data = await sq.query(`select b.* , al.id as "antrian_list_id", al.tanggal_antrian ,al.is_master ,al.poli_layanan ,al.initial ,al.antrian_no ,al."sequence" ,al.is_cancel ,al.is_process ,al.status_antrian ,al.booking_id ,al.poli_id ,al.master_loket_id ,al.jenis_antrian_id from booking b left join antrian_list al on al.booking_id = b.id where b."deletedAt" isnull and b.kode_booking = '${kode_booking}'`, s)
 
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
