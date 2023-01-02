@@ -78,13 +78,29 @@ const koneksi_socket = koneksi_socket => {
             const { tanggal_antrian, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id, booking_id } = asd
 
             try {
-                let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
-                let antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan =${poli_layanan}`, s)
-                let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_layanan = ${poli_layanan} and status_antrian in (0,1)`, s);
-                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id, booking_id })
-                hasil.dataValues.sisa_antrian = sisa[0].total
+                if (booking_id) {
+                    let cekBooking = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.booking_id = '${booking_id}'`, s)
+                    if (cekBooking.length > 0) {
+                        io.emit("data_sudah_ada", cekBooking);
+                    } else {
+                        let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
+                        let antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan =${poli_layanan}`, s)
+                        let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_layanan = ${poli_layanan} and status_antrian in (0,1)`, s);
+                        let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id, booking_id })
+                        hasil.dataValues.sisa_antrian = sisa[0].total
 
-                io.emit("refresh_antrian_loket", hasil);
+                        io.emit("refresh_antrian_loket", hasil);
+                    }
+                } else {
+                    let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
+                    let antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan =${poli_layanan}`, s)
+                    let cekNomorAntrian = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.antrian_no = ''`, s)
+                    let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_layanan = ${poli_layanan} and status_antrian in (0,1)`, s);
+                    let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: antrian_no[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id })
+                    hasil.dataValues.sisa_antrian = sisa[0].total
+
+                    io.emit("refresh_antrian_loket", hasil);
+                }
             } catch (error) {
                 console.log(error);
                 socket.emit("error", error);
@@ -125,6 +141,27 @@ const koneksi_socket = koneksi_socket => {
 
             } catch (error) {
                 await t.rollback();
+                console.log(error);
+                socket.emit("error", error);
+            }
+        })
+
+        socket.on('registerAPMMandiri', async (asd) => {
+            const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, poli_id, master_loket_id } = asd
+
+            try {
+                let countantrian = await sq.query(`select count(*)  from antrian_list al  where al."deletedAt" isnull and jadwal_dokter_id ='${jadwal_dokter_id}' and al.is_master = 1`, s)
+                let countsequence = await sq.query(`select count(*)  from antrian_list al  where al."deletedAt" isnull and jadwal_dokter_id ='${jadwal_dokter_id}' and al.is_master = 1`, s)
+                let antrian_no = +countantrian[0].count + 1
+                let sequence_no = +countsequence[0].count + 1
+                let curdate = moment().format('YYYY-MM-DD')
+                let kirim = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
+
+                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: curdate, is_master: 1, poli_layanan: 1, initial, antrian_no, sequence: sequence_no, jadwal_dokter_id, booking_id, poli_id, master_loket_id })
+
+                io.emit("refresh_register_APM_mandiri", hasil);
+
+            } catch (error) {
                 console.log(error);
                 socket.emit("error", error);
             }

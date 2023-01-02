@@ -212,6 +212,26 @@ class Controller {
         const { id } = req.params
         try {
             let data = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${id}'`, s)
+            let kirim = await axios.get(purworejo + "/get-poli", config)
+            let polinya = kirim.data.data
+            let kirim2 = await axios.get(purworejo + "/get-dokter", config)
+            let dokternya = kirim2.data.data
+
+            for (let i = 0; i < data.length; i++) {
+                for (let j = 0; j < polinya.length; j++) {
+                    if (data[i].poli_id == polinya[j].id) {
+                        data[i].nama_poli = polinya[j].nama
+                    }
+                }
+            }
+
+            for (let k = 0; k < data.length; k++) {
+                for (let l = 0; l < dokternya.length; l++) {
+                    if (data[k].dokter_id == dokternya[l].id) {
+                        data[k].nama_dokter = dokternya[l].nama
+                    }
+                }
+            }
 
             res.status(200).json({ status: 200, message: "sukses", data })
 
