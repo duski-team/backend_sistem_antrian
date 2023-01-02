@@ -162,7 +162,6 @@ const koneksi_socket = koneksi_socket => {
                 io.emit("refresh_register_APM_mandiri", hasil);
 
             } catch (error) {
-                await t.rollback();
                 console.log(error);
                 socket.emit("error", error);
             }
