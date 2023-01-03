@@ -118,7 +118,12 @@ class Controller {
     static async listBookingByUserId(req, res) {
         let { user_id } = req.body
         try {
-            let data = await sq.query(`select u.id as "user_id", m.id as "member_id", b.id as "booking_id", m.user_id as "user_id_member", * from users u left join "member" m on m.user_id = u.id join booking b on b.no_rm = m.no_rm_pasien left join antrian_list al on al.booking_id = b.id left join jadwal_dokter jd on jd.id = al.jadwal_dokter_id where u."deletedAt" isnull and u.id = '${user_id}'`, s)
+            let data = await sq.query(`select u.id as "user_id", m.id as "member_id", b.id as "booking_id", m.user_id as "user_id_member", * 
+            from booking b 
+            join users u on u.id = b.user_id 
+            left join "member" m on m.no_rm_pasien = b.no_rm  
+            left join antrian_list al on al.booking_id = b.id 
+            where b."deletedAt" isnull and u."deletedAt" isnull and b.user_id = '${user_id}'`, s)
 
             for (let i = 0; i < data.length; i++) {
                 let data_pasien = await axios.get(purworejo + "/get-pasien?no=" + data[i].no_rm_pasien, config)
