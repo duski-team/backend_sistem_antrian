@@ -174,7 +174,7 @@ const koneksi_socket = koneksi_socket => {
 
             try {
                 let countantrian = await sq.query(`select count(*)  from antrian_list al  where al."deletedAt" isnull and initial ='${initial}' and al.is_master = 1`, s)
-                let countsequence = await sq.query(`select count(*)  from antrian_list al  where al."deletedAt" isnull and initial ='${initial}'`, s)
+                let countsequence = await sq.query(`select count(*)  from antrian_list al  where al."deletedAt" isnull and initial ='${initial}' and poli_id = ${idPoli}`, s)
                 let antrian_no = +countantrian[0].count + 1
                 let sequence_no = +countsequence[0].count + 1
                 let curdate = moment().format('YYYY-MM-DD')
