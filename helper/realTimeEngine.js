@@ -193,8 +193,13 @@ const koneksi_socket = koneksi_socket => {
                 io.emit("refresh_register_APM_mandiri", hasil);
 
             } catch (error) {
-                console.log(error);
-                socket.emit("error", error);
+                // console.log(error);
+                if (error.name = "AxiosError") {
+                    let respon_error = error.response.data
+                    socket.emit("error", respon_error);
+                } else {
+                    socket.emit("error", error);
+                }
             }
         })
 
