@@ -178,7 +178,7 @@ const koneksi_socket = koneksi_socket => {
                 let antrian_no = +countantrian[0].count + 1
                 let sequence_no = +countsequence[0].count + 1
                 let curdate = moment().format('YYYY-MM-DD')
-                let sisa = await sq.query(`select count(*) as total from antrian_list al where date(al.tanggal_antrian) = '${curdate}' and al.poli_id = '${idPoli}' and status_antrian in (0,1)`, s);
+                let sisa = await sq.query(`select count(*) as total from antrian_list al where date(al.tanggal_antrian) = '${curdate}' and al.initial = '${initial}' and al.status_antrian in (0,1) and al.poli_layanan = 1`, s);
                 // let kirim = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
 
                 let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: curdate, is_master: 1, poli_layanan: 1, initial, antrian_no, sequence: sequence_no, jadwal_dokter_id, booking_id, poli_id: idPoli, master_loket_id })
