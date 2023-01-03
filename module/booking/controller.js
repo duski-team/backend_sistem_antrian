@@ -138,7 +138,7 @@ class Controller {
 
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
-            // console.log(error);
+            console.log(error);
             if (error.name = "AxiosError") {
                 // console.log(error.response.data);
                 let respon_error = error.response.data
