@@ -118,37 +118,35 @@ class Controller {
     static async listBookingByUserId(req, res) {
         let { user_id } = req.body
         try {
-            let data = await sq.query(`select u.id as "user_id", m.id as "member_id", b.id as "booking_id", m.user_id as "user_id_member", * 
+            let data = await sq.query(`select b.id as booking_id,u.username,u."role",jd.dokter_id,jd.poli_id,b.*,m.id as member_id
             from booking b 
             join users u on u.id = b.user_id 
-            left join "member" m on m.no_rm_pasien = b.no_rm  
-            left join antrian_list al on al.booking_id = b.id 
+            join jadwal_dokter jd on jd.id = b.jadwal_dokter_id 
+            left join "member" m on m.no_rm_pasien = b.no_rm 
             where b."deletedAt" isnull and u."deletedAt" isnull and b.user_id = '${user_id}'`, s)
+            let kirim = await axios.get(purworejo + "/get-dokter", config)
+            let data_dokter = kirim.data.data
 
             for (let i = 0; i < data.length; i++) {
-                let data_pasien = await axios.get(purworejo + "/get-pasien?no=" + data[i].no_rm_pasien, config)
-                if (data_pasien.data.data[0].noRm == data[i].no_rm_pasien) {
-
-                    let kirim = await axios.get(purworejo + "/get-dokter", config)
-                    let data_dokter = kirim.data.data
-                    for (let j = 0; j < data_dokter.length; j++) {
-                        if (data_dokter[j].id == data[i].dokter_id) {
-                            data[i].nama_dokter = data_dokter[j].nama
-                        }
+                for (let j = 0; j < data_dokter.length; j++) {
+                    if (data_dokter[j].id == data[i].dokter_id) {
+                        data[i].nama_dokter = data_dokter[j].nama
                     }
-
+                }
+                if(data[i].no_rm){
+                    let data_pasien = await axios.get(purworejo + "/get-pasien?no=" + data[i].no_rm, config)
                     data[i].profil = data_pasien.data.data[0]
                 }
             }
 
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
-            console.log(error);
             if (error.name = "AxiosError") {
                 // console.log(error.response.data);
                 let respon_error = error.response.data
                 res.status(201).json({ status: respon_error.code, message: respon_error.message })
             } else {
+                console.log(error);
                 res.status(500).json({ status: 500, message: "gagal", data: error })
             }
         }
