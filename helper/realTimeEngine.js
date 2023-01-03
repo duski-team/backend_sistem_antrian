@@ -173,8 +173,8 @@ const koneksi_socket = koneksi_socket => {
             const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id } = asd
 
             try {
-                let countantrian = await sq.query(`select count(*)  from antrian_list al  where al."deletedAt" isnull and jadwal_dokter_id ='${jadwal_dokter_id}' and al.is_master = 1`, s)
-                let countsequence = await sq.query(`select count(*)  from antrian_list al  where al."deletedAt" isnull and jadwal_dokter_id ='${jadwal_dokter_id}'`, s)
+                let countantrian = await sq.query(`select count(*)  from antrian_list al  where al."deletedAt" isnull and initial ='${initial}' and al.is_master = 1`, s)
+                let countsequence = await sq.query(`select count(*)  from antrian_list al  where al."deletedAt" isnull and initial ='${initial}'`, s)
                 let antrian_no = +countantrian[0].count + 1
                 let sequence_no = +countsequence[0].count + 1
                 let curdate = moment().format('YYYY-MM-DD')
