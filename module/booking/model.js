@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sq } = require('../../config/connection');
 const jadwal_dokter = require('../jadwal_dokter/model')
+const user = require('../users/model')
 
 const booking = sq.define('booking', {
     id: {
@@ -55,6 +56,9 @@ const booking = sq.define('booking', {
 
 booking.belongsTo(jadwal_dokter, { foreignKey: "jadwal_dokter_id" })
 jadwal_dokter.hasMany(booking, { foreignKey: "jadwal_dokter_id" })
+
+booking.belongsTo(user, { foreignKey: "user_id" })
+user.hasMany(booking, { foreignKey: "user_id" })
 
 // booking.sync({alter:true})
 

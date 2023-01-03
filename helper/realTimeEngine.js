@@ -177,9 +177,18 @@ const koneksi_socket = koneksi_socket => {
                 let antrian_no = +countantrian[0].count + 1
                 let sequence_no = +countsequence[0].count + 1
                 let curdate = moment().format('YYYY-MM-DD')
-                // let kirim = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
+                let kirim = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
 
                 let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: curdate, is_master: 1, poli_layanan: 1, initial, antrian_no, sequence: sequence_no, jadwal_dokter_id, booking_id, poli_id: asd.idPoli, master_loket_id })
+
+                // let kirim = await axios.get(purworejo + "/get-poli", config)
+                // let polinya = kirim.data.data
+                // for (let i = 0; i < polinya.length; i++) {
+                //     if (polinya[i].id == asd.idPoli) {
+                //         hasil.dataValues.nama_poli = polinya[i].nama
+                //     }
+                // }
+                // console.log(hasil);
 
                 io.emit("refresh_register_APM_mandiri", hasil);
 
