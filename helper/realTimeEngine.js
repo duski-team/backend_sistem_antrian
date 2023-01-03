@@ -177,7 +177,7 @@ const koneksi_socket = koneksi_socket => {
                 let antrian_no = +countantrian[0].count + 1
                 let sequence_no = +countsequence[0].count + 1
                 let curdate = moment().format('YYYY-MM-DD')
-                let kirim = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
+                // let kirim = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
 
                 let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: curdate, is_master: 1, poli_layanan: 1, initial, antrian_no, sequence: sequence_no, jadwal_dokter_id, booking_id, poli_id: asd.idPoli, master_loket_id })
 
@@ -193,11 +193,11 @@ const koneksi_socket = koneksi_socket => {
                 io.emit("refresh_register_APM_mandiri", hasil);
 
             } catch (error) {
-                // console.log(error);
                 if (error.name = "AxiosError") {
                     let respon_error = error.response.data
                     socket.emit("error", respon_error);
                 } else {
+                    console.log(error);
                     socket.emit("error", error);
                 }
             }
