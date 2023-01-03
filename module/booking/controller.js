@@ -138,8 +138,14 @@ class Controller {
 
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
-            console.log(error);
-            res.status(500).json({ status: 500, message: "gagal", data: error })
+            // console.log(error);
+            if (error.name = "AxiosError") {
+                // console.log(error.response.data);
+                let respon_error = error.response.data
+                res.status(201).json({ status: respon_error.code, message: respon_error.message })
+            } else {
+                res.status(500).json({ status: 500, message: "gagal", data: error })
+            }
         }
     }
 
