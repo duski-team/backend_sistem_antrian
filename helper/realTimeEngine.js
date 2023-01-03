@@ -181,7 +181,7 @@ const koneksi_socket = koneksi_socket => {
 
                 let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: curdate, is_master: 1, poli_layanan: 1, initial, antrian_no, sequence: sequence_no, jadwal_dokter_id, booking_id, poli_id, master_loket_id })
 
-                io.emit("refresh_antrian_loket", hasil);
+                io.emit("refresh_register_APM_mandiri", hasil);
 
             } catch (error) {
                 console.log(error);
