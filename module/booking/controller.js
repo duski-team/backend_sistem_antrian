@@ -222,6 +222,24 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }
     }
+
+    static async listBookingAktif(req, res) {
+        try {
+            let tgl = moment().format('YYYY-MM-DD')
+            let data = await sq.query(`select b.id as booking_id, u.username, u."role", jd.dokter_id, jd.poli_id, b.*, m.id as member_id 
+            from booking b 
+            join users u on u.id = b.user_id 
+            join jadwal_dokter jd on jd.id = b.jadwal_dokter_id 
+            left join "member" m on m.no_rm_pasien = b.no_rm 
+            where b."deletedAt" isnull and u."deletedAt" isnull 
+            and date(b.tanggal_booking) >= '${tgl}' and '${tgl}' <= date(b.tanggal_booking)`, s)
+
+            res.status(200).json({ status: 200, message: "sukses", data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
 }
 
 module.exports = Controller
