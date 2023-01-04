@@ -43,8 +43,10 @@ const koneksi_socket = koneksi_socket => {
                             }
                         }
                     }
-                    asd.sisa_antrian = sisa[0].total
-                    io.to(room_id).emit("refresh_layar", asd);
+                    asd.sisa_antrian = sisa[0].total 
+                    let x = `"${room_id}"`
+                    io.to(x).emit("refresh_layar", asd);
+                    io.emit("refresh_admin", asd);
                 } else {
                     io.emit("refresh_admin", asd);
                 }
