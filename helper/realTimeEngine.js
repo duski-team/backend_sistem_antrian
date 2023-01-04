@@ -31,7 +31,8 @@ const koneksi_socket = koneksi_socket => {
 
                 if (status_antrian == 0) {
                     let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
-                    let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id = ${poli_id} and status_antrian in (0,1)`, s);
+                    let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id = ${poli_id} and poli_layanan = ${poli_layanan} and status_antrian in (0,1)`, s);
+
                     if (jadwal_dokter_id) {
                         let jadwal_dokter = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
                         let kirim = await axios.get(purworejo + "/get-dokter", config)
@@ -102,8 +103,10 @@ const koneksi_socket = koneksi_socket => {
                 if (booking_id) {
                     let cekBooking = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.booking_id = '${booking_id}'`, s)
                     if (cekBooking.length > 0) {
-                        console.log('data sudah ada');
-                        io.emit("data_sudah_ada", cekBooking);
+                        let tgl = moment(cekBooking[0].tanggal_booking).format('YYYY-MM-DD')
+                        let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_layanan = ${cekBooking[0].poli_layanan} and status_antrian in (0,1)`, s);
+                        cekBooking[0].sisa_antrian = sisa[0].total
+                        io.emit("refresh_antrian_loket", cekBooking);
                     } else {
                         let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
                         let antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.initial = '${initial}'`, s);
@@ -143,12 +146,12 @@ const koneksi_socket = koneksi_socket => {
                     nomer_antrian = antrian_no
                 }
                 else {
-                    let nomernya = await sq.query(`select count(*) from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and poli_id =${poli_id} and initial = '${initial}' and is_master=1`, s)
+                    let nomernya = await sq.query(`select count(*) from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and initial = '${initial}'`, s)
                     nomer_antrian = +nomernya[0].count + 1
                 }
 
-                let sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id =${poli_id} and initial = '${initial}'`, s);
-                let sisa = await sq.query(`select count(*)as total from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_id = '${poli_id}' and initial = '${initial}' and status_antrian in (0,1)`, s);
+                let sequence = await sq.query(`select count(*) from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id =${poli_id} and initial = '${initial}' and poli_layanan = ${poli_layanan}`, s);
+                let sisa = await sq.query(`select count(*)as total from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_id = ${poli_id} and initial = '${initial}' and poli_layanan = ${poli_layanan} and status_antrian in (0,1)`, s);
 
                 // console.log(nomer_antrian,sequence[0].count);
 
@@ -173,12 +176,12 @@ const koneksi_socket = koneksi_socket => {
             const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id } = asd
 
             try {
-                let countantrian = await sq.query(`select count(*)  from antrian_list al  where al."deletedAt" isnull and initial ='${initial}' and al.is_master = 1`, s)
-                let countsequence = await sq.query(`select count(*)  from antrian_list al  where al."deletedAt" isnull and initial ='${initial}' and poli_id = ${idPoli}`, s)
+                let curdate = moment().format('YYYY-MM-DD')
+                let countantrian = await sq.query(`select count(*) from antrian_list al where al."deletedAt" isnull and al.initial ='${initial}' and date(al.tanggal_antrian)='${curdate}'`, s)
+                let countsequence = await sq.query(`select count(*)  from antrian_list al  where al."deletedAt" isnull and initial ='${initial}' and poli_id = ${idPoli} and date(al.tanggal_antrian)='${curdate}' and al.poli_layanan = 1`, s)
+                let sisa = await sq.query(`select count(*) as total from antrian_list al where date(al.tanggal_antrian) = '${curdate}' and al.initial = '${initial}' and poli_id = ${idPoli} and al.status_antrian in (0,1) and al.poli_layanan = 1`, s);
                 let antrian_no = +countantrian[0].count + 1
                 let sequence_no = +countsequence[0].count + 1
-                let curdate = moment().format('YYYY-MM-DD')
-                let sisa = await sq.query(`select count(*) as total from antrian_list al where date(al.tanggal_antrian) = '${curdate}' and al.initial = '${initial}' and al.status_antrian in (0,1) and al.poli_layanan = 1`, s);
                 // let kirim = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
 
                 let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: curdate, is_master: 1, poli_layanan: 1, initial, antrian_no, sequence: sequence_no, jadwal_dokter_id, booking_id, poli_id: idPoli, master_loket_id })
