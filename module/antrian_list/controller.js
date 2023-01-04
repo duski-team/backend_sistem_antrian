@@ -136,7 +136,8 @@ class Controller {
                 isi += ` and al.jenis_antrian_id = '${jenis_antrian_id}' `
             }
 
-            let data = await sq.query(`select al.id as antrian_list_id,* from antrian_list al left join jadwal_dokter jd on jd.id = al.jadwal_dokter_id left join master_loket ml on ml.id = al.master_loket_id left join booking b on b.id = al.booking_id left join jenis_antrian ja on ja.id = al.jenis_antrian_id where al."deletedAt" isnull ${isi} order by al."sequence"`, s)
+            let data = await sq.query(`select al.id as "antrian_list_id", al.*, jd.waktu_mulai ,jd.waktu_selesai ,jd.kode_jadwal ,jd.kuota ,jd.kuota_mobile ,jd.dokter_id ,ml.nama_loket ,
+            b.tanggal_booking ,b.nama_booking ,b.no_rujukan ,b.no_rm , ja.nama_jenis_antrian ,ja.kode_jenis_antrian  from antrian_list al left join jadwal_dokter jd on jd.id = al.jadwal_dokter_id left join master_loket ml on ml.id = al.master_loket_id left join booking b on b.id = al.booking_id left join jenis_antrian ja on ja.id = al.jenis_antrian_id where al."deletedAt" isnull ${isi} order by al."sequence"`, s)
 
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
