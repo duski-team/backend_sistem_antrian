@@ -8,7 +8,7 @@ router.post('/update', authentification, Controller.update)
 router.post('/list', authentification, Controller.list)
 router.post('/listBookingByUserId', Controller.listBookingByUserId)
 router.get('/detailsBookingByKodeBooking/:kode_booking', Controller.detailsBookingByKodeBooking)
-router.get('/listAllBooking', Controller.listAllBooking)
+router.post('/listAllBooking', Controller.listAllBooking)
 router.get('/qr', Controller.qr)
 // router.post('/delete',authentification,Controller.delete)
 module.exports = router

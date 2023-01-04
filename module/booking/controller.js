@@ -4,6 +4,7 @@ const { v4: uuid_v4 } = require("uuid");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT }
 var QRCode = require('qrcode')
+const moment = require('moment');
 
 const purworejo = 'http://103.121.123.87/rsudapi/reg'
 const token = 'agAW4AUAgjOtCMwIxcKnGjkDj6jj64vr'
@@ -123,7 +124,7 @@ class Controller {
             join users u on u.id = b.user_id 
             join jadwal_dokter jd on jd.id = b.jadwal_dokter_id 
             left join "member" m on m.no_rm_pasien = b.no_rm 
-            where b."deletedAt" isnull and u."deletedAt" isnull and b.user_id = '${user_id}'`, s)
+            where b."deletedAt" isnull and u."deletedAt" isnull and b.user_id = '${user_id}' order by b."createdAt" desc`, s)
             let kirim = await axios.get(purworejo + "/get-dokter", config)
             let data_dokter = kirim.data.data
 
@@ -133,7 +134,7 @@ class Controller {
                         data[i].nama_dokter = data_dokter[j].nama
                     }
                 }
-                if(data[i].no_rm){
+                if (data[i].no_rm) {
                     let data_pasien = await axios.get(purworejo + "/get-pasien?no=" + data[i].no_rm, config)
                     data[i].profil = data_pasien.data.data[0]
                 }
@@ -165,8 +166,60 @@ class Controller {
     }
 
     static async listAllBooking(req, res) {
+        let { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, flag_layanan, jadwal_dokter_id, user_id, poli_id } = req.body
         try {
-            let data = await sq.query(`select b.id as "booking_id", * from booking b left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join users u on u.id = b.user_id where b."deletedAt" isnull `, s)
+            let tgl = moment().format('YYYY-MM-DD')
+            let isi = ''
+            if (tanggal_booking) {
+                isi += ` and b.tanggal_booking = '${tanggal_booking}' `
+            }
+            if (jenis_booking) {
+                isi += ` and b.jenis_booking = '${jenis_booking}' `
+            }
+            if (NIK) {
+                isi += ` and b.NIK = '${NIK}' `
+            }
+            if (nama_booking) {
+                isi += ` and b.nama_booking = '${nama_booking}' `
+            }
+            if (no_hp_booking) {
+                isi += ` and b.no_hp_booking = '${no_hp_booking}' `
+            }
+            if (no_rujukan) {
+                isi += ` and b.no_rujukan = '${no_rujukan}' `
+            }
+            if (no_kontrol) {
+                isi += ` and b.no_kontrol = '${no_kontrol}' `
+            }
+            if (is_verified) {
+                isi += ` and b.is_verified = '${is_verified}' `
+            }
+            if (is_registered) {
+                isi += ` and b.is_registered = '${is_registered}' `
+            }
+            if (status_booking) {
+                isi += ` and b.status_booking = '${status_booking}' `
+            }
+            if (no_rm) {
+                isi += ` and b.no_rm = '${no_rm}' `
+            }
+            if (kode_booking) {
+                isi += ` and b.kode_booking = '${kode_booking}' `
+            }
+            if (flag_layanan) {
+                isi += ` and b.flag_layanan = '${flag_layanan}' `
+            }
+            if (jadwal_dokter_id) {
+                isi += ` and b.jadwal_dokter_id = '${jadwal_dokter_id}' `
+            }
+            if (user_id) {
+                isi += ` and b.user_id = '${user_id}' `
+            }
+            if (poli_id) {
+                isi += ` and jd.poli_id = '${poli_id}' `
+            }
+            
+            let data = await sq.query(`select b.id as "booking_id", * from booking b left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join users u on u.id = b.user_id where b."deletedAt" isnull and date(b.tanggal_booking) >= '${tgl}' and '${tgl}' <= date(b.tanggal_booking) ${isi}`, s)
 
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
