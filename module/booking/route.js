@@ -9,7 +9,6 @@ router.post('/list', authentification, Controller.list)
 router.post('/listBookingByUserId', Controller.listBookingByUserId)
 router.get('/detailsBookingByKodeBooking/:kode_booking', Controller.detailsBookingByKodeBooking)
 router.post('/listAllBooking', Controller.listAllBooking)
-router.get('/listBookingAktif', Controller.listBookingAktif)
 router.get('/qr', Controller.qr)
 // router.post('/delete',authentification,Controller.delete)
 module.exports = router

@@ -167,6 +167,7 @@ class Controller {
     static async listAllBooking(req, res) {
         let { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, flag_layanan, jadwal_dokter_id, user_id } = req.body
         try {
+            let tgl = moment().format('YYYY-MM-DD')
             let isi = ''
             if (tanggal_booking) {
                 isi += ` and b.tanggal_booking = '${tanggal_booking}' `
@@ -214,25 +215,7 @@ class Controller {
                 isi += ` and b.user_id = '${user_id}' `
             }
             
-            let data = await sq.query(`select b.id as "booking_id", * from booking b left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join users u on u.id = b.user_id where b."deletedAt" isnull ${isi}`, s)
-
-            res.status(200).json({ status: 200, message: "sukses", data })
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ status: 500, message: "gagal", data: error })
-        }
-    }
-
-    static async listBookingAktif(req, res) {
-        try {
-            let tgl = moment().format('YYYY-MM-DD')
-            let data = await sq.query(`select b.id as booking_id, u.username, u."role", jd.dokter_id, jd.poli_id, b.*, m.id as member_id 
-            from booking b 
-            join users u on u.id = b.user_id 
-            join jadwal_dokter jd on jd.id = b.jadwal_dokter_id 
-            left join "member" m on m.no_rm_pasien = b.no_rm 
-            where b."deletedAt" isnull and u."deletedAt" isnull 
-            and date(b.tanggal_booking) >= '${tgl}' and '${tgl}' <= date(b.tanggal_booking)`, s)
+            let data = await sq.query(`select b.id as "booking_id", * from booking b left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join users u on u.id = b.user_id where b."deletedAt" isnull and date(b.tanggal_booking) >= '${tgl}' and '${tgl}' <= date(b.tanggal_booking) ${isi}`, s)
 
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
