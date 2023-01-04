@@ -3,7 +3,7 @@ const router = require('express').Router()
 const authentification = require('../../middleware/authentification')
 
 router.post('/registerLoket', Controller.registerLoket)
-router.post('/registerMandiri', Controller.registerMandiri)
+router.post('/registerAntrian', Controller.registerAntrian)
 router.post('/update', Controller.update)
 router.post('/list',Controller.list)
 router.post('/listHalaman',Controller.listHalaman)
