@@ -221,6 +221,27 @@ class Controller {
             
             let data = await sq.query(`select b.id as "booking_id", * from booking b left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join users u on u.id = b.user_id where b."deletedAt" isnull and date(b.tanggal_booking) >= '${tgl}' and '${tgl}' <= date(b.tanggal_booking) ${isi}`, s)
 
+            let kirim = await axios.get(purworejo + "/get-poli", config)
+            let polinya = kirim.data.data
+            let kirim2 = await axios.get(purworejo + "/get-dokter", config)
+            let dokternya = kirim2.data.data
+
+            for (let i = 0; i < data.length; i++) {
+                for (let j = 0; j < polinya.length; j++) {
+                    if (data[i].poli_id == polinya[j].id) {
+                        data[i].nama_poli = polinya[j].nama
+                    }
+                }
+            }
+
+            for (let k = 0; k < data.length; k++) {
+                for (let l = 0; l < dokternya.length; l++) {
+                    if (data[k].dokter_id == dokternya[l].id) {
+                        data[k].nama_dokter = dokternya[l].nama
+                    }
+                }
+            }
+
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
             console.log(error);

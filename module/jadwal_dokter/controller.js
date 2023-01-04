@@ -238,6 +238,33 @@ class Controller {
             res.status(200).json({ status: 200, message: "sukses", data })
 
         } catch (error) {
+            if (error.name = "AxiosError") {
+                let respon_error = error.response.data
+                res.status(201).json({ status: respon_error.code, message: respon_error.message })
+            } else {
+                console.log(error);
+                res.status(500).json({ status: 500, message: "gagal", data: error })
+            }
+        }
+    }
+
+    static async listJadwalDokterByPoliId(req, res) {
+        const { poli_id } = req.body
+        try {
+            let data = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.poli_id ='${poli_id}'`, s)
+            let kirim2 = await axios.get(purworejo + "/get-dokter", config)
+            let dokternya = kirim2.data.data
+
+            for (let i = 0; i < data.length; i++) {
+                for (let j = 0; j < dokternya.length; j++) {
+                    if (data[i].dokter_id == dokternya[j].id) {
+                        data[i].nama_dokter = dokternya[j].nama
+                    }
+                }
+            }
+            res.status(200).json({ status: 200, message: "sukses", data: data })
+
+        } catch (error) {
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }
     }
