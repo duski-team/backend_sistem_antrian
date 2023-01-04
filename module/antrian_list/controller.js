@@ -24,8 +24,10 @@ class Controller {
                 cekBooking[0].sisa_antrian = sisa[0].total-1
                 res.status(200).json({ status: 200, message: "sukses", data: cekBooking })
             }else{
-                let antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}'`, s)
-                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: antrian_no[0].nomor, sequence: sequence[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id,booking_id })
+                // let antrian_no = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}'`, s)
+                let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
+                let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
+                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: no, sequence: sequence[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id,booking_id })
                 hasil.dataValues.sisa_antrian = +sisa[0].total
 
                 res.status(200).json({ status: 200, message: "sukses", data: hasil })
@@ -46,8 +48,9 @@ class Controller {
             let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
 
             if (!antrian_no) {
-                let nomernya = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and initial = '${initial}'`, s)
-                nomer_antrian =  nomernya[0].nomor
+                // let nomernya = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and initial = '${initial}'`, s)
+                let nomernya = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
+                nomer_antrian =  nomernya.length == 0 ? 1 : +nomernya[0].antrian_no + 1
             }
 
             let sequence = await sq.query(`select count(*)+1 as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id =${poli_id}`, s);
