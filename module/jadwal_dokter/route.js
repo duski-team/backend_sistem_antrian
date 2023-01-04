@@ -9,6 +9,7 @@ router.post('/delete', authentification, Controller.delete)
 router.post('/syncJadwal', Controller.syncJadwal)
 router.post('/listDokterByTanggalPoli', Controller.listDokterByTanggalPoli)
 router.post('/listJadwalByDokterTanggalPoli', Controller.listJadwalByDokterTanggalPoli)
+router.post('/listJadwalDokterByPoliId', Controller.listJadwalDokterByPoliId)
 router.get('/detailsById/:id', Controller.detailsById)
 
 module.exports = router
