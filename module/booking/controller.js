@@ -4,6 +4,7 @@ const { v4: uuid_v4 } = require("uuid");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT }
 var QRCode = require('qrcode')
+const moment = require('moment');
 
 const purworejo = 'http://103.121.123.87/rsudapi/reg'
 const token = 'agAW4AUAgjOtCMwIxcKnGjkDj6jj64vr'
