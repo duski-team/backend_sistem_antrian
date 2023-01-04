@@ -166,7 +166,7 @@ class Controller {
     }
 
     static async listAllBooking(req, res) {
-        let { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, flag_layanan, jadwal_dokter_id, user_id } = req.body
+        let { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, flag_layanan, jadwal_dokter_id, user_id, poli_id } = req.body
         try {
             let tgl = moment().format('YYYY-MM-DD')
             let isi = ''
@@ -214,6 +214,9 @@ class Controller {
             }
             if (user_id) {
                 isi += ` and b.user_id = '${user_id}' `
+            }
+            if (poli_id) {
+                isi += ` and jd.poli_id = '${poli_id}' `
             }
             
             let data = await sq.query(`select b.id as "booking_id", * from booking b left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join users u on u.id = b.user_id where b."deletedAt" isnull and date(b.tanggal_booking) >= '${tgl}' and '${tgl}' <= date(b.tanggal_booking) ${isi}`, s)
