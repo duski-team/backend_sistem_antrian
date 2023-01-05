@@ -47,9 +47,9 @@ const koneksi_socket = koneksi_socket => {
                         }
                     }
                     asd.sisa_antrian = sisa[0].total 
-                    let x = `"${room_id}"`
-                    io.to(x).emit("refresh_layar", asd);
+                    let x = `${room_id}`
                     await t.commit();
+                    io.to(x).emit("refresh_layar", asd);
                     io.emit("refresh_admin", asd);
                 } else {
                     if(status_antrian == 2 && booking_id){
