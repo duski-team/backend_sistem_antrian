@@ -203,6 +203,7 @@ class Controller {
                 }
             }
             data[0].kuota_terbooking = kuota[0].total
+            data[0].sisa_kuota = +data[0].kuota_mobile - +kuota[0].total
             
             res.status(200).json({ status: 200, message: "sukses", data: data })
 
