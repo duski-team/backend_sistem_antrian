@@ -22,10 +22,13 @@ const koneksi_socket = koneksi_socket => {
         console.log('ada yang connect');
 
         socket.on('panggil', async (asd, room_id) => {
-            const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id } = asd
-            try {
-                await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id } })
+            const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id,booking_id } = asd
 
+            const t = await sq.transaction();
+
+            try {
+                await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id },transaction:t})
+    
                 if (status_antrian == 0) {
                     let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
                     let isi = ''
@@ -46,8 +49,13 @@ const koneksi_socket = koneksi_socket => {
                     asd.sisa_antrian = sisa[0].total 
                     let x = `"${room_id}"`
                     io.to(x).emit("refresh_layar", asd);
+                    await t.commit();
                     io.emit("refresh_admin", asd);
                 } else {
+                    if(status_antrian == 2 && booking_id){
+                        await booking.update({status_booking:2},{where:{id:booking_id},transaction:t})
+                    }
+                    await t.commit();
                     io.emit("refresh_admin", asd);
                 }
             } catch (error) {
@@ -82,6 +90,7 @@ const koneksi_socket = koneksi_socket => {
                     io.emit("refresh_antrian_loket", hasil);
                 }
             } catch (error) {
+                await t.rollback();
                 console.log(error);
                 socket.emit("error", error);
             }
