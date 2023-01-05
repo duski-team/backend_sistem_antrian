@@ -107,7 +107,7 @@ class Controller {
         try {
             let text = req.query.text
 
-            let data = await QRCode.toDataURL(text, { errorCorrectionLevel: 'H' })
+            let data = await QRCode.toDataURL(text, { errorCorrectionLevel: 'H', scale: 20 })
 
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
