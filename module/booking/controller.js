@@ -23,7 +23,7 @@ class Controller {
             let k = sha1(uuid_v4());
             let kode_booking = k.substring(k.length - 6).toUpperCase();
             let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
-            let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}'`, s)
+            let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}' and b.status_booking > 0 `, s)
 
             if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
                 let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, flag_layanan, jadwal_dokter_id, user_id })
@@ -44,7 +44,7 @@ class Controller {
             let k = sha1(uuid_v4());
             let kode_booking = k.substring(k.length - 6).toUpperCase();
             let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
-            let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}'`, s)
+            let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}' and b.status_booking > 0 `, s)
 
             if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
                 let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking, flag_layanan, jadwal_dokter_id, user_id })
@@ -107,7 +107,7 @@ class Controller {
         try {
             let text = req.query.text
 
-            let data = await QRCode.toDataURL(text, { errorCorrectionLevel: 'H', scale: 20 })
+            let data = await QRCode.toDataURL(text, { errorCorrectionLevel: 'H', scale: 10 })
 
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {

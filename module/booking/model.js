@@ -39,7 +39,7 @@ const booking = sq.define('booking', {
         type: DataTypes.INTEGER  // 0: belum registrasi, 1:sudah
     },
     status_booking: {
-        type: DataTypes.INTEGER //0 :tidak_aktif/cancel , 1 :aktif
+        type: DataTypes.INTEGER //0 :tidak_aktif/cancel , 1 :aktif , 2 :selesai
     },
     kode_booking: {
         type: DataTypes.STRING
