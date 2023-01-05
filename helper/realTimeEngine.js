@@ -22,16 +22,13 @@ const koneksi_socket = koneksi_socket => {
         console.log('ada yang connect');
 
         socket.on('panggil', async (asd, room_id) => {
-            const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id,status_booking,booking_id } = asd
+            const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id,booking_id } = asd
 
             const t = await sq.transaction();
 
             try {
                 await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id },transaction:t})
-                if(status_booking == 2){
-                    await booking.update({status_booking},{where:{id:booking_id},transaction:t})
-                }
-
+    
                 if (status_antrian == 0) {
                     let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
                     let isi = ''
@@ -55,6 +52,9 @@ const koneksi_socket = koneksi_socket => {
                     await t.commit();
                     io.emit("refresh_admin", asd);
                 } else {
+                    if(status_antrian == 2 && booking_id){
+                        await booking.update({status_booking:2},{where:{id:booking_id},transaction:t})
+                    }
                     await t.commit();
                     io.emit("refresh_admin", asd);
                 }
