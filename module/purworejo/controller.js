@@ -6,6 +6,7 @@ const axios = require('axios')
 const config = {
     headers: { Authorization: `Bearer ${token}`,'Content-Type': 'application/json' }
 };
+const moment = require('moment');
 
 class Controller{
 
@@ -90,7 +91,16 @@ class Controller{
         }
         try {
             let kirim = await axios.get(purworejo+"/get-list-rujukan?noPeserta="+noPeserta,config)
-            res.status(200).json({ status: 200, message: "sukses",data:kirim.data})
+            let data = kirim.data.data.rujukan;
+            let hasil = []
+            let tgl = moment().format('YYYY-MM-DD')
+            for (let i = 0; i < data.length; i++) {
+                let tglExp = moment(data[i].tglKunjungan).add(90,'days').format('YYYY-MM-DD')
+                if(tglExp>tgl){
+                    hasil.push(data[i])
+                }
+            }
+            res.status(200).json({ status: 200, message: "sukses",data: hasil})
         } catch (error) {
             res.status(500).json({ status: 500, message: "gagal", data: error})
         }
