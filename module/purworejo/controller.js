@@ -93,7 +93,6 @@ class Controller{
             let kirim = await axios.get(purworejo+"/get-list-rujukan?noPeserta="+noPeserta,config)
             let data = kirim.data.data.rujukan;
             let asalFaskes = kirim.data.data.asalFaskes
-            console.log(kirim.data.data);
             let hasil = []
             let tgl = moment().format('YYYY-MM-DD')
             for (let i = 0; i < data.length; i++) {
