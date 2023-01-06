@@ -92,6 +92,8 @@ class Controller{
         try {
             let kirim = await axios.get(purworejo+"/get-list-rujukan?noPeserta="+noPeserta,config)
             let data = kirim.data.data.rujukan;
+            let asalFaskes = kirim.data.data.asalFaskes
+            console.log(kirim.data.data);
             let hasil = []
             let tgl = moment().format('YYYY-MM-DD')
             for (let i = 0; i < data.length; i++) {
@@ -100,7 +102,7 @@ class Controller{
                     hasil.push(data[i])
                 }
             }
-            res.status(200).json({ status: 200, message: "sukses",data: hasil})
+            res.status(200).json({ status: 200, message: "sukses",data: {asalFaskes,rujukan:hasil}})
         } catch (error) {
             res.status(500).json({ status: 500, message: "gagal", data: error})
         }
