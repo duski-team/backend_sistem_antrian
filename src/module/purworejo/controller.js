@@ -27,7 +27,6 @@ class Controller{
     
     static async jadwalDokter(req,res){
         const{dokter_id}=req.params
-        
         try {
             let kirim = await axios.get(purworejo+"/get-jadwal-dokter?idDokter="+dokter_id,config)
             res.status(200).json({ status: 200, message: "sukses",data:kirim.data})
