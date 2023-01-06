@@ -7,7 +7,8 @@ const booking = require('../module/booking/model');
 const antrian_list = require('../module/antrian_list/model')
 const { Server } = require("socket.io")
 const sha1 = require('sha1');
-const purworejo = 'http://103.121.123.87/rsudapi/reg'
+// const purworejo = 'http://103.121.123.87/rsudapi/reg'
+const purworejo = 'http://194.169.46.193/rsudapi/reg'
 const token = 'agAW4AUAgjOtCMwIxcKnGjkDj6jj64vr'
 const axios = require('axios')
 const config = {
@@ -47,9 +48,9 @@ const koneksi_socket = koneksi_socket => {
                         }
                     }
                     asd.sisa_antrian = sisa[0].total 
-                    let x = `"${room_id}"`
-                    io.to(x).emit("refresh_layar", asd);
+                    let x = `${room_id}`
                     await t.commit();
+                    io.to(x).emit("refresh_layar", asd);
                     io.emit("refresh_admin", asd);
                 } else {
                     if(status_antrian == 2 && booking_id){

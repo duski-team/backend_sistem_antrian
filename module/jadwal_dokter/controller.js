@@ -4,7 +4,9 @@ const { v4: uuid_v4 } = require("uuid");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT }
 
-const purworejo = 'http://103.121.123.87/rsudapi/reg'
+// const purworejo = 'http://103.121.123.87/rsudapi/reg'
+const purworejo = 'http://194.169.46.193/rsudapi/reg'
+
 const token = 'agAW4AUAgjOtCMwIxcKnGjkDj6jj64vr'
 const axios = require('axios');
 const moment = require('moment');
@@ -181,6 +183,10 @@ class Controller {
         try {
 
             let data = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and jd.dokter_id = '${dokter_id}' and poli_id = '${poli_id}' and date(waktu_mulai)='${tanggal}'`, s)
+            let kuota = await sq.query(`select count(*)as total from booking b 
+            join jadwal_dokter jd on jd.id = b.jadwal_dokter_id
+            where b."deletedAt" isnull and date(b.tanggal_booking) = '${tanggal}' and b.status_booking > 0 and jd.dokter_id = '${dokter_id}'`,s);
+
             let kirim = await axios.get(purworejo + "/get-poli", config)
             let polinya = kirim.data.data
             let kirim2 = await axios.get(purworejo + "/get-dokter", config)
@@ -192,15 +198,15 @@ class Controller {
                         data[i].nama_poli = polinya[j].nama
                     }
                 }
-            }
-
-            for (let i = 0; i < data.length; i++) {
-                for (let j = 0; j < dokternya.length; j++) {
-                    if (data[i].dokter_id == dokternya[j].id) {
-                        data[i].nama_dokter = dokternya[j].nama
+                for (let k = 0; k < dokternya.length; k++) {
+                    if (data[i].dokter_id == dokternya[k].id) {
+                        data[i].nama_dokter = dokternya[k].nama
                     }
                 }
             }
+            data[0].kuota_terbooking = kuota[0].total
+            data[0].sisa_kuota = +data[0].kuota_mobile - +kuota[0].total
+            
             res.status(200).json({ status: 200, message: "sukses", data: data })
 
         } catch (error) {
