@@ -4,7 +4,7 @@ const { sq } = require("../../config/connection");
 const bcrypt = require("../../helper/bcrypt.js");
 const jwt = require("../../helper/jwt");
 const { v4: uuid_v4 } = require("uuid");
-const { QueryTypes } = require('sequelize');;
+const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT }
 const moment = require('moment');
 const formData = require('form-data');
@@ -16,6 +16,24 @@ const mg_domain = process.env.MAILGUN_DOMAIN
 const mg_email = process.env.MAILGUN_EMAIL
 let sha1 = require('sha1');
 
+async function createSuperUser() {
+    try {
+        let encryptedPassword = bcrypt.hashPassword("superadmin");
+        await users.findOrCreate({
+            where: { username: "superadmin" },
+            defaults: {
+                id: "superadmin",
+                username: "superadmin",
+                password: encryptedPassword,
+                role: "superadmin",
+                user_status: 1
+            }
+        })
+    } catch (err) {
+        console.log(err);
+    }
+}
+createSuperUser();
 class Controller {
 
     static register(req, res) {
@@ -88,11 +106,10 @@ class Controller {
             }
         }).then(hasil => {
             res.status(200).json({ status: 200, message: "sukses" })
+        }).catch(error => {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
         })
-            .catch(error => {
-                console.log(error);
-                res.status(500).json({ status: 500, message: "gagal", data: error })
-            })
     }
 
     static verifikasiOTP(req, res) {
@@ -134,11 +151,9 @@ class Controller {
 
     static delete(req, res) {
         const { id } = req.body
-        users.destroy({ where: { id } })
-            .then(hasil => {
+        users.destroy({ where: { id } }).then(hasil => {
                 res.status(200).json({ status: 200, message: "sukses" })
-            })
-            .catch(error => {
+            }).catch(error => {
                 console.log(error);
                 res.status(500).json({ status: 500, message: "gagal", data: error })
             })
@@ -181,7 +196,7 @@ class Controller {
                     let passwordnya = bcrypt.hashPassword(password_baru);
                     await users.update({ password: passwordnya, user_status: 1 }, { where: { username } })
 
-                   res.status(200).json({ status: 200, message: "sukses" })
+                    res.status(200).json({ status: 200, message: "sukses" })
                 } else {
                     res.status(200).json({ status: 200, message: "password lama salah" })
                 }
