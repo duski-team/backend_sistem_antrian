@@ -86,7 +86,7 @@ class Controller{
         const{noPeserta,type}=req.body
         let tambahan=''
         if(type){
-            tambahan +=`&type=${type}`
+            tambahan +=`&tipe=${type}`
         }
         try {
             let kirim = await axios.get(purworejo+"/get-list-rujukan?noPeserta="+noPeserta,config)
