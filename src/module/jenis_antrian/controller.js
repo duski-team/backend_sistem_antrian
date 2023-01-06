@@ -36,8 +36,8 @@ class Controller{
     }
 
     static list(req,res){
-        jenis_antrian.findAll()
-        .then(hasil=>{
+        
+        jenis_antrian.findAll().then(hasil=>{
             res.status(200).json({ status: 200, message: "sukses",data:hasil})
         })
         .catch(error=>{
