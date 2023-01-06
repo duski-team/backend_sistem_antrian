@@ -1,4 +1,6 @@
-const purworejo = 'http://103.121.123.87/rsudapi/reg'
+// const purworejo = 'http://103.121.123.87/rsudapi/reg'
+const purworejo = 'http://194.169.46.193/rsudapi/reg'
+
 const token = 'agAW4AUAgjOtCMwIxcKnGjkDj6jj64vr'
 const axios = require('axios')
 const config = {
