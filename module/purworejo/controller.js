@@ -81,11 +81,21 @@ class Controller{
         const{noPeserta,type}=req.body
         let tambahan=''
         if(type){
-            tambahan +=`&type=${type}`
+            tambahan +=`&tipe=${type}`
         }
         try {
             let kirim = await axios.get(purworejo+"/get-list-rujukan?noPeserta="+noPeserta,config)
-            res.status(200).json({ status: 200, message: "sukses",data:kirim.data})
+            let data = kirim.data.data.rujukan;
+            let asalFaskes = kirim.data.data.asalFaskes
+            let hasil = []
+            let tgl = moment().format('YYYY-MM-DD')
+            for (let i = 0; i < data.length; i++) {
+                let tglExp = moment(data[i].tglKunjungan).add(90,'days').format('YYYY-MM-DD')
+                if(tglExp>tgl){
+                    hasil.push(data[i])
+                }
+            }
+            res.status(200).json({ status: 200, message: "sukses",data: {asalFaskes,rujukan:hasil}})
         } catch (error) {
             res.status(500).json({ status: 500, message: "gagal", data: error})
         }

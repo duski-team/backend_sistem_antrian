@@ -147,9 +147,15 @@ const koneksi_socket = koneksi_socket => {
                     // from antrian_list al where al."deletedAt" isnull and al.initial = '${initial}' and date(al.tanggal_antrian) = '${tgl}'`, s)
                     let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
                     let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
-                    // let kirim = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
+                    let kirim = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
                     let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id })
                     hasil.dataValues.sisa_antrian = +sisa[0].total
+                    let idDaftar = kirim.data.data.idDaftar
+                    let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)
+
+                    console.log(kirim.data.data.idDaftar, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+                    console.log(kirimSEP, "SEP");
+
                     io.emit("refresh_register_APM_mandiri", hasil);
                 }
                 // let kirim = await axios.get(purworejo + "/get-poli", config)
@@ -162,14 +168,15 @@ const koneksi_socket = koneksi_socket => {
                 // console.log(hasil);
 
             } catch (error) {
-                // if (error.name = "AxiosError") {
-                //     let respon_error = error.response.data
-                //     socket.emit("error", respon_error);
-                // } 
-                // else {
+                if (error.name = "AxiosError") {
+                    let respon_error = error.response.data
+                    console.log(respon_error);
+                    socket.emit("error", respon_error);
+                } 
+                else {
                 console.log(error);
                 socket.emit("error", error);
-                // }
+                }
             }
         })
 
