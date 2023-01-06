@@ -1,3 +1,4 @@
+const moment = require('moment');
 const axios = require('axios')
 const purworejo = process.env.HOST_PURWOREJO
 const config = require("../../helper/config").config
@@ -97,6 +98,7 @@ class Controller{
             }
             res.status(200).json({ status: 200, message: "sukses",data: {asalFaskes,rujukan:hasil}})
         } catch (error) {
+            console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error})
         }
       
