@@ -1,3 +1,4 @@
+require('dotenv').config({})
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
@@ -20,7 +21,7 @@ app.use((req, res, next) => {
 	res.status(200).json({ status: '404', message: "gagal,tidak ada endpoint" });
 })
 
-const port = 8070
+const port = process.env.PORT_EXPRESS
 server.listen(port, () => {
 	console.log(` telah tersambung pada port : ${port}`)
 });
