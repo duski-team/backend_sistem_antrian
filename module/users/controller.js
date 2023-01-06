@@ -11,8 +11,7 @@ const formData = require('form-data');
 const Mailgun = require('mailgun.js');
 const mailgun = new Mailgun(formData);
 
-const mg = mailgun.client({ username: 'api', key: process.env.MAILGUN_API_KEY, url: "https://api.eu.mailgun.net/" });
-// const mg = mailgun.client({username: 'api', key: process.env.MAILGUN_API_KEY});
+const mg = mailgun.client({ username: process.env.MAILGUN_USERNAME, key: process.env.MAILGUN_API_KEY, url: process.env.MAILGUN_URL });
 const mg_domain = process.env.MAILGUN_DOMAIN
 const mg_email = process.env.MAILGUN_EMAIL
 let sha1 = require('sha1');

@@ -5,16 +5,11 @@ const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT }
 var QRCode = require('qrcode')
 const moment = require('moment');
-
-// const purworejo = 'http://103.121.123.87/rsudapi/reg'
-const purworejo = 'http://194.169.46.193/rsudapi/reg'
-
-const token = 'agAW4AUAgjOtCMwIxcKnGjkDj6jj64vr'
-const axios = require('axios');
-const config = {
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-};
 const sha1 = require('sha1');
+const axios = require('axios');
+
+const purworejo = process.env.HOST_PURWOREJO
+const config = require("../../helper/config").config
 
 class Controller {
 

@@ -3,18 +3,13 @@ const { sq } = require("../../config/connection");
 const { v4: uuid_v4 } = require("uuid");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT }
-
-// const purworejo = 'http://103.121.123.87/rsudapi/reg'
-const purworejo = 'http://194.169.46.193/rsudapi/reg'
-
-const token = 'agAW4AUAgjOtCMwIxcKnGjkDj6jj64vr'
 const axios = require('axios');
 const moment = require('moment');
-const config = {
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-};
-
 const cron = require('node-cron');
+
+const purworejo = process.env.HOST_PURWOREJO
+const config = require("../../helper/config").config
+
 
 function syncJadwal() {
     cron.schedule('0 1 * * *', async () => {
@@ -210,6 +205,7 @@ class Controller {
             res.status(200).json({ status: 200, message: "sukses", data: data })
 
         } catch (error) {
+            console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }
     }

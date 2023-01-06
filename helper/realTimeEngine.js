@@ -6,14 +6,10 @@ const s = { type: QueryTypes.SELECT }
 const booking = require('../module/booking/model');
 const antrian_list = require('../module/antrian_list/model')
 const { Server } = require("socket.io")
-const sha1 = require('sha1');
-// const purworejo = 'http://103.121.123.87/rsudapi/reg'
-const purworejo = 'http://194.169.46.193/rsudapi/reg'
-const token = 'agAW4AUAgjOtCMwIxcKnGjkDj6jj64vr'
 const axios = require('axios')
-const config = {
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-};
+
+const purworejo = process.env.HOST_PURWOREJO
+const config = require("./config").config
 
 const koneksi_socket = koneksi_socket => {
     const io = new Server(koneksi_socket, { cors: "*" })
