@@ -192,7 +192,7 @@ const koneksi_socket = koneksi_socket => {
                     let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id },{transaction:t})
                     hasil.dataValues.sisa_antrian = +sisa[0].total
 
-                    console.log(kirim.data.data, 'KIRIM RAJAL');
+                    console.log(kirimRajal, 'KIRIM RAJAL');
                     await t.commit();
                     io.emit("refresh_register_APM_mandiri", hasil);
                 }
@@ -247,7 +247,7 @@ const koneksi_socket = koneksi_socket => {
                     let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id },{transaction:t})
                     hasil.dataValues.sisa_antrian = +sisa[0].total
 
-                    console.log(kirim.data.data, 'KIRIM RAJAL');
+                    console.log(kirimRajal, 'KIRIM RAJAL');
                     console.log(kirimSEP, "SEP");
                     await t.commit();
                     io.emit("refresh_register_APM_mandiri", hasil);
