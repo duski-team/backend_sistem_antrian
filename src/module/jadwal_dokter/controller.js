@@ -227,12 +227,9 @@ class Controller {
                         data[i].kode_poli_bpjs = polinya[j].kdPoliBpjs
                     }
                 }
-            }
-
-            for (let k = 0; k < data.length; k++) {
                 for (let l = 0; l < dokternya.length; l++) {
-                    if (data[k].dokter_id == dokternya[l].id) {
-                        data[k].nama_dokter = dokternya[l].nama
+                    if (data[i].dokter_id == dokternya[l].id) {
+                        data[i].nama_dokter = dokternya[l].nama
                     }
                 }
             }
@@ -267,7 +264,13 @@ class Controller {
             res.status(200).json({ status: 200, message: "sukses", data: data })
 
         } catch (error) {
-            res.status(500).json({ status: 500, message: "gagal", data: error })
+            if (error.name = "AxiosError") {
+                let respon_error = error.response.data
+                res.status(201).json({ status: respon_error.code, message: respon_error.message })
+            } else {
+                console.log(error);
+                res.status(500).json({ status: 500, message: "gagal", data: error })
+            }
         }
     }
 
