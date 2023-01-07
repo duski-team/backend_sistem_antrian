@@ -28,4 +28,12 @@ async function authentification(req, res, next) {
     }
 }
 
+// async function authentification(req, res, next) {
+//     try {
+//        next()
+//     } catch (err) {
+//         res.status(201).json({ status: 201, message: "anda belum login" });
+//     }
+// }
+
 module.exports = authentification
