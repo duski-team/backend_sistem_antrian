@@ -242,13 +242,13 @@ const koneksi_socket = koneksi_socket => {
                     let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
                     let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, noSuratKontrol, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
                     let idDaftar = kirimRajal.data.data.idDaftar
-                    await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
+                    let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
 
                     let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id },{transaction:t})
                     hasil.dataValues.sisa_antrian = +sisa[0].total
 
-                    // console.log(kirim.data.data.idDaftar, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-                    // console.log(kirimSEP, "SEP");
+                    console.log(kirim.data.data.idDaftar, 'KIRIM RAJAL');
+                    console.log(kirimSEP, "SEP");
                     await t.commit();
                     io.emit("refresh_register_APM_mandiri", hasil);
                 }
