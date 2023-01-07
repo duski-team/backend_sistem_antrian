@@ -133,7 +133,8 @@ const koneksi_socket = koneksi_socket => {
 
         socket.on('registerAntrianLayanan', async (asd) => {
             const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id } = asd
-
+            
+            // console.log(asd);
             //room_id = poli layanan
             const t = await sq.transaction();
 
@@ -143,12 +144,13 @@ const koneksi_socket = koneksi_socket => {
 
                 if (!antrian_no) {
                     let nomernya = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.initial = '${initial}' and al.poli_layanan = ${poli_layanan} order by al.antrian_no desc limit 1`, s)
+                    // console.log(nomernya);
                     nomer_antrian = nomernya.length == 0 ? 1 : +nomernya[0].antrian_no + 1
                 }
 
                 let sequence = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan =${poli_layanan}`, s);
                 let sisa = await sq.query(`select count(*)as total from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan = ${poli_layanan} and al.status_antrian in (0,1)`, s);
-
+                // console.log(antrian_no);
                 if (id_antrian_list) {
                     await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list }, transaction: t })
                 }
@@ -156,7 +158,7 @@ const koneksi_socket = koneksi_socket => {
                 let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].total, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id }, { transaction: t })
                 hasil.dataValues.sisa_antrian = +sisa[0].total
                 await t.commit();
-                io.emit("refresh_antrian_layanan", hasil);
+                io.emit("refresh_antrian_layanan",asd);
             } catch (error) {
                 await t.rollback();
                 console.log(error);

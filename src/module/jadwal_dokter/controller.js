@@ -52,30 +52,24 @@ class Controller {
 
     static register(req, res) {
         const { waktu_mulai, waktu_selesai, kode_jadwal, kuota, master_poliklinik_id, master_dokter_id, master_layanan_id } = req.body
-        jadwal_dokter.create({ id: uuid_v4(), waktu_mulai, waktu_selesai, kode_jadwal, kuota, master_poliklinik_id, master_dokter_id, master_layanan_id })
-            .then(hasil2 => {
-                res.status(200).json({ status: 200, message: "sukses", data: hasil2 })
-            })
-            .catch(error => {
-                console.log(error);
-                res.status(500).json({ status: 500, message: "gagal", data: error })
-            })
+
+        jadwal_dokter.create({ id: uuid_v4(), waktu_mulai, waktu_selesai, kode_jadwal, kuota, master_poliklinik_id, master_dokter_id, master_layanan_id }).then(hasil2 => {
+            res.status(200).json({ status: 200, message: "sukses", data: hasil2 })
+        }).catch(error => {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        })
     }
 
     static update(req, res) {
         const { id, waktu_mulai, waktu_selesai, kode_jadwal, kuota, master_poliklinik_id, master_dokter_id, master_layanan_id } = req.body
-        jadwal_dokter.update({ waktu_mulai, waktu_selesai, kode_jadwal, kuota, master_poliklinik_id, master_dokter_id, master_layanan_id }, {
-            where: {
-                id
-            }
+
+        jadwal_dokter.update({ waktu_mulai, waktu_selesai, kode_jadwal, kuota, master_poliklinik_id, master_dokter_id, master_layanan_id }, { where: { id } }).then(hasil => {
+            res.status(200).json({ status: 200, message: "sukses" })
+        }).catch(error => {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
         })
-            .then(hasil => {
-                res.status(200).json({ status: 200, message: "sukses" })
-            })
-            .catch(error => {
-                console.log(error);
-                res.status(500).json({ status: 500, message: "gagal", data: error })
-            })
     }
 
     static async list(req, res) {
@@ -85,19 +79,13 @@ class Controller {
 
     static delete(req, res) {
         const { id } = req.body
-        jadwal_dokter.destroy({
-            where: {
-                id
-            }
-        })
-            .then(hasil => {
-                res.status(200).json({ status: 200, message: "sukses" })
-            })
-            .catch(error => {
-                console.log(error);
-                res.status(500).json({ status: 500, message: "gagal", data: error })
-            })
 
+        jadwal_dokter.destroy({ where: { id } }).then(hasil => {
+            res.status(200).json({ status: 200, message: "sukses" })
+        }).catch(error => {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        })
     }
 
     static async syncJadwal(req, res) {
@@ -180,7 +168,7 @@ class Controller {
             let data = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and jd.dokter_id = '${dokter_id}' and poli_id = '${poli_id}' and date(waktu_mulai)='${tanggal}'`, s)
             let kuota = await sq.query(`select count(*)as total from booking b 
             join jadwal_dokter jd on jd.id = b.jadwal_dokter_id
-            where b."deletedAt" isnull and date(b.tanggal_booking) = '${tanggal}' and b.status_booking > 0 and jd.dokter_id = '${dokter_id}'`,s);
+            where b."deletedAt" isnull and date(b.tanggal_booking) = '${tanggal}' and b.status_booking > 0 and jd.dokter_id = '${dokter_id}'`, s);
 
             let kirim = await axios.get(purworejo + "/get-poli", config)
             let polinya = kirim.data.data
@@ -201,7 +189,7 @@ class Controller {
             }
             data[0].kuota_terbooking = kuota[0].total
             data[0].sisa_kuota = +data[0].kuota_mobile - +kuota[0].total
-            
+
             res.status(200).json({ status: 200, message: "sukses", data: data })
 
         } catch (error) {
@@ -223,7 +211,7 @@ class Controller {
                 for (let j = 0; j < polinya.length; j++) {
                     if (data[i].poli_id == polinya[j].id) {
                         data[i].nama_poli = polinya[j].nama
-                        data[i].kode_antrean = polinya[j].kdAntrean 
+                        data[i].kode_antrean = polinya[j].kdAntrean
                         data[i].kode_poli_bpjs = polinya[j].kdPoliBpjs
                     }
                 }
