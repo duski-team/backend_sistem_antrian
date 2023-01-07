@@ -17,8 +17,8 @@ const antrian_list = sq.define('antrian_list',{
         type:DataTypes.SMALLINT //0:not master, 1 : master
     },
     poli_layanan:{
-        type:DataTypes.INTEGER  //1.poli  || 2.loket || 3.kasir || 4.farmasi || 5.layanan
-        
+        type:DataTypes.INTEGER  //1.poli  || 2.loket || 3.kasir || 4.farmasi || 5.Radiologi  || 6. LAB || 7. IGD
+
     },
     initial:{
         type:DataTypes.STRING
