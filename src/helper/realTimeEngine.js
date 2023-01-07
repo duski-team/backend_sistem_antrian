@@ -17,7 +17,10 @@ const koneksi_socket = koneksi_socket => {
     const io = new Server(koneksi_socket, { cors: "*" })
     const pubClient = createClient({ url: `redis://${process.env.HOST_REDIS}:${process.env.PORT_REDIS}` });
     const subClient = pubClient.duplicate();
-    io.adapter(createAdapter(pubClient, subClient));
+
+    Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
+        io.adapter(createAdapter(pubClient, subClient));
+      });
 
     io.on('connection', function (socket) {
         // console.log(socket.id);
