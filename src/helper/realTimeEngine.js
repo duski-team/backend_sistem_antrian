@@ -237,7 +237,7 @@ const koneksi_socket = koneksi_socket => {
                     cekBooking[0].sisa_antrian = sisa[0].total - 1
                     io.emit("refresh_register_APM_mandiri", cekBooking[0]);
                 } else {
-                    
+
                     let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
                     let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
                     let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, noSuratKontrol, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
@@ -248,8 +248,8 @@ const koneksi_socket = koneksi_socket => {
                     hasil.dataValues.sisa_antrian = +sisa[0].total
                     let RAJAL = kirimRajal.data.data
                     let SEP = kirimRajal.data.data
-                    let SEPPESERTA = kirimSEP.data.data.sep.data.peserta
-                    let SEPINFORMASI = kirimSEP.data.data.sep.data.informasi
+                    let SEPPESERTA = kirimSEP.data.data.sep.data.sep.peserta
+                    let SEPINFORMASI = kirimSEP.data.data.sep.data.sep.informasi
 
                     console.log(RAJAL, 'KIRIM RAJAL');
                     console.log(SEP, "SEP");
