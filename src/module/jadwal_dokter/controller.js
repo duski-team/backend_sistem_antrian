@@ -13,6 +13,7 @@ const config = require("../../helper/config").config
 
 function syncJadwal() {
     cron.schedule('0 1 * * *', async () => {
+        console.log('cron');
         let curdate = moment().format('YYYY-MM-DD')
         // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
         try {
