@@ -247,18 +247,19 @@ const koneksi_socket = koneksi_socket => {
                     let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id },{transaction:t})
                     hasil.dataValues.sisa_antrian = +sisa[0].total
                     let RAJAL = kirimRajal.data.data
-                    let SEP = kirimRajal.data.data
-                    let SEPPESERTA = kirimSEP.data.data.sep.data.sep.peserta
-                    let SEPINFORMASI = kirimSEP.data.data.sep.data.sep.informasi
-                    let SEPPESERTA1 = kirimSEP.data.data.sep.data.peserta
-                    let SEPINFORMASI1 = kirimSEP.data.data.sep.data.informasi
-
                     console.log(RAJAL, 'KIRIM RAJAL');
+                    let SEP = kirimRajal.data.data
                     console.log(SEP, "SEP");
+                    let SEPPESERTA = kirimSEP.data.data.sep.data.sep.peserta
                     console.log(SEPPESERTA, "SEP PESERTA");
+                    let SEPINFORMASI = kirimSEP.data.data.sep.data.sep.informasi
                     console.log(SEPINFORMASI, "SEP INFORMASI");
+                    let SEPPESERTA1 = kirimSEP.data.data.sep.data.peserta
                     console.log(SEPPESERTA1, "SEP PESERTA1");
+                    let SEPINFORMASI1 = kirimSEP.data.data.sep.data.informasi
                     console.log(SEPINFORMASI1, "SEP INFORMASI1");
+                 
+                    
                     await t.commit();
                     io.emit("refresh_register_APM_mandiri", {RAJAL,SEP,SEPPESERTA,SEPINFORMASI});
                 }
