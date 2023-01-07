@@ -18,6 +18,25 @@ class Controller{
     static async listPoli(req,res){
         try {
             let kirim = await axios.get(purworejo+"/get-poli",config)
+            let x =[
+                {
+                    id: '888',
+                    nama: 'Farmasi',
+                    kdPoliBpjs: '',
+                    kuota: '999',
+                    kuotaOnline: '0',
+                    kdAntrean: 'FM'
+                },
+                {
+                    id: '777',
+                    nama: 'Kasir',
+                    kdPoliBpjs: '',
+                    kuota: '999',
+                    kuotaOnline: '0',
+                    kdAntrean: 'KS'
+                }
+            ]
+            kirim.data.data.push(...x)
             res.status(200).json({ status: 200, message: "sukses",data:kirim.data})
         } catch (error) {
             res.status(500).json({ status: 500, message: "gagal", data: error})
