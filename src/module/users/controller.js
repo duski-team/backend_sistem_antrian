@@ -51,6 +51,7 @@ class Controller {
                     })
                     res.status(200).json({ status: 200, message: "sukses", data: respon });
                 }).catch((err) => {
+                    console.log(err);
                     res.status(500).json({ status: 500, message: "gagal", data: err });
                 })
             }

@@ -14,7 +14,7 @@ const config = require("../../helper/config").config
 class Controller {
 
     static async registerDenganRM(req, res) {
-        const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, flag_layanan, jadwal_dokter_id, user_id } = req.body
+        const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, flag_layanan, jadwal_dokter_id, user_id, tujuan_booking } = req.body
 
         try {
             let k = sha1(uuid_v4());
@@ -23,7 +23,7 @@ class Controller {
             let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}' and b.status_booking > 0 `, s)
 
             if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
-                let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, flag_layanan, jadwal_dokter_id, user_id })
+                let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, flag_layanan, jadwal_dokter_id, user_id, tujuan_booking })
                 res.status(200).json({ status: 200, message: "sukses", data: data_booking })
             } else {
                 res.status(200).json({ status: 200, message: "kuota penuh" })
@@ -35,7 +35,7 @@ class Controller {
     }
 
     static async registerTanpaRM(req, res) {
-        const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, jadwal_dokter_id, flag_layanan, user_id } = req.body
+        const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, jadwal_dokter_id, flag_layanan, user_id, tujuan_booking } = req.body
 
         try {
             let k = sha1(uuid_v4());
@@ -44,7 +44,7 @@ class Controller {
             let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}' and b.status_booking > 0 `, s)
 
             if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
-                let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking, flag_layanan, jadwal_dokter_id, user_id })
+                let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking, flag_layanan, jadwal_dokter_id, user_id, tujuan_booking })
                 res.status(200).json({ status: 200, message: "sukses", data: data_booking })
             } else {
                 res.status(200).json({ status: 200, message: "kuota penuh" })
@@ -57,9 +57,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, user_id } = req.body
+        const { id, tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, user_id, tujuan_booking } = req.body
 
-        booking.update({ tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, user_id }, { where: { id } }).then(hasil => {
+        booking.update({ tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, user_id, tujuan_booking }, { where: { id } }).then(hasil => {
             res.status(200).json({ status: 200, message: "sukses" })
         }).catch(error => {
             console.log(error);

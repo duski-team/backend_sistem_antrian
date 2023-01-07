@@ -47,6 +47,9 @@ const booking = sq.define('booking', {
     flag_layanan: {
         type: DataTypes.INTEGER, // 0: non bpjs || 1: bpjs 
         defaultValue: 0
+    },
+    tujuan_booking: {
+        type: DataTypes.INTEGER, // 1: mandiri || 2:rujukan || 3:kontrol 
     }
 },
     {
