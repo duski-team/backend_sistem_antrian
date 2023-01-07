@@ -126,9 +126,10 @@ const koneksi_socket = koneksi_socket => {
             }
         })
 
-        socket.on('registerAntrianLayanan', async (asd) => {
+        socket.on('registerAntrianLayanan', async (asd,room_id) => {
             const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id } = asd
 
+            //room_id = poli layanan
             const t = await sq.transaction();
 
             try {
@@ -150,8 +151,8 @@ const koneksi_socket = koneksi_socket => {
                 let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].total, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id }, { transaction: t })
                 hasil.dataValues.sisa_antrian = +sisa[0].total
                 await t.commit();
-
-                io.emit("refresh_antrian_layanan", hasil);
+                let x = `${room_id}`
+                io.to(x).emit("refresh_antrian_layanan", hasil);
             } catch (error) {
                 await t.rollback();
                 console.log(error);
