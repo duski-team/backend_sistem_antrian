@@ -250,7 +250,7 @@ const koneksi_socket = koneksi_socket => {
                     hasil.dataValues.sisa_antrian = +sisa[0].total
                     let RAJAL = kirimRajal.data.data
                     console.log(RAJAL, 'KIRIM RAJAL');
-                    let SEP = kirimRajal.data.data
+                    let SEP = kirimSEP.data.data.sep
                     console.log(SEP, "SEP");
                     let SEPPESERTA = kirimSEP.data.data.sep.data.sep.peserta
                     console.log(SEPPESERTA, "SEP PESERTA");
