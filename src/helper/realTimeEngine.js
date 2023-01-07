@@ -17,7 +17,10 @@ const koneksi_socket = koneksi_socket => {
     const io = new Server(koneksi_socket, { cors: "*" })
     const pubClient = createClient({ url: `redis://${process.env.HOST_REDIS}:${process.env.PORT_REDIS}` });
     const subClient = pubClient.duplicate();
-    io.adapter(createAdapter(pubClient, subClient));
+
+    Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
+        io.adapter(createAdapter(pubClient, subClient));
+      });
 
     io.on('connection', function (socket) {
         // console.log(socket.id);
@@ -249,7 +252,7 @@ const koneksi_socket = koneksi_socket => {
                     // console.log(kirim.data.data.idDaftar, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
                     // console.log(kirimSEP, "SEP");
                     await t.commit();
-                    io.emit("refresh_register_APM_BPJS", hasil);
+                    io.emit("refresh_register_APM_mandiri", hasil);
                 }
                 // let kirim = await axios.get(purworejo + "/get-poli", config)
                 // let polinya = kirim.data.data
