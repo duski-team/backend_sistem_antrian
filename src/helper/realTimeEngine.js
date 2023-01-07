@@ -7,12 +7,17 @@ const booking = require('../module/booking/model');
 const antrian_list = require('../module/antrian_list/model')
 const { Server } = require("socket.io")
 const axios = require('axios')
+const { createClient } = require("redis");
+const { createAdapter } = require("@socket.io/redis-adapter");
 
 const purworejo = process.env.HOST_PURWOREJO
 const config = require("./config").config
 
 const koneksi_socket = koneksi_socket => {
     const io = new Server(koneksi_socket, { cors: "*" })
+    const pubClient = createClient({ url: `redis://${process.env.HOST_REDIS}:${process.env.PORT_REDIS}` });
+    const subClient = pubClient.duplicate();
+    io.adapter(createAdapter(pubClient, subClient));
 
     io.on('connection', function (socket) {
         // console.log(socket.id);
