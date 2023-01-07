@@ -250,11 +250,15 @@ const koneksi_socket = koneksi_socket => {
                     let SEP = kirimRajal.data.data
                     let SEPPESERTA = kirimSEP.data.data.sep.data.sep.peserta
                     let SEPINFORMASI = kirimSEP.data.data.sep.data.sep.informasi
+                    let SEPPESERTA1 = kirimSEP.data.data.sep.data.peserta
+                    let SEPINFORMASI1 = kirimSEP.data.data.sep.data.informasi
 
                     console.log(RAJAL, 'KIRIM RAJAL');
                     console.log(SEP, "SEP");
                     console.log(SEPPESERTA, "SEP PESERTA");
                     console.log(SEPINFORMASI, "SEP INFORMASI");
+                    console.log(SEPPESERTA1, "SEP PESERTA1");
+                    console.log(SEPINFORMASI1, "SEP INFORMASI1");
                     await t.commit();
                     io.emit("refresh_register_APM_mandiri", {RAJAL,SEP,SEPPESERTA,SEPINFORMASI});
                 }
