@@ -256,10 +256,10 @@ const koneksi_socket = koneksi_socket => {
                     console.log(SEPPESERTA, "SEP PESERTA");
                     let SEPINFORMASI = kirimSEP.data.data.sep.data.sep.informasi
                     console.log(SEPINFORMASI, "SEP INFORMASI");
-                    let SEPPESERTA1 = kirimSEP.data.data.sep.data.peserta
-                    console.log(SEPPESERTA1, "SEP PESERTA1");
-                    let SEPINFORMASI1 = kirimSEP.data.data.sep.data.informasi
-                    console.log(SEPINFORMASI1, "SEP INFORMASI1");
+                    // let SEPPESERTA1 = kirimSEP.data.data.sep.data.peserta
+                    // console.log(SEPPESERTA1, "SEP PESERTA1");
+                    // let SEPINFORMASI1 = kirimSEP.data.data.sep.data.informasi
+                    // console.log(SEPINFORMASI1, "SEP INFORMASI1");
                  
                     
                     await t.commit();
