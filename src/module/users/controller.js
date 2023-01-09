@@ -147,6 +147,33 @@ class Controller {
         }
     }
 
+    static async listAdmin(req, res) {
+        const {user_status,role,username} = req.body
+        
+        try {
+            let isi = ''
+            if(user_status){
+                isi+= `and u.user_status = ${user_status} `
+            }
+            if(role){
+                isi+= `and u."role" ilike '%${role}%' `
+            }
+            if(role){
+                isi+= `and u."role" ilike '%${role}%' `
+            }
+            if(username){
+                isi+= `and u.username ilike '%${username}%' `
+            }
+
+            let data = await sq.query(`select * from users u where u."deletedAt" isnull ${isi} order by u."createdAt" desc`, s)
+
+            res.status(200).json({ status: 200, message: "sukses", data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
+
     static async detailsById(req, res) {
         const { id } = req.params
         try {
