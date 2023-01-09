@@ -49,11 +49,10 @@ function syncJadwal() {
     cron.schedule('30 * * * * *', async () => {
         let curdate = moment().format('YYYY-MM-DD dddd hh:mm:ss')
         // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
-        console.log(curdate);
-        console.log("======================");
-        console.log(moment());
         try {
-          console.log(`${curdate} / jam 5:30`);
+            console.log(curdate);
+            console.log("======================");
+            console.log(moment());
         } catch (error) {
             console.log(error);
         }
