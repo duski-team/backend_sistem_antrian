@@ -46,17 +46,19 @@ function syncJadwal() {
     //     timezone: "Asia/Jakarta"
     // });
    
-    cron.schedule('30 * * * * *', async () => {
+    cron.schedule('40 20 * * *', async () => {
         let curdate = moment().format('YYYY-MM-DD dddd hh:mm:ss')
         // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
         try {
-            console.log(curdate);
+            console.log(curdate,"cron 20:40");
             console.log("======================");
             console.log(moment());
         } catch (error) {
             console.log(error);
         }
-    });
+    }, {
+            timezone: "Asia/Jakarta"
+        });
 }
 syncJadwal()
 
