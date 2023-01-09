@@ -51,7 +51,7 @@ function syncJadwal() {
         // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
         console.log(curdate);
         console.log("======================");
-        console.log(moment().format());
+        console.log(moment());
         try {
           console.log(`${curdate} / jam 5:30`);
         } catch (error) {
