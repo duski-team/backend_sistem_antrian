@@ -6,7 +6,7 @@ const s = { type: QueryTypes.SELECT }
 const axios = require('axios');
 const moment = require('moment');
 const cron = require('node-cron');
-
+moment.locale('id')
 const purworejo = process.env.HOST_PURWOREJO
 const config = require("../../helper/config").config
 
@@ -45,18 +45,15 @@ function syncJadwal() {
     //     scheduled: true,
     //     timezone: "Asia/Jakarta"
     // });
-
+   
     cron.schedule(' */30 * * * * *', async () => {
-        let curdate = moment().format('YYYY-MM-DD hh:mm:ss')
+        let curdate = moment().format('YYYY-MM-DD dddd hh:mm:ss')
         // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
         try {
           console.log(`${curdate} / setiap 30 detik`);
         } catch (error) {
             console.log(error);
         }
-    }, {
-        scheduled: true,
-        timezone: "Asia/Jakarta"
     });
 }
 syncJadwal()
