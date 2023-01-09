@@ -46,9 +46,12 @@ function syncJadwal() {
     //     timezone: "Asia/Jakarta"
     // });
    
-    cron.schedule('30 5 * * *', async () => {
+    cron.schedule('30 * * * * *', async () => {
         let curdate = moment().format('YYYY-MM-DD dddd hh:mm:ss')
         // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
+        console.log(curdate);
+        console.log("======================");
+        console.log(moment().format());
         try {
           console.log(`${curdate} / jam 5:30`);
         } catch (error) {
