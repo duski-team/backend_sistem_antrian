@@ -174,7 +174,6 @@ class Controller {
         }
     }
 
-
     static async listJadwalByDokterTanggalPoli(req, res) {
         const { dokter_id, poli_id, tanggal } = req.body
         try {

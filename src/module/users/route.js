@@ -3,6 +3,7 @@ const router = require('express').Router()
 const authentification = require('../../middleware/authentification')
 
 router.post('/register', Controller.register)
+router.post('/registerADMIN', Controller.registerADMIN)
 router.post('/verifikasiOTP', Controller.verifikasiOTP)
 router.post('/update', authentification, Controller.update)
 router.post('/login', Controller.login)

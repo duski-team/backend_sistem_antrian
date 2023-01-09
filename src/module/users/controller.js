@@ -33,14 +33,15 @@ class Controller {
 
     static register(req, res) {
         const { username, password, role } = req.body;
-        let encryptedPassword = bcrypt.hashPassword(password);
-        users.findAll({ where: { username } }).then((data) => {
+
+        users.findAll({ where: { username } }).then(async (data) => {
             if (data.length) {
                 res.status(200).json({ status: 200, message: "username sudah terdaftar" });
             } else {
                 let y = uuid_v4()
                 let kode = y.substring(y.length - 4, y.length).toUpperCase()
-                users.create({ id: uuid_v4(), username, password: encryptedPassword, role, kode_otp: kode, otp_time: moment().add(60, 'm').toDate() }, { returning: true }).then(async (respon) => {
+                let encryptedPassword = bcrypt.hashPassword(password);
+                await users.create({ id: uuid_v4(), username, password: encryptedPassword, role, kode_otp: kode, otp_time: moment().add(60, 'm').toDate() }, { returning: true }).then(async (respon) => {
                     let fieldheader = `RSUD RAA TJOKRONEGORO PURWOREJO <br> Gunakan kode dibawah ini untuk verifikasi : <br> OTP : <b>${kode}</b>`
                     await mg.messages.create(mg_domain, {
                         from: mg_email,
@@ -49,6 +50,27 @@ class Controller {
                         text: " ",
                         html: fieldheader
                     })
+                    res.status(200).json({ status: 200, message: "sukses", data: respon });
+                }).catch((err) => {
+                    console.log(err);
+                    res.status(500).json({ status: 500, message: "gagal", data: err });
+                })
+            }
+        }).catch(error => {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        })
+    }
+
+    static registerADMIN(req, res) {
+        const { username, password, role, user_status } = req.body;
+
+        users.findAll({ where: { username } }).then(async (data) => {
+            if (data.length) {
+                res.status(200).json({ status: 200, message: "username sudah terdaftar" });
+            } else {
+                let encryptedPassword = bcrypt.hashPassword(password);
+                await users.create({ id: uuid_v4(), username, password: encryptedPassword, role,user_status }).then(async (respon) => {
                     res.status(200).json({ status: 200, message: "sukses", data: respon });
                 }).catch((err) => {
                     console.log(err);
