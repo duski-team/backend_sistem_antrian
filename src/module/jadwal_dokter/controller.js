@@ -12,32 +12,45 @@ const config = require("../../helper/config").config
 
 
 function syncJadwal() {
-    cron.schedule('1 1 * * *', async () => {
-        let curdate = moment().format('YYYY-MM-DD')
+    // cron.schedule('1 1 * * *', async () => {
+    //     let curdate = moment().format('YYYY-MM-DD')
+    //     // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
+    //     try {
+    //         let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + curdate, config)
+    //         let datanya = kirim.data.data
+    //         let bulknya = []
+    //         // console.log(kirim.data.data);
+    //         for (let i = 0; i < datanya.length; i++) {
+    //             let awal = moment(datanya[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
+    //             let akhir = moment(datanya[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
+    //             if (datanya[i].isCuti == 0) {
+    //                 // console.log(curdate+" "+awal);
+    //                 bulknya.push({
+    //                     id: uuid_v4(),
+    //                     waktu_mulai: curdate + " " + awal,
+    //                     waktu_selesai: curdate + " " + akhir,
+    //                     kuota: datanya[i].kuota,
+    //                     kuota_mobile: datanya[i].kuotaOnline,
+    //                     dokter_id: datanya[i].idDokter,
+    //                     poli_id: datanya[i].idPoli
+    //                 })
+    //             }
+
+    //         }
+    //         await jadwal_dokter.bulkCreate(bulknya)
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }, {
+    //     scheduled: true,
+    //     timezone: "Asia/Jakarta"
+    // });
+
+    cron.schedule(' */30 * * * * *', async () => {
+        let curdate = moment().format('YYYY-MM-DD hh:mm:ss')
         // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
         try {
-            let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + curdate, config)
-            let datanya = kirim.data.data
-            let bulknya = []
-            // console.log(kirim.data.data);
-            for (let i = 0; i < datanya.length; i++) {
-                let awal = moment(datanya[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
-                let akhir = moment(datanya[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
-                if (datanya[i].isCuti == 0) {
-                    // console.log(curdate+" "+awal);
-                    bulknya.push({
-                        id: uuid_v4(),
-                        waktu_mulai: curdate + " " + awal,
-                        waktu_selesai: curdate + " " + akhir,
-                        kuota: datanya[i].kuota,
-                        kuota_mobile: datanya[i].kuotaOnline,
-                        dokter_id: datanya[i].idDokter,
-                        poli_id: datanya[i].idPoli
-                    })
-                }
-
-            }
-            await jadwal_dokter.bulkCreate(bulknya)
+          console.log(`${curdate} / setiap 30 detik`);
         } catch (error) {
             console.log(error);
         }
@@ -92,29 +105,33 @@ class Controller {
         let curdate = moment().format('YYYY-MM-DD')
         // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
         try {
-            let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + curdate, config)
-            let datanya = kirim.data.data
-            let bulknya = []
-            // console.log(kirim.data.data);
-            for (let i = 0; i < datanya.length; i++) {
-                let awal = moment(datanya[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
-                let akhir = moment(datanya[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
-                if (datanya[i].isCuti == 0) {
-                    // console.log(curdate+" "+awal);
-                    bulknya.push({
-                        id: uuid_v4(),
-                        waktu_mulai: curdate + " " + awal,
-                        waktu_selesai: curdate + " " + akhir,
-                        kuota: datanya[i].kuota,
-                        kuota_mobile: datanya[i].kuotaOnline,
-                        dokter_id: datanya[i].idDokter,
-                        poli_id: datanya[i].idPoli
-                    })
+            let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`,s);
+            if(cekJadwal.length>0){
+                res.status(201).json({ status: 204, message: "data sudah ada",data:cekJadwal})
+            }else{
+                let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + curdate, config)
+                let datanya = kirim.data.data
+                let bulknya = []
+                // console.log(kirim.data.data);
+                for (let i = 0; i < datanya.length; i++) {
+                    let awal = moment(datanya[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
+                    let akhir = moment(datanya[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
+                    if (datanya[i].isCuti == 0) {
+                        // console.log(curdate+" "+awal);
+                        bulknya.push({
+                            id: uuid_v4(),
+                            waktu_mulai: curdate + " " + awal,
+                            waktu_selesai: curdate + " " + akhir,
+                            kuota: datanya[i].kuota,
+                            kuota_mobile: datanya[i].kuotaOnline,
+                            dokter_id: datanya[i].idDokter,
+                            poli_id: datanya[i].idPoli
+                        })
+                    }
                 }
-
+                await jadwal_dokter.bulkCreate(bulknya)
+                res.status(200).json({ status: 200, message: "sukses", data: bulknya })
             }
-            await jadwal_dokter.bulkCreate(bulknya)
-            res.status(200).json({ status: 200, message: "sukses", data: bulknya })
         } catch (error) {
             console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error })
