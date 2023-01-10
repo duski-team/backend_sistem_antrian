@@ -70,7 +70,7 @@ class Controller {
                 res.status(200).json({ status: 200, message: "username sudah terdaftar" });
             } else {
                 let encryptedPassword = bcrypt.hashPassword(password);
-                await users.create({ id: uuid_v4(), username, password: encryptedPassword, role,user_status }).then(async (respon) => {
+                await users.create({ id: uuid_v4(), username, password: encryptedPassword, role, user_status }).then(async (respon) => {
                     res.status(200).json({ status: 200, message: "sukses", data: respon });
                 }).catch((err) => {
                     console.log(err);
@@ -148,24 +148,21 @@ class Controller {
     }
 
     static async listAdmin(req, res) {
-        const {user_status,role,username} = req.body
-        
+        const { user_status, role, username } = req.body
+
         try {
             let isi = ''
-            if(user_status){
-                isi+= `and u.user_status = ${user_status} `
+            if (user_status) {
+                isi += ` and u.user_status = ${user_status} `
             }
-            if(role){
-                isi+= `and u."role" ilike '%${role}%' `
+            if (role) {
+                isi += ` and u."role" = %${role}% `
             }
-            if(role){
-                isi+= `and u."role" ilike '%${role}%' `
-            }
-            if(username){
-                isi+= `and u.username ilike '%${username}%' `
+            if (username) {
+                isi += ` and u.username ilike '%${username}%' `
             }
 
-            let data = await sq.query(`select * from users u where u."deletedAt" isnull ${isi} order by u."createdAt" desc`, s)
+            let data = await sq.query(`select * from users u where u."deletedAt" isnull and u."role" <> 9998 ${isi} order by u."createdAt" desc`, s)
 
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
