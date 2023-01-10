@@ -12,53 +12,57 @@ const config = require("../../helper/config").config
 
 
 function syncJadwal() {
-    // cron.schedule('1 1 * * *', async () => {
-    //     let curdate = moment().format('YYYY-MM-DD')
-    //     // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
-    //     try {
-    //         let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + curdate, config)
-    //         let datanya = kirim.data.data
-    //         let bulknya = []
-    //         // console.log(kirim.data.data);
-    //         for (let i = 0; i < datanya.length; i++) {
-    //             let awal = moment(datanya[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
-    //             let akhir = moment(datanya[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
-    //             if (datanya[i].isCuti == 0) {
-    //                 // console.log(curdate+" "+awal);
-    //                 bulknya.push({
-    //                     id: uuid_v4(),
-    //                     waktu_mulai: curdate + " " + awal,
-    //                     waktu_selesai: curdate + " " + akhir,
-    //                     kuota: datanya[i].kuota,
-    //                     kuota_mobile: datanya[i].kuotaOnline,
-    //                     dokter_id: datanya[i].idDokter,
-    //                     poli_id: datanya[i].idPoli
-    //                 })
-    //             }
-
-    //         }
-    //         await jadwal_dokter.bulkCreate(bulknya)
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }, {
-    //     scheduled: true,
-    //     timezone: "Asia/Jakarta"
-    // });
-   
-    cron.schedule('40 20 * * *', async () => {
-        let curdate = moment().format('YYYY-MM-DD dddd hh:mm:ss')
-        // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
+    cron.schedule('15 17 * * *', async () => {
         try {
-            console.log(curdate,"cron 20:40");
-            console.log("======================");
-            console.log(moment());
+            // let curdate = moment().format('YYYY-MM-DD')
+            let curdate= moment().add(1,'d').format('YYYY-MM-DD')
+            let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`,s);
+            if(cekJadwal.length>0){
+                console.log("data sudah ada");
+            }else{
+                let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + curdate, config)
+                let datanya = kirim.data.data
+                let bulknya = []
+                // console.log(kirim.data.data);
+                for (let i = 0; i < datanya.length; i++) {
+                    let awal = moment(datanya[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
+                    let akhir = moment(datanya[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
+                    if (datanya[i].isCuti == 0) {
+                        // console.log(curdate+" "+awal);
+                        bulknya.push({
+                            id: uuid_v4(),
+                            waktu_mulai: curdate + " " + awal,
+                            waktu_selesai: curdate + " " + akhir,
+                            kuota: datanya[i].kuota,
+                            kuota_mobile: datanya[i].kuotaOnline,
+                            dokter_id: datanya[i].idDokter,
+                            poli_id: datanya[i].idPoli
+                        })
+                    }
+                }
+                await jadwal_dokter.bulkCreate(bulknya)
+                console.log("berhasil");
+            }
         } catch (error) {
             console.log(error);
         }
     }, {
-            timezone: "Asia/Jakarta"
-        });
+        timezone: "Asia/Jakarta"
+    });
+   
+    // cron.schedule('40 20 * * *', async () => {
+    //     let curdate = moment().format('YYYY-MM-DD dddd hh:mm:ss')
+    //     // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
+    //     try {
+    //         console.log(curdate,"cron 20:40");
+    //         console.log("======================");
+    //         console.log(moment());
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }, {
+    //         timezone: "Asia/Jakarta"
+    //     });
 }
 syncJadwal()
 
@@ -103,9 +107,10 @@ class Controller {
     }
 
     static async syncJadwal(req, res) {
-        let curdate = moment().format('YYYY-MM-DD')
-        // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
+        
         try {
+            let curdate = moment().format('YYYY-MM-DD')
+        // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
             let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`,s);
             if(cekJadwal.length>0){
                 res.status(201).json({ status: 204, message: "data sudah ada",data:cekJadwal})
