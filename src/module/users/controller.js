@@ -171,6 +171,19 @@ class Controller {
         }
     }
 
+    static async listByRole(req, res) {
+        const { role } = req.body
+
+        try {
+            let data = await sq.query(`select * from users u where u."deletedAt" isnull and u."role" ${role} order by u."createdAt" desc`, s)
+
+            res.status(200).json({ status: 200, message: "sukses", data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
+
     static async detailsById(req, res) {
         const { id } = req.params
         try {
