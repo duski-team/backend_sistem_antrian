@@ -21,7 +21,7 @@ async function createSuperUser() {
         let encryptedPassword = bcrypt.hashPassword("superadmin");
         await users.findOrCreate({
             where: { username: "superadmin" },
-            defaults: { id: "superadmin", username: "superadmin", password: encryptedPassword, role: "superadmin", user_status: 1 }
+            defaults: { id: "superadmin", username: "superadmin", password: encryptedPassword, role: 9999, user_status: 1 }
         })
     } catch (err) {
         console.log(err);

@@ -34,3 +34,17 @@ const users = sq.define('users', {
 // users.sync({alter:true})
 
 module.exports = users
+
+// role id : 
+/* 
+1. admin = 1017 
+2. superadmin = 9999
+3. user_mobile = 9998
+4. kasir = 2
+5. loket = 1 
+6. poli = 4 
+7. radiologi = 6
+8. farmasi = 9 
+9. laboratorium = 5
+10. supervisor = 99
+*/
