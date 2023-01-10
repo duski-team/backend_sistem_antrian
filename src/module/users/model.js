@@ -13,7 +13,7 @@ const users = sq.define('users', {
         type: DataTypes.STRING
     },
     role: {
-        type: DataTypes.STRING
+        type: DataTypes.INTEGER
     },
     user_status: {
         type: DataTypes.INTEGER, // 0: belum ganti password, 1 : sudah ganti password
