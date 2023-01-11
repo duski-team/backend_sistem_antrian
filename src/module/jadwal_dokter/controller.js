@@ -9,8 +9,8 @@ const cron = require('node-cron');
 moment.locale('id')
 const purworejo = process.env.HOST_PURWOREJO
 const config = require("../../helper/config").config
-const redis = require('redis').createClient()
-const CronJob = require('cron-cluster')(redis).CronJob
+// const redis = require('redis').createClient()
+// const CronJob = require('cron-cluster')(redis).CronJob
 
 // function syncJadwal() {
 //     cron.schedule('15 17 * * *', async () => {
@@ -68,13 +68,13 @@ const CronJob = require('cron-cluster')(redis).CronJob
 
 // syncJadwal()
 
-function doCron () {
-    var job = new CronJob('* * * * * *', function () {
-        console.log(moment().format(),"per dua detik");
-      })
-      job.start()
-  }
-  doCron()
+// function doCron () {
+//     var job = new CronJob('* * * * * *', function () {
+//         console.log(moment().format(),"per dua detik");
+//       })
+//       job.start()
+//   }
+//   doCron()
 
 class Controller {
 
