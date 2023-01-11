@@ -12,7 +12,7 @@ const config = require("../../helper/config").config
 const { createClient } = require("redis")
 const client = createClient({ url: `redis://${process.env.HOST_REDIS}:${process.env.PORT_REDIS}`, legacyMode: true });
 client.connect().catch(console.error)
-const ClusterCronJob = require('cron-cluster')(client, { key: "1" }).CronJob;
+const ClusterCronJob = require('cron-cluster')(client, { key: "leaderKey" }).CronJob;
 
 // function syncJadwal() {
 //     cron.schedule('15 17 * * *', async () => {
@@ -70,14 +70,14 @@ const ClusterCronJob = require('cron-cluster')(client, { key: "1" }).CronJob;
 
 // syncJadwal()
 
-// function doCron() {
-//     console.log("tesssssssssss")
-//     var job = new ClusterCronJob('*/2 * * * * *', function () {
-//         console.log(moment().format(), "per dua detik");
-//     })
-//     job.start()
-// }
-// doCron()
+function doCron() {
+    console.log("tesssssssssss")
+    var job = new ClusterCronJob('*/2 * * * * *', function () {
+        console.log(moment().format(), "per dua detik");
+    })
+    job.start()
+}
+doCron()
 
 class Controller {
 
