@@ -71,11 +71,9 @@ client.connect().catch(console.error)
 // syncJadwal()
 
 function syncJadwal() {
-    var job = new ClusterCronJob('50 12 * * *', function () {
+    var job = new ClusterCronJob('55 19 * * *', function () {
         console.log(moment().format(), "berhasil");
-    },{
-            timezone: "Asia/Jakarta"
-        })
+    })
     job.start()
 }
 syncJadwal()
