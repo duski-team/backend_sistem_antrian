@@ -9,13 +9,10 @@ const cron = require('node-cron');
 moment.locale('id')
 const purworejo = process.env.HOST_PURWOREJO
 const config = require("../../helper/config").config
-<<<<<<< HEAD
-=======
 const { createClient } = require("redis")
 const client = createClient({ url: `redis://${process.env.HOST_REDIS}:${process.env.PORT_REDIS}`, legacyMode: true });
-client.connect().catch(console.error)
 const ClusterCronJob = require('cron-cluster')(client, { key: "leaderKey" }).CronJob;
->>>>>>> 96feaafa21a8ddb14e6f0a3d398b2c68089404bc
+client.connect().catch(console.error)
 
 // function syncJadwal() {
 //     cron.schedule('15 17 * * *', async () => {
@@ -73,14 +70,15 @@ const ClusterCronJob = require('cron-cluster')(client, { key: "leaderKey" }).Cro
 
 // syncJadwal()
 
-function doCron() {
-    console.log("tesssssssssss")
-    var job = new ClusterCronJob('*/2 * * * * *', function () {
-        console.log(moment().format(), "per dua detik");
-    })
+function syncJadwal() {
+    var job = new ClusterCronJob('46 19 * * *', function () {
+        console.log(moment().format(), "berhasil");
+    },{
+            timezone: "Asia/Jakarta"
+        })
     job.start()
 }
-doCron()
+syncJadwal()
 
 class Controller {
 
