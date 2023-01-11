@@ -9,8 +9,10 @@ const cron = require('node-cron');
 moment.locale('id')
 const purworejo = process.env.HOST_PURWOREJO
 const config = require("../../helper/config").config
-// const redis = require('redis').createClient()
-// const CronJob = require('cron-cluster')(redis).CronJob
+const { createClient } = require("redis")
+const client = createClient({ url: `redis://${process.env.HOST_REDIS}:${process.env.PORT_REDIS}`, legacyMode: true });
+client.connect().catch(console.error)
+const ClusterCronJob = require('cron-cluster')(client, { key: "1" }).CronJob;
 
 // function syncJadwal() {
 //     cron.schedule('15 17 * * *', async () => {
@@ -50,7 +52,7 @@ const config = require("../../helper/config").config
 //     }, {
 //         timezone: "Asia/Jakarta"
 //     });
-   
+
 //     cron.schedule('40 20 * * *', async () => {
 //         let curdate = moment().format('YYYY-MM-DD dddd hh:mm:ss')
 //         // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
@@ -68,13 +70,14 @@ const config = require("../../helper/config").config
 
 // syncJadwal()
 
-// function doCron () {
-//     var job = new CronJob('* * * * * *', function () {
-//         console.log(moment().format(),"per dua detik");
-//       })
-//       job.start()
-//   }
-//   doCron()
+// function doCron() {
+//     console.log("tesssssssssss")
+//     var job = new ClusterCronJob('*/2 * * * * *', function () {
+//         console.log(moment().format(), "per dua detik");
+//     })
+//     job.start()
+// }
+// doCron()
 
 class Controller {
 
@@ -117,14 +120,14 @@ class Controller {
     }
 
     static async syncJadwal(req, res) {
-        
+
         try {
             let curdate = moment().format('YYYY-MM-DD')
-        // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
-            let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`,s);
-            if(cekJadwal.length>0){
-                res.status(201).json({ status: 204, message: "data sudah ada",data:cekJadwal})
-            }else{
+            // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
+            let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`, s);
+            if (cekJadwal.length > 0) {
+                res.status(201).json({ status: 204, message: "data sudah ada", data: cekJadwal })
+            } else {
                 let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + curdate, config)
                 let datanya = kirim.data.data
                 let bulknya = []
