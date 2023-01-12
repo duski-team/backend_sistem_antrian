@@ -71,9 +71,13 @@ client.connect().catch(console.error)
 // syncJadwal()
 
 function syncJadwal() {
-    var job = new ClusterCronJob('57 12 * * *', function () {
+    var job = new ClusterCronJob('38 12 * * *', function () {
         console.log(moment().format(), "berhasil");
-    })
+    },
+      null,
+      true,
+     "Asia/Jakarta"
+    )
     job.start()
 }
 syncJadwal()
