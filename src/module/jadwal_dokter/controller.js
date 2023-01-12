@@ -71,10 +71,10 @@ client.connect().catch(console.error)
 // syncJadwal()
 
 function syncJadwal() {
-    var job = new ClusterCronJob('35 16 * * *', async function () {
+    var job = new ClusterCronJob('0 1 * * *', async function () {
         try {
             // let curdate = moment().format('YYYY-MM-DD')
-            let curdate= moment().add(1,'d').format('YYYY-MM-DD')
+            let curdate= moment().add(2,'d').format('YYYY-MM-DD')
             let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`,s);
             if(cekJadwal.length>0){
                 console.log("data sudah ada");
