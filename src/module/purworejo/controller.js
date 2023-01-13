@@ -143,11 +143,9 @@ class Controller {
         const { noRm } = req.body
         try {
             let kirim = await axios.post(purworejo + "/get-list-rujuk-internal", { noRm }, config)
-            console.log(kirim.data);
+
             res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
         } catch (error) {
-            console.log(error);
-            console.log(req.body);
             if (error.response.status == 404) {
                 res.status(200).json({ status: 200, message: "data tidak ada" })
             }
