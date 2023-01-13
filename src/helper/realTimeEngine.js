@@ -196,7 +196,7 @@ const koneksi_socket = koneksi_socket => {
 
                     // console.log(kirimRajal, 'KIRIM RAJAL');
                     await t.commit();
-                    io.emit("refresh_register_APM_mandiri", {kirimRajal});
+                    io.emit("refresh_register_APM_mandiri",hasil);
                 }
                 // let kirim = await axios.get(purworejo + "/get-poli", config)
                 // let polinya = kirim.data.data
