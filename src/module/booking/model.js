@@ -50,7 +50,10 @@ const booking = sq.define('booking', {
     },
     tujuan_booking: {
         type: DataTypes.INTEGER, // 1: mandiri || 2:rujukan || 3:kontrol 
-    }
+    },
+    foto_ktp: {
+        type: DataTypes.STRING
+    },
 },
     {
         paranoid: true,
