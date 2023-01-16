@@ -157,10 +157,12 @@ class Controller {
     }
 
     static async listHeadline(req, res) {
-        const { getListHeadline } = req.params
+        let  getListHeadline = true
         try {
-            let kirim = await axios.get("https://rsutjokronegoro.purworejokab.go.id/headline/action.php", { getListHeadline }, config)
-            console.log(kirim.data);
+            let kirim = await axios.post("https://rsutjokronegoro.purworejokab.go.id/headline/action.php", { getListHeadline }, {
+                headers: { Authorization: `Bearer ${process.env.TOKEN}`, 'Content-Type': 'application/x-www-form-urlencoded' }
+            })
+
             res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
         } catch (error) {
             console.log(error.response);
