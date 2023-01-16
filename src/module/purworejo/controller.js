@@ -140,11 +140,27 @@ class Controller {
     }
 
     static async getListRujukInternal(req, res) {
-        const { noRm } = req.body
+        const { noRm } = req.params
         try {
-            // let kirim = await axios.post(purworejo + "/get-list-rujuk-internal", { noRm }, config)
             let kirim = await axios.get(purworejo + `/get-list-rujuk-internal?noRm=${noRm}`, config)
-            // console.log(kirim.data);
+            res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
+        } catch (error) {
+            console.log(error.response);
+            console.log(req.body);
+            if (error.response.status == 404) {
+                res.status(200).json({ status: error.response.data.code, message: error.response.data.message })
+            }
+            else {
+                res.status(500).json({ status: 500, message: "gagal", data: error.code })
+            }
+        }
+    }
+
+    static async listHeadline(req, res) {
+        const { getListHeadline } = req.params
+        try {
+            let kirim = await axios.get("https://rsutjokronegoro.purworejokab.go.id/headline/action.php", { getListHeadline }, config)
+            console.log(kirim.data);
             res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
         } catch (error) {
             console.log(error.response);

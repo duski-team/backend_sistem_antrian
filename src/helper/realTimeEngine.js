@@ -41,6 +41,7 @@ const koneksi_socket = koneksi_socket => {
                         isi += `  and poli_id = ${poli_id} `
                     }
                     let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' ${isi} and poli_layanan = ${poli_layanan} and status_antrian in (0,1)`, s);
+                    console.log(sisa);
                     if (jadwal_dokter_id) {
                         let jadwal_dokter = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
                         let kirim = await axios.get(purworejo + "/get-dokter", config)
@@ -76,6 +77,7 @@ const koneksi_socket = koneksi_socket => {
             try {
                 let cekBooking = []
                 let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
+                
                 let sequence = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan =2`, s);
                 let sisa = await sq.query(`select count(*)as total from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan = 2 and al.status_antrian in (0,1)`, s);
 
