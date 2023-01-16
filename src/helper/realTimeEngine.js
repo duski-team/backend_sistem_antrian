@@ -191,12 +191,12 @@ const koneksi_socket = koneksi_socket => {
                 } else {
                     let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
                     let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
-                    // let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
+                    let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
 
                     let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id }, { transaction: t })
                     hasil.dataValues.sisa_antrian = +sisa[0].total
 
-                    // console.log(kirimRajal, 'KIRIM RAJAL');
+                    console.log(kirimRajal, 'KIRIM RAJAL');
                     await t.commit();
                     io.emit("refresh_register_APM_mandiri", hasil);
                 }
@@ -244,24 +244,24 @@ const koneksi_socket = koneksi_socket => {
 
                     let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
                     let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
-                    // let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, noSuratKontrol, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
-                    // let idDaftar = kirimRajal.data.data.idDaftar
-                    // let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
+                    let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, noSuratKontrol, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
+                    let idDaftar = kirimRajal.data.data.idDaftar
+                    let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
 
                     let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id }, { transaction: t })
                     hasil.dataValues.sisa_antrian = +sisa[0].total
-                    // let RAJAL = kirimRajal.data.data
-                    // console.log(RAJAL, 'KIRIM RAJAL');
-                    // let SEP = kirimSEP.data.data.sep
-                    // console.log(SEP, "SEP");
-                    // let SEPPESERTA = kirimSEP.data.data.sep.data.sep.peserta
-                    // console.log(SEPPESERTA, "SEP PESERTA");
-                    // let SEPINFORMASI = kirimSEP.data.data.sep.data.sep.informasi
-                    // console.log(SEPINFORMASI, "SEP INFORMASI");
-                    // let SEPPESERTA1 = kirimSEP.data.data.sep.data.peserta
-                    // console.log(SEPPESERTA1, "SEP PESERTA1");
-                    // let SEPINFORMASI1 = kirimSEP.data.data.sep.data.informasi
-                    // console.log(SEPINFORMASI1, "SEP INFORMASI1");
+                    let RAJAL = kirimRajal.data.data
+                    console.log(RAJAL, 'KIRIM RAJAL');
+                    let SEP = kirimSEP.data.data.sep
+                    console.log(SEP, "SEP");
+                    let SEPPESERTA = kirimSEP.data.data.sep.data.sep.peserta
+                    console.log(SEPPESERTA, "SEP PESERTA");
+                    let SEPINFORMASI = kirimSEP.data.data.sep.data.sep.informasi
+                    console.log(SEPINFORMASI, "SEP INFORMASI");
+                    let SEPPESERTA1 = kirimSEP.data.data.sep.data.peserta
+                    console.log(SEPPESERTA1, "SEP PESERTA1");
+                    let SEPINFORMASI1 = kirimSEP.data.data.sep.data.informasi
+                    console.log(SEPINFORMASI1, "SEP INFORMASI1");
 
 
                     await t.commit();
