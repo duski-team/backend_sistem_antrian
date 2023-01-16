@@ -11,7 +11,7 @@ router.post('/detailsPasienBPJS',Controller.detailsPasienBPJS)
 router.get('/detailsDataKontrol/:noSuratKontrol',Controller.detailsDataKontrol)
 router.post('/listRujukan',Controller.listRujukan)
 router.post('/getKontrol',Controller.getKontrol)
-router.get('/getListRujukInternal/:noRm',Controller.getListRujukInternal)
+router.post('/getListRujukInternal',Controller.getListRujukInternal)
 router.get('/listHeadline/:getListHeadline',Controller.listHeadline)
 
 module.exports = router
