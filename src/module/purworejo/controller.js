@@ -157,11 +157,117 @@ class Controller {
     }
 
     static async listHeadline(req, res) {
-        let  getListHeadline = true
+        let getListHeadline = true
         try {
             let kirim = await axios.post("https://rsutjokronegoro.purworejokab.go.id/headline/action.php", { getListHeadline }, {
                 headers: { Authorization: `Bearer ${process.env.TOKEN}`, 'Content-Type': 'application/x-www-form-urlencoded' }
             })
+
+            res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
+        } catch (error) {
+            console.log(error.response);
+            console.log(req.body);
+            if (error.response.status == 404) {
+                res.status(200).json({ status: error.response.data.code, message: error.response.data.message })
+            }
+            else {
+                res.status(500).json({ status: 500, message: "gagal", data: error.code })
+            }
+        }
+    }
+
+    static async createPasienBaru(req, res) {
+        const { noKtp, nama, noBpjs, tempatLahir, tglLahir, alamat, alamatDomisili, noHp, jenisKelamin, statusKawin, pekerjaan, pendidikan, agama, sukuBangsa, idProv, idKota, idKec, idKel, namaPenanggungjawab, hubunganDenganPasien, alamatPenanggungjawab, noHpPenanggungjawab, keterangan } = req.body
+        try {
+            let kirim = await axios.post(purworejo + "/create-pasien-baru", { noKtp, nama, noBpjs, tempatLahir, tglLahir, alamat, alamatDomisili, noHp, jenisKelamin, statusKawin, pekerjaan, pendidikan, agama, sukuBangsa, idProv, idKota, idKec, idKel, namaPenanggungjawab, hubunganDenganPasien, alamatPenanggungjawab, noHpPenanggungjawab, keterangan }, config)
+
+            res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
+        } catch (error) {
+            console.log(error.response);
+            console.log(req.body);
+            if (error.response.status == 404) {
+                res.status(200).json({ status: error.response.data.code, message: error.response.data.message })
+            }
+            else {
+                res.status(500).json({ status: 500, message: "gagal", data: error.code })
+            }
+        }
+    }
+
+    static async getListPekerjaan(req, res) {
+        try {
+            let kirim = await axios.get(purworejo + `/get-list-pekerjaan`, config)
+
+            res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
+        } catch (error) {
+            console.log(error.response);
+            console.log(req.body);
+            if (error.response.status == 404) {
+                res.status(200).json({ status: error.response.data.code, message: error.response.data.message })
+            }
+            else {
+                res.status(500).json({ status: 500, message: "gagal", data: error.code })
+            }
+        }
+    }
+
+    static async getListProvinsi(req, res) {
+        try {
+            let kirim = await axios.get(purworejo + `/get-list-prov`, config)
+
+            res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
+        } catch (error) {
+            console.log(error.response);
+            console.log(req.body);
+            if (error.response.status == 404) {
+                res.status(200).json({ status: error.response.data.code, message: error.response.data.message })
+            }
+            else {
+                res.status(500).json({ status: 500, message: "gagal", data: error.code })
+            }
+        }
+    }
+
+    static async getListKota(req, res) {
+        const { idProv } = req.params
+        try {
+            let kirim = await axios.get(purworejo + `/get-list-kota?${idProv}`, config)
+
+            res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
+        } catch (error) {
+            console.log(error.response);
+            console.log(req.body);
+            if (error.response.status == 404) {
+                res.status(200).json({ status: error.response.data.code, message: error.response.data.message })
+            }
+            else {
+                res.status(500).json({ status: 500, message: "gagal", data: error.code })
+            }
+        }
+    }
+
+    static async getListKecamatan(req, res) {
+        const { idKota } = req.params
+        try {
+            let kirim = await axios.get(purworejo + `/get-list-kec?${idKota}`, config)
+
+            res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
+        } catch (error) {
+            console.log(error.response);
+            console.log(req.body);
+            if (error.response.status == 404) {
+                res.status(200).json({ status: error.response.data.code, message: error.response.data.message })
+            }
+            else {
+                res.status(500).json({ status: 500, message: "gagal", data: error.code })
+            }
+        }
+    }
+
+    static async getListKelurahan(req, res) {
+        const { idKec } = req.params
+        try {
+            let kirim = await axios.get(purworejo + `/get-list-kel?${idKec}`, config)
 
             res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
         } catch (error) {
