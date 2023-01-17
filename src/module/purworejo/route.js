@@ -15,9 +15,9 @@ router.post('/getListRujukInternal', Controller.getListRujukInternal)
 router.post('/listHeadline', Controller.listHeadline)
 router.get('/getListPekerjaan', Controller.getListPekerjaan)
 router.get('/getListProvinsi', Controller.getListProvinsi)
-router.get('/getListKota/:idProv', Controller.getListKota)
-router.get('/getListKecamatan/:idKota', Controller.getListKecamatan)
-router.get('/getListKelurahan/:idKec', Controller.getListKelurahan)
+router.post('/getListKota', Controller.getListKota)
+router.post('/getListKecamatan', Controller.getListKecamatan)
+router.post('/getListKelurahan', Controller.getListKelurahan)
 router.post('/createPasienBaru', Controller.createPasienBaru)
 
 module.exports = router

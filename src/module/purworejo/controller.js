@@ -229,9 +229,9 @@ class Controller {
     }
 
     static async getListKota(req, res) {
-        const { idProv } = req.params
+        const { idProv } = req.body
         try {
-            let kirim = await axios.get(purworejo + `/get-list-kota?${idProv}`, config)
+            let kirim = await axios.get(purworejo + `/get-list-kota?idProv=${idProv}`, config)
 
             res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
         } catch (error) {
@@ -247,9 +247,9 @@ class Controller {
     }
 
     static async getListKecamatan(req, res) {
-        const { idKota } = req.params
+        const { idKota } = req.body
         try {
-            let kirim = await axios.get(purworejo + `/get-list-kec?${idKota}`, config)
+            let kirim = await axios.get(purworejo + `/get-list-kec?idKota=${idKota}`, config)
 
             res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
         } catch (error) {
@@ -265,9 +265,9 @@ class Controller {
     }
 
     static async getListKelurahan(req, res) {
-        const { idKec } = req.params
+        const { idKec } = req.body
         try {
-            let kirim = await axios.get(purworejo + `/get-list-kel?${idKec}`, config)
+            let kirim = await axios.get(purworejo + `/get-list-kel?idKec=${idKec}`, config)
 
             res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
         } catch (error) {
