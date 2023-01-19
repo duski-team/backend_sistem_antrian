@@ -183,7 +183,7 @@ class Controller {
 
             res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
         } catch (error) {
-            console.log(error.response);
+            console.log(error);
             console.log(req.body);
             if (error.response.status == 404) {
                 res.status(200).json({ status: error.response.data.code, message: error.response.data.message })

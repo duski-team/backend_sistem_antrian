@@ -10,13 +10,13 @@ const config = require("../../helper/config").config
 
 class Controller {
     static register(req, res) {
-        const { no_rm_pasien, NIK, nama_member } = req.body
+        const { no_ktp, nama, no_bpjs, tempat_lahir, tanggal_lahir, alamat, alamat_domisili, no_hp, jenis_kelamin, status_kawin, pekerjaan, pendidikan, agama, suku_bangsa, id_provinsi, id_kota, id_kecamatan, id_kelurahan, nama_penanggung_jawab, hubungan_dengan_pasien, alamat_penanggung_jawab, no_hp_penanggung_jawab, keterangan } = req.body
 
-        member.findAll({ where: { no_rm_pasien } }).then(async hasilnya => {
+        member.findAll({ where: { no_ktp } }).then(async hasilnya => {
             if (hasilnya.length) {
                 res.status(200).json({ status: 200, message: "gagal, pasien tersebut sudah terdaftar" })
             } else {
-                await member.create({ id: uuid_v4(), no_rm_pasien, user_id: req.dataUsers.id, NIK, nama_member }).then(data => {
+                await member.create({ id: uuid_v4(), no_ktp, nama, no_bpjs, tempat_lahir, tanggal_lahir, alamat, alamat_domisili, no_hp, jenis_kelamin, status_kawin, pekerjaan, pendidikan, agama, suku_bangsa, id_provinsi, id_kota, id_kecamatan, id_kelurahan, nama_penanggung_jawab, hubungan_dengan_pasien, alamat_penanggung_jawab, no_hp_penanggung_jawab, keterangan, user_id: req.dataUsers.id }).then(data => {
                     res.status(200).json({ status: 200, message: "sukses", data })
                 }).catch(error => {
                     console.log(error)
@@ -24,6 +24,37 @@ class Controller {
                 })
             }
         })
+    }
+
+    static async acceptedPersetujuan(req, res) {
+        const { id, no_ktp, nama, no_bpjs, tempat_lahir, tanggal_lahir, alamat, alamat_domisili, no_hp, jenis_kelamin, status_kawin, pekerjaan, pendidikan, agama, suku_bangsa, id_provinsi, id_kota, id_kecamatan, id_kelurahan, nama_penanggung_jawab, hubungan_dengan_pasien, alamat_penanggung_jawab, no_hp_penanggung_jawab, keterangan, status_persetujuan } = req.body
+        try {
+            if (status_persetujuan == 2) {
+                let kirim = await axios.post(purworejo + "/create-pasien-baru", { noKtp: no_ktp, nama: nama, noBpjs: no_bpjs, tempatLahir: tempat_lahir, tglLahir: tanggal_lahir, alamat: alamat, alamatDomisili: alamat_domisili, noHp: no_hp, jenisKelamin: jenis_kelamin, statusKawin: status_kawin, pekerjaan: pekerjaan, pendidikan: pendidikan, agama: agama, sukuBangsa: suku_bangsa, idProv: id_provinsi, idKota: id_kota, idKec: id_kecamatan, idKel: id_kelurahan, namaPenanggungjawab: nama_penanggung_jawab, hubunganDenganPasien: hubungan_dengan_pasien, alamatPenanggungjawab: alamat_penanggung_jawab, noHpPenanggungjawab: no_hp_penanggung_jawab, keterangan: keterangan }, config)
+
+                let no_rm_pasien = kirim.data.data.noRM
+
+                let data_member = await member.update({ status_persetujuan, no_rm_pasien }, { where: { id }, returning: true })
+
+                res.status(200).json({ status: 200, message: "sukses", data: data_member[1][0] })
+            } else {
+                let data_member = await member.update({ status_persetujuan }, { where: { id }, returning: true })
+                res.status(200).json({ status: 200, message: "sukses", data: data_member[1][0] })
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
+
+    static async listMemberBaru(req, res) {
+        try {
+            let data = await sq.query(`select m.id as "member_id", * from "member" m where m."deletedAt" isnull and m.status_persetujuan = 1 order by m."createdAt" desc`,s)
+            res.status(200).json({ status: 200, message: "sukses", data: data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
     }
 
     static async cekPasien(req, res) {
