@@ -112,6 +112,18 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }
     }
+
+    static async detailsById(req, res) {
+        const { id } = req.params
+        try {
+            let data = await sq.query(`select m.id as "member_id", * from "member" m where m."deletedAt" isnull and m.id = '${id}'`, s)
+
+            res.status(200).json({ status: 200, message: "sukses", data: data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
 }
 
 module.exports = Controller

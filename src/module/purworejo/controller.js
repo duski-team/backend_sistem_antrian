@@ -279,6 +279,44 @@ class Controller {
             }
         }
     }
+
+    static async getFinger(req, res) {
+        const { noPeserta } = req.body
+        try {
+            let kirim = await axios.get(purworejo + "/get-finger?noPeserta=" + noPeserta, config)
+            console.log(kirim.data);
+            res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
+        } catch (error) {
+            console.log(error.response);
+            console.log(req.body);
+            if (error.response.status == 404) {
+                res.status(200).json({ status: error.response.data.code, message: error.response.data.message })
+            }
+            else {
+                res.status(500).json({ status: 500, message: "gagal", data: error.code })
+            }
+        }
+    }
+
+    static async createAntrean(req, res) {
+        const { kodebooking, jenispasien, nomorkartu, nik, nohp, kodepoli, namapoli, pasienbaru, norm, tanggalperiksa, kodedokter, namadokter, jampraktek, jeniskunjungan, nomorreferensi, nomorantrean, angkaantrean, estimasidilayani, sisakuotajkn, kuotajkn, sisakuotanonjkn, kuotanonjkn, keterangan } = req.body
+        try {
+            let kirim = await axios.post(purworejo + "/create-antrean", { kodebooking, jenispasien, nomorkartu, nik, nohp, kodepoli, namapoli, pasienbaru, norm, tanggalperiksa, kodedokter, namadokter, jampraktek, jeniskunjungan, nomorreferensi, nomorantrean, angkaantrean, estimasidilayani, sisakuotajkn, kuotajkn, sisakuotanonjkn, kuotanonjkn, keterangan }, config)
+
+            console.log(kirim);
+
+            res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
+        } catch (error) {
+            console.log(error);
+            console.log(req.body);
+            if (error.response.status == 404) {
+                res.status(200).json({ status: error.response.data.code, message: error.response.data.message })
+            }
+            else {
+                res.status(500).json({ status: 500, message: "gagal", data: error.code })
+            }
+        }
+    }
 }
 
 

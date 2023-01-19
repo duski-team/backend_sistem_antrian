@@ -19,5 +19,7 @@ router.post('/getListKota', Controller.getListKota)
 router.post('/getListKecamatan', Controller.getListKecamatan)
 router.post('/getListKelurahan', Controller.getListKelurahan)
 router.post('/createPasienBaru', Controller.createPasienBaru)
+router.post('/getFinger', Controller.getFinger)
+router.post('/createAntrean', Controller.createAntrean)
 
 module.exports = router
