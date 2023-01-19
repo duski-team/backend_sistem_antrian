@@ -284,7 +284,7 @@ class Controller {
         const { noPeserta } = req.body
         try {
             let kirim = await axios.get(purworejo + "/get-finger?noPeserta=" + noPeserta, config)
-            console.log(kirim.data);
+            
             res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
         } catch (error) {
             console.log(error.response);
