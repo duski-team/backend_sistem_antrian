@@ -99,12 +99,25 @@ class Controller {
 
         try {
             let data = []
-            let membernya = await sq.query(`select no_rm_pasien from member m where m.user_id ='${user_id}' and m."deletedAt" isnull and m."status_persetujuan" = 2`, s)
+            let membernya = await sq.query(`select no_rm_pasien from member m where m.user_id = '${user_id}' and m."deletedAt" isnull and m."status_persetujuan" = 2`, s)
 
             for (let i = 0; i < membernya.length; i++) {
                 let kirim = await axios.get(purworejo + "/get-pasien?no=" + membernya[i].no_rm_pasien, config)
                 data.push(kirim.data.data[0])
             }
+
+            res.status(200).json({ status: 200, message: "sukses", data: data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
+
+    static async listMemberBelumDiverifikasiByUserId(req, res) {
+        const { user_id } = req.params
+
+        try {
+            let data = await sq.query(`select * from member m where m.user_id = '${user_id}' and m."deletedAt" isnull and m."status_persetujuan" = 1`, s)
 
             res.status(200).json({ status: 200, message: "sukses", data: data })
         } catch (error) {
