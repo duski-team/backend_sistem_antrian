@@ -99,7 +99,7 @@ class Controller {
 
         try {
             let data = []
-            let membernya = await sq.query(`select no_rm_pasien from member m where m.user_id='${user_id}' and m."deletedAt" isnull`, s)
+            let membernya = await sq.query(`select no_rm_pasien from member m where m.user_id ='${user_id}' and m."deletedAt" isnull and m."status_persetujuan" = 2`, s)
 
             for (let i = 0; i < membernya.length; i++) {
                 let kirim = await axios.get(purworejo + "/get-pasien?no=" + membernya[i].no_rm_pasien, config)
