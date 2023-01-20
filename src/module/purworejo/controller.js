@@ -332,6 +332,8 @@ class Controller {
 
             let antrian = await antrian_list.update({ no_rm, kode_booking }, { where: { id: id_antrian_list } })
 
+            let kirim3 = await axios.post(purworejo + "/update-antrean", { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 })
+
             res.status(200).json({ status: 200, message: "sukses", data: kirim2.data })
         } catch (error) {
             await t.rollback();
