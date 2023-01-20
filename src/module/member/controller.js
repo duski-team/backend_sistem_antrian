@@ -126,6 +126,19 @@ class Controller {
         }
     }
 
+    static async listMemberDitolakByUserId(req, res) {
+        const { user_id } = req.params
+
+        try {
+            let data = await sq.query(`select * from member m where m.user_id = '${user_id}' and m."deletedAt" isnull and m."status_persetujuan" = 0`, s)
+
+            res.status(200).json({ status: 200, message: "sukses", data: data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
+
     static async detailsById(req, res) {
         const { id } = req.params
         try {

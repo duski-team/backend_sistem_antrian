@@ -9,6 +9,7 @@ router.post('/update',authentification,Controller.update)
 router.get('/cekPasien/:no', Controller.cekPasien)
 router.get('/listMemberByUserId/:user_id', Controller.listMemberByUserId)
 router.get('/listMemberBelumDiverifikasiByUserId/:user_id', Controller.listMemberBelumDiverifikasiByUserId)
+router.get('/listMemberDitolakByUserId/:user_id', Controller.listMemberDitolakByUserId)
 router.get('/listMemberBaru', Controller.listMemberBaru)
 router.get('/detailsById/:id', Controller.detailsById)
 
