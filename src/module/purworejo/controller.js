@@ -3,6 +3,7 @@ const axios = require('axios')
 const purworejo = process.env.HOST_PURWOREJO
 const config = require("../../helper/config").config
 const antrian_list = require('../antrian_list/model');
+const { sq } = require("../../config/connection");
 
 class Controller {
 
