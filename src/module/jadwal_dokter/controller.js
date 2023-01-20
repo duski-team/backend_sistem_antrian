@@ -210,6 +210,7 @@ class Controller {
                 for (let k = 0; k < dokternya.length; k++) {
                     if (data[i].dokter_id == dokternya[k].id) {
                         data[i].nama_dokter = dokternya[k].nama
+                        data[i].kode_dokter = dokternya[k].idDokterBpjs
                     }
                 }
             }

@@ -273,6 +273,55 @@ const koneksi_socket = koneksi_socket => {
             }
         })
 
+        socket.on('registerAntreanBPJSLoket', async (asd) => {
+            const { jenis_pasien, nomor_kartu, poli_id, pasien_baru, no_rm, tanggal_periksa, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, nomor_referensi, nomor_antrean, angka_antrean, estimasi_dilayani, keterangan, id_antrian_list } = asd
+
+            const t = await sq.transaction();
+
+            try {
+                let tanggal = moment().format("YYYYMMDD")
+                let kode_booking = tanggal + nomor_antrean
+                let kirim = await axios.get(purworejo + "/get-poli", config)
+                let poli = kirim.data.data
+                let kode_poli = ''
+                let nama_poli = ''
+                for (let i = 0; i < poli.length; i++) {
+                    if (poli_id == poli[i].id) {
+                        kode_poli = poli[i].kdPoliBpjs
+                        nama_poli = poli[i].nama
+                    }
+                }
+
+                let nik = ''
+                let no_hp = ''
+                if (jenis_pasien == 'JKN') {
+                    let tgl = moment().format("YYYY-MM-DD")
+                    let kirim = await axios.get(purworejo + `/get-pasien-bpjs?noPeserta=${nomor_kartu}&tgl=${tgl}`, config)
+
+                    nik = kirim.data.data.peserta.nik
+                    no_hp = kirim.data.data.peserta.mr.noTelepon
+                }
+
+                let kirim2 = await axios.post(purworejo + "/create-antrean", { kodebooking: kode_booking, jenispasien: jenis_pasien, nomorkartu: nomor_kartu, nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: no_rm, tanggalperiksa: tanggal_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: nomor_referensi, nomorantrean: nomor_antrean, angkaantrean: angka_antrean, estimasidilayani: estimasi_dilayani, sisakuotajkn: 5, kuotajkn: 30, sisakuotanonjkn: 5, kuotanonjkn: 30, keterangan }, config)
+                
+                let antrian = await antrian_list.update({ no_rm }, { where: { id: id_antrian_list } })
+                io.emit("refresh_register_antrean_BPJS_loket", kirim2.data);
+            } catch (error) {
+                await t.rollback();
+                console.log(error);
+                socket.emit("error", error);
+                // if (error.name = "AxiosError") {
+                //     let respon_error = error.response.data
+                //     console.log(respon_error);
+                //     socket.emit("error", respon_error);
+                // }
+                // else {
+                //     console.log(error);
+                //     socket.emit("error", error);
+                // }
+            }
+        })
+
         socket.on('joinRoom', (room_id) => {
             socket.join(room_id);
             console.log(`join ${room_id}`);
