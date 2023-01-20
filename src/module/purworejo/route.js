@@ -20,6 +20,6 @@ router.post('/getListKecamatan', Controller.getListKecamatan)
 router.post('/getListKelurahan', Controller.getListKelurahan)
 router.post('/createPasienBaru', Controller.createPasienBaru)
 router.post('/getFinger', Controller.getFinger)
-router.post('/createAntrean', Controller.createAntrean)
+router.post('/registerAntreanBPJSLoket', Controller.registerAntreanBPJSLoket)
 
 module.exports = router

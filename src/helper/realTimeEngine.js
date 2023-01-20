@@ -389,7 +389,7 @@ const koneksi_socket = koneksi_socket => {
 
                 let kirim2 = await axios.post(purworejo + "/create-antrean", { kodebooking: kode_booking, jenispasien: jenis_pasien, nomorkartu: nomor_kartu, nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: no_rm, tanggalperiksa: tanggal_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: nomor_referensi, nomorantrean: nomor_antrean, angkaantrean: angka_antrean, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan }, config)
 
-                let antrian = await antrian_list.update({ no_rm }, { where: { id: id_antrian_list } })
+                let antrian = await antrian_list.update({ no_rm, kode_booking }, { where: { id: id_antrian_list } })
                 io.emit("refresh_register_antrean_BPJS_loket", kirim2.data);
             } catch (error) {
                 await t.rollback();
