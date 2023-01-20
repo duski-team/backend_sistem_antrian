@@ -6,7 +6,7 @@ const config = require("../../helper/config").config
 class Controller {
 
     static async printAntrian(req, res) {
-        const {tgl,jam,no_antrian,tempat,sisa_antrian} = req.body
+        const {tgl,jam,no_antrian,tempat,sisa_antrian} = req.query
         try {
             let html = `
             <!DOCTYPE html>
