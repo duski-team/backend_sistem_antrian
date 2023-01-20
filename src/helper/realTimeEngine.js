@@ -227,8 +227,67 @@ const koneksi_socket = koneksi_socket => {
             }
         })
 
+        // socket.on('registerAPMBPJS', async (asd) => {
+        //     const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id, noSuratKontrol } = asd
+
+        //     const t = await sq.transaction();
+
+        //     try {
+        //         let cekBooking = []
+        //         let tgl = moment().format('YYYY-MM-DD')
+        //         let sequence_no = await sq.query(`select count(*)+1 as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id = ${idPoli}`, s);
+        //         let sisa = await sq.query(`select count(*)as total from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan = 1 and al.status_antrian in (0,1) and al.poli_id = ${idPoli}`, s);
+
+        //         if (booking_id) {
+        //             cekBooking = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.booking_id = '${booking_id}' and date(al.tanggal_antrian) = '${tgl}'`, s)
+        //         }
+        //         if (cekBooking.length > 0) {
+        //             cekBooking[0].sisa_antrian = sisa[0].total - 1
+        //             io.emit("refresh_register_APM_mandiri", cekBooking[0]);
+        //         } else {
+
+        //             let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
+        //             let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
+        //             // let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, noSuratKontrol, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
+        //             // let idDaftar = kirimRajal.data.data.idDaftar
+        //             // let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
+
+        //             let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id }, { transaction: t })
+        //             hasil.dataValues.sisa_antrian = +sisa[0].total
+        //             // let RAJAL = kirimRajal.data.data
+        //             // console.log(RAJAL, 'KIRIM RAJAL');
+        //             // let SEP = kirimSEP.data.data.sep
+        //             // console.log(SEP, "SEP");
+        //             // let SEPPESERTA = kirimSEP.data.data.sep.data.sep.peserta
+        //             // console.log(SEPPESERTA, "SEP PESERTA");
+        //             // let SEPINFORMASI = kirimSEP.data.data.sep.data.sep.informasi
+        //             // console.log(SEPINFORMASI, "SEP INFORMASI");
+        //             // let SEPPESERTA1 = kirimSEP.data.data.sep.data.peserta
+        //             // console.log(SEPPESERTA1, "SEP PESERTA1");
+        //             // let SEPINFORMASI1 = kirimSEP.data.data.sep.data.informasi
+        //             // console.log(SEPINFORMASI1, "SEP INFORMASI1");
+
+        //             await t.commit();
+        //             // io.emit("refresh_register_APM_mandiri", {RAJAL,SEP,SEPPESERTA,SEPINFORMASI});
+        //             io.emit("refresh_register_APM_mandiri", hasil);
+        //         }
+
+        //     } catch (error) {
+        //         await t.rollback();
+        //         if (error.name = "AxiosError") {
+        //             let respon_error = error.response.data
+        //             console.log(respon_error);
+        //             socket.emit("error", respon_error);
+        //         }
+        //         else {
+        //             console.log(error);
+        //             socket.emit("error", error);
+        //         }
+        //     }
+        // })
+
         socket.on('registerAPMBPJS', async (asd) => {
-            const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id, noSuratKontrol } = asd
+            const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id, noSuratKontrol, jenis_pasien, pasien_baru, tanggal_periksa, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, nomor_referensi, estimasi_dilayani, keterangan } = asd
 
             const t = await sq.transaction();
 
@@ -266,6 +325,32 @@ const koneksi_socket = koneksi_socket => {
                     // console.log(SEPPESERTA1, "SEP PESERTA1");
                     // let SEPINFORMASI1 = kirimSEP.data.data.sep.data.informasi
                     // console.log(SEPINFORMASI1, "SEP INFORMASI1");
+                    let kode_booking = moment().format("YYYYMMDD") + `${initial}${no}`
+                    let nomor_antrean = `${initial}-${no}`
+                    let kirim = await axios.get(purworejo + "/get-poli", config)
+                    let poli = kirim.data.data
+                    let kode_poli = ''
+                    let nama_poli = ''
+                    for (let i = 0; i < poli.length; i++) {
+                        if (idPoli == poli[i].id) {
+                            kode_poli = poli[i].kdPoliBpjs
+                            nama_poli = poli[i].nama
+                        }
+                    }
+
+                    let nik = ''
+                    let no_hp = ''
+                    if (jenis_pasien == 'JKN') {
+                        let tgl = moment().format("YYYY-MM-DD")
+                        let kirim = await axios.get(purworejo + `/get-pasien-bpjs?noPeserta=${noBpjs}&tgl=${tgl}`, config)
+
+                        nik = kirim.data.data.peserta.nik
+                        no_hp = kirim.data.data.peserta.mr.noTelepon
+                    }
+
+                    let kirim2 = await axios.post(purworejo + "/create-antrean", { kodebooking: kode_booking, jenispasien: jenis_pasien, nomorkartu: noBpjs, nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: noRm, tanggalperiksa: tanggal_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: nomor_referensi, nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan }, config)
+
+                    let antrian = await antrian_list.update({ no_rm, kode_booking }, { where: { id: hasil.dataValues.id } })
 
                     await t.commit();
                     // io.emit("refresh_register_APM_mandiri", {RAJAL,SEP,SEPPESERTA,SEPINFORMASI});
@@ -315,9 +400,11 @@ const koneksi_socket = koneksi_socket => {
                     no_hp = kirim.data.data.peserta.mr.noTelepon
                 }
 
-                let kirim2 = await axios.post(purworejo + "/create-antrean", { kodebooking: kode_booking, jenispasien: jenis_pasien, nomorkartu: nomor_kartu, nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: no_rm, tanggalperiksa: tanggal_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: nomor_referensi, nomorantrean: nomor_antrean, angkaantrean: angka_antrean, estimasidilayani: estimasi_dilayani, sisakuotajkn: 5, kuotajkn: 30, sisakuotanonjkn: 5, kuotanonjkn: 30, keterangan }, config)
-                
-                let antrian = await antrian_list.update({ no_rm }, { where: { id: id_antrian_list } })
+                let kirim2 = await axios.post(purworejo + "/create-antrean", { kodebooking: kode_booking, jenispasien: jenis_pasien, nomorkartu: nomor_kartu, nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: no_rm, tanggalperiksa: tanggal_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: nomor_referensi, nomorantrean: nomor_antrean, angkaantrean: angka_antrean, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan }, config)
+
+                let antrian = await antrian_list.update({ no_rm, kode_booking }, { where: { id: id_antrian_list } })
+
+                let kirim3 = await axios.post(purworejo + "/update-antrean", { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 })
                 io.emit("refresh_register_antrean_BPJS_loket", kirim2.data);
             } catch (error) {
                 await t.rollback();
