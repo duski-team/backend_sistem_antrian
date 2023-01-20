@@ -27,13 +27,19 @@ const koneksi_socket = koneksi_socket => {
         console.log('ada yang connect');
 
         socket.on('panggil', async (asd, room_id) => {
-            const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id } = asd
+            const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id,kode_booking,taskid } = asd
 
             const t = await sq.transaction();
 
             try {
                 await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id }, transaction: t })
-
+                if(kode_booking && taskid){
+                    let waktu = moment(new Date()).format('x')
+                    let x = {kodebooking:kode_booking,taskid,waktu}
+                    let kirim = await axios.post(purworejo + "/update-antrean",x, config)
+                    console.log(x);
+                    console.log(kirim.data.data);
+                }
                 if (status_antrian == 0) {
                     let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
                     let isi = ''
@@ -137,7 +143,7 @@ const koneksi_socket = koneksi_socket => {
         })
 
         socket.on('registerAntrianLayanan', async (asd) => {
-            const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id } = asd
+            const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id,kode_booking,taskid } = asd
 
             // console.log(asd);
             //room_id = poli layanan
@@ -158,6 +164,13 @@ const koneksi_socket = koneksi_socket => {
                 // console.log(antrian_no);
                 if (id_antrian_list) {
                     await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list }, transaction: t })
+                }
+                if(kode_booking && taskid){
+                    let waktu = moment(new Date()).format('x')
+                    let x = {kodebooking:kode_booking,taskid,waktu}
+                    let kirim = await axios.post(purworejo + "/update-antrean",x, config)
+                    console.log(x);
+                    console.log(kirim.data.data);
                 }
 
                 let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].nomor, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id }, { transaction: t })
