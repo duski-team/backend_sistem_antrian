@@ -319,15 +319,10 @@ class Controller {
                 }
             }
 
-            let nik = ''
-            let no_hp = ''
-            if (jenis_pasien == 'JKN') {
-                let tgl = moment().format("YYYY-MM-DD")
-                let kirim = await axios.get(purworejo + `/get-pasien-bpjs?noPeserta=${nomor_kartu}&tgl=${tgl}`, config)
+            let kirim4 = await axios.get(purworejo + "/get-pasien?no=" + noRm, config)
 
-                nik = kirim.data.data.peserta.nik
-                no_hp = kirim.data.data.peserta.mr.noTelepon
-            }
+            let nik = kirim4.data.data[0].nik
+            let no_hp = kirim4.data.data[0].noTelp
 
             let kirim2 = await axios.post(purworejo + "/create-antrean", { kodebooking: kode_booking, jenispasien: jenis_pasien, nomorkartu: nomor_kartu, nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: no_rm, tanggalperiksa: tanggal_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: nomor_referensi, nomorantrean: nomor_antrean, angkaantrean: angka_antrean, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan }, config)
 
