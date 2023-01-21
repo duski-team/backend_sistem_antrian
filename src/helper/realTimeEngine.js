@@ -315,7 +315,7 @@ const koneksi_socket = koneksi_socket => {
         // })
 
         socket.on('registerAPMBPJS', async (asd) => {
-            const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id, noSuratKontrol, jenis_pasien, pasien_baru, tanggal_periksa, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, nomor_referensi, estimasi_dilayani, keterangan } = asd
+            const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id, noSuratKontrol, jenis_pasien, pasien_baru, tanggal_periksa, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, nomor_referensi, estimasi_dilayani, keterangan,poli_tujuan } = asd
 
             const t = await sq.transaction();
 
@@ -362,10 +362,10 @@ const koneksi_socket = koneksi_socket => {
 
                     // let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
                     // let sep = kirimSEP.data.data.sep.data.sep
-                    let sep
-                    let hasilSEP = await sepModel.create({id:uuid_v4(),no_rm:noRm,kode_booking,no_sep:sep.noSep,data:sep},{transaction:t})
-
-                    let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id,no_rm: noRm, kode_booking }, { transaction: t })
+                    let sep={noSep:null}
+                    let idAntrian = uuid_v4()
+                    let hasil = await antrian_list.create({ id: idAntrian, tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id,no_rm: noRm, kode_booking }, { transaction: t })
+                    let hasilSEP = await sepModel.create({id:uuid_v4(),no_sep:sep.noSep,nama_dokter,data_sep:sep,antrian_list_id:idAntrian,poli_tujuan},{transaction:t})
 
                     let kirim2 = await axios.post(purworejo + "/create-antrean", { kodebooking: kode_booking, jenispasien: jenis_pasien, nomorkartu: noBpjs, nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: noRm, tanggalperiksa: tanggal_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: nomor_referensi, nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan }, config)
                     

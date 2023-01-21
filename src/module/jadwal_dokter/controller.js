@@ -27,7 +27,7 @@ client.connect().catch(console.error)
 // }
 
 function syncJadwal() {
-    var job = new ClusterCronJob('0 1 * * *', async function () {
+    var job = new ClusterCronJob('40 16 * * *', async function () {
         try {
             // let curdate = moment().format('YYYY-MM-DD')
             let curdate= moment().add(2,'d').format('YYYY-MM-DD')
