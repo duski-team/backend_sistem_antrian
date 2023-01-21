@@ -385,15 +385,17 @@ const koneksi_socket = koneksi_socket => {
 
             } catch (error) {
                 await t.rollback();
-                if (error.name = "AxiosError") {
-                    let respon_error = error.response.data
-                    console.log(respon_error);
-                    socket.emit("error", respon_error);
-                }
-                else {
-                    console.log(error);
-                    socket.emit("error", error);
-                }
+                console.log(error);
+                socket.emit("error", error);
+                // if (error.name = "AxiosError") {
+                //     let respon_error = error.response.data
+                //     console.log(respon_error);
+                //     socket.emit("error", respon_error);
+                // }
+                // else {
+                //     console.log(error);
+                //     socket.emit("error", error);
+                // }
             }
         })
 
