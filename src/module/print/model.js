@@ -1,21 +1,22 @@
 const { DataTypes } = require('sequelize');
 const { sq } = require('../../config/connection');
+const antrianList = require('../antrian_list/model');
 
 const sep = sq.define('sep', {
     id: {
         type: DataTypes.STRING,
         primaryKey: true,
     },
-    no_rm: {
-        type: DataTypes.STRING
-    },
     no_sep: {
         type: DataTypes.STRING
     },
-    kode_booking: {
+    nama_dokter: {
         type: DataTypes.STRING
     },
-    data: {
+    poli_tujuan: {
+        type: DataTypes.STRING
+    },
+    data_sep: {
         type: DataTypes.JSONB
     }
 },
@@ -24,4 +25,8 @@ const sep = sq.define('sep', {
         freezeTableName: true
         
     });
+
+sep.belongsTo(antrianList, { foreignKey: "antrian_list_id" })
+antrianList.hasMany(sep, { foreignKey: "antrian_list_id" })
+
 module.exports = sep
