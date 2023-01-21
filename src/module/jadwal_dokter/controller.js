@@ -113,8 +113,8 @@ class Controller {
     static async syncJadwal(req, res) {
 
         try {
-            let curdate = moment().format('YYYY-MM-DD')
-            // let curdate= moment().add(1,'d').format('YYYY-MM-DD')
+            // let curdate = moment().format('YYYY-MM-DD')
+            let curdate= moment().add(2,'d').format('YYYY-MM-DD')
             let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`, s);
             if (cekJadwal.length > 0) {
                 res.status(201).json({ status: 204, message: "data sudah ada", data: cekJadwal })

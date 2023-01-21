@@ -28,16 +28,16 @@ const koneksi_socket = koneksi_socket => {
         console.log('ada yang connect');
 
         socket.on('panggil', async (asd, room_id) => {
-            const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id,kode_booking,taskid } = asd
+            const { id, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking, taskid } = asd
 
             const t = await sq.transaction();
 
             try {
                 await antrian_list.update({ tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, id_antrian_list, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id }, { where: { id }, transaction: t })
-                if(kode_booking && taskid){
+                if (kode_booking && taskid) {
                     let waktu = moment(new Date()).format('x')
-                    let x = {kodebooking:kode_booking,taskid,waktu}
-                    let kirim = await axios.post(purworejo + "/update-antrean",x, config)
+                    let x = { kodebooking: kode_booking, taskid, waktu }
+                    let kirim = await axios.post(purworejo + "/update-antrean", x, config)
                     console.log(x);
                     console.log(kirim.data.data);
                 }
@@ -111,7 +111,7 @@ const koneksi_socket = koneksi_socket => {
         })
 
         socket.on('registerMandiri', async (asd) => {
-            const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id,kode_booking } = asd
+            const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking } = asd
 
             const t = await sq.transaction();
 
@@ -131,7 +131,7 @@ const koneksi_socket = koneksi_socket => {
                     await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list }, transaction: t })
                 }
 
-                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].total, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id,kode_booking }, { transaction: t })
+                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].total, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking }, { transaction: t })
                 hasil.dataValues.sisa_antrian = +sisa[0].total
                 await t.commit();
 
@@ -144,7 +144,7 @@ const koneksi_socket = koneksi_socket => {
         })
 
         socket.on('registerAntrianLayanan', async (asd) => {
-            const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id,kode_booking,taskid } = asd
+            const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking, taskid } = asd
 
             // console.log(asd);
             //room_id = poli layanan
@@ -166,15 +166,15 @@ const koneksi_socket = koneksi_socket => {
                 if (id_antrian_list) {
                     await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list }, transaction: t })
                 }
-                if(kode_booking && taskid){
+                if (kode_booking && taskid) {
                     let waktu = moment(new Date()).format('x')
-                    let x = {kodebooking:kode_booking,taskid,waktu}
-                    let kirim = await axios.post(purworejo + "/update-antrean",x, config)
+                    let x = { kodebooking: kode_booking, taskid, waktu }
+                    let kirim = await axios.post(purworejo + "/update-antrean", x, config)
                     console.log(x);
                     console.log(kirim.data.data);
                 }
 
-                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].nomor, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id,kode_booking }, { transaction: t })
+                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].nomor, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking }, { transaction: t })
                 hasil.dataValues.sisa_antrian = +sisa[0].total
                 await t.commit();
                 io.emit("refresh_antrian_layanan", asd);
@@ -221,15 +221,10 @@ const koneksi_socket = koneksi_socket => {
                         }
                     }
 
-                    let nik = ''
-                    let no_hp = ''
-                    if (jenis_pasien == 'JKN') {
-                        let tgl = moment().format("YYYY-MM-DD")
-                        let kirim = await axios.get(purworejo + `/get-pasien-bpjs?noPeserta=${noBpjs}&tgl=${tgl}`, config)
+                    let kirim4 = await axios.get(purworejo + "/get-pasien?no=" + noRm, config)
 
-                        nik = kirim.data.data.peserta.nik
-                        no_hp = kirim.data.data.peserta.mr.noTelepon
-                    }
+                    let nik = kirim4.data.data[0].nik
+                    let no_hp = kirim4.data.data[0].noTelp
 
                     let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking }, { transaction: t })
                     hasil.dataValues.sisa_antrian = +sisa[0].total
@@ -341,21 +336,16 @@ const koneksi_socket = koneksi_socket => {
                     let nomor_antrean = `${initial}-${no}`
                     let kode_poli = ''
                     let nama_poli = ''
-                    let nik = ''
-                    let no_hp = ''
                     for (let i = 0; i < poli.length; i++) {
                         if (idPoli == poli[i].id) {
                             kode_poli = poli[i].kdPoliBpjs
                             nama_poli = poli[i].nama
                         }
                     }
-                    if (jenis_pasien == 'JKN') {
-                        let tgl = moment().format("YYYY-MM-DD")
-                        let kirim = await axios.get(purworejo + `/get-pasien-bpjs?noPeserta=${noBpjs}&tgl=${tgl}`, config)
+                    let kirim4 = await axios.get(purworejo + "/get-pasien?no=" + noRm, config)
 
-                        nik = kirim.data.data.peserta.nik
-                        no_hp = kirim.data.data.peserta.mr.noTelepon
-                    }
+                    let nik = kirim4.data.data[0].nik
+                    let no_hp = kirim4.data.data[0].noTelp
 
                     // let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, noSuratKontrol, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
                     // let idDaftar = kirimRajal.data.data.idDaftar
@@ -363,14 +353,14 @@ const koneksi_socket = koneksi_socket => {
                     // let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
                     // let sep = kirimSEP.data.data.sep.data.sep
                     let sep
-                    let hasilSEP = await sepModel.create({id:uuid_v4(),no_rm:noRm,kode_booking,no_sep:sep.noSep,data:sep},{transaction:t})
+                    let hasilSEP = await sepModel.create({ id: uuid_v4(), no_rm: noRm, kode_booking, no_sep: sep.noSep, data: sep }, { transaction: t })
 
-                    let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id,no_rm: noRm, kode_booking }, { transaction: t })
+                    let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking }, { transaction: t })
 
                     let kirim2 = await axios.post(purworejo + "/create-antrean", { kodebooking: kode_booking, jenispasien: jenis_pasien, nomorkartu: noBpjs, nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: noRm, tanggalperiksa: tanggal_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: nomor_referensi, nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan }, config)
-                    
+
                     let kirim3 = await axios.post(purworejo + "/update-antrean", { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 })
-                    
+
                     hasil.dataValues.sisa_antrian = +sisa[0].total
 
                     await t.commit();
@@ -378,7 +368,7 @@ const koneksi_socket = koneksi_socket => {
                     // console.log(RAJAL, 'KIRIM RAJAL');
                     // let SEP = kirimSEP.data.data.sep
                     // console.log(SEP, "SEP");
-                    io.emit("refresh_register_APM_mandiri", {hasil,hasilSEP});
+                    io.emit("refresh_register_APM_mandiri", { hasil, hasilSEP });
                 }
 
             } catch (error) {
@@ -416,15 +406,10 @@ const koneksi_socket = koneksi_socket => {
                     }
                 }
 
-                let nik = ''
-                let no_hp = ''
-                if (jenis_pasien == 'JKN') {
-                    let tgl = moment().format("YYYY-MM-DD")
-                    let kirim = await axios.get(purworejo + `/get-pasien-bpjs?noPeserta=${nomor_kartu}&tgl=${tgl}`, config)
+                let kirim4 = await axios.get(purworejo + "/get-pasien?no=" + noRm, config)
 
-                    nik = kirim.data.data.peserta.nik
-                    no_hp = kirim.data.data.peserta.mr.noTelepon
-                }
+                let nik = kirim4.data.data[0].nik
+                let no_hp = kirim4.data.data[0].noTelp
 
                 let kirim2 = await axios.post(purworejo + "/create-antrean", { kodebooking: kode_booking, jenispasien: jenis_pasien, nomorkartu: nomor_kartu, nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: no_rm, tanggalperiksa: tanggal_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: nomor_referensi, nomorantrean: nomor_antrean, angkaantrean: angka_antrean, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan }, config)
 
