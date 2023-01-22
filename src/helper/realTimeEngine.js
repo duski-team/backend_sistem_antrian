@@ -37,9 +37,9 @@ const koneksi_socket = koneksi_socket => {
                 if (kode_booking && taskid) {
                     let waktu = moment(new Date()).format('x')
                     let x = { kodebooking: kode_booking, taskid, waktu }
-                    let kirim = await axios.post(purworejo + "/update-antrean", x, config)
-                    console.log(x);
-                    console.log(kirim.data.data);
+                    // let kirim = await axios.post(purworejo + "/update-antrean", x, config)
+                    console.log(x,"kode booking");
+                    // console.log(kirim.data.data);
                 }
                 if (status_antrian == 0) {
                     let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
@@ -169,9 +169,9 @@ const koneksi_socket = koneksi_socket => {
                 if (kode_booking && taskid) {
                     let waktu = moment(new Date()).format('x')
                     let x = { kodebooking: kode_booking, taskid, waktu }
-                    let kirim = await axios.post(purworejo + "/update-antrean", x, config)
-                    console.log(x);
-                    console.log(kirim.data.data);
+                    // let kirim = await axios.post(purworejo + "/update-antrean", x, config)
+                    console.log(x,"kode_booking");
+                    // console.log(kirim.data.data);
                 }
 
                 let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].nomor, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking }, { transaction: t })
