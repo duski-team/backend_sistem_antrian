@@ -20,6 +20,9 @@ function syncJadwal() {
         console.log(moment().format(), "berhasil");
         // console.log("tessssssssssssssssss");
     },
+      null,
+      true,
+     "Asia/Jakarta"
     )
     job.start()
 }
