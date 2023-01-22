@@ -69,7 +69,7 @@ function syncJadwal() {
 //     )
 //     job.start()
 // }
-// syncJadwal()
+syncJadwal()
 
 class Controller {
 
