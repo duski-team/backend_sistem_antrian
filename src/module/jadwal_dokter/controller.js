@@ -15,52 +15,10 @@ const ClusterCronJob = require('cron-cluster')(client, { key: "leaderKey" }).Cro
 client.connect().catch(console.error)
 
 
-// function syncJadwal() {
-//     var job = new ClusterCronJob('*/2 * * * * *', function () {
-//         console.log(moment().format(), "berhasil");
-//     },
-//       null,
-//       true,
-//      "Asia/Jakarta"
-//     )
-//     job.start()
-// }
-
 function syncJadwal() {
-    var job = new ClusterCronJob('0 1 * * *', async function () {
-        try {
-            // let curdate = moment().format('YYYY-MM-DD')
-            let curdate= moment().add(2,'d').format('YYYY-MM-DD')
-            let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`,s);
-            if(cekJadwal.length>0){
-                console.log("data sudah ada");
-            }else{
-                let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + curdate, config)
-                let datanya = kirim.data.data
-                let bulknya = []
-                // console.log(kirim.data.data);
-                for (let i = 0; i < datanya.length; i++) {
-                    let awal = moment(datanya[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
-                    let akhir = moment(datanya[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
-                    if (datanya[i].isCuti == 0) {
-                        // console.log(curdate+" "+awal);
-                        bulknya.push({
-                            id: uuid_v4(),
-                            waktu_mulai: curdate + " " + awal,
-                            waktu_selesai: curdate + " " + akhir,
-                            kuota: datanya[i].kuota,
-                            kuota_mobile: datanya[i].kuotaOnline,
-                            dokter_id: datanya[i].idDokter,
-                            poli_id: datanya[i].idPoli
-                        })
-                    }
-                }
-                await jadwal_dokter.bulkCreate(bulknya)
-                console.log("berhasil");
-            }
-        } catch (error) {
-            console.log(error);
-        }
+    var job = new ClusterCronJob('*/1 * * * * *', function () {
+        console.log(moment().format(), "berhasil");
+        // console.log("tessssssssssssssssss");
     },
       null,
       true,
@@ -68,6 +26,49 @@ function syncJadwal() {
     )
     job.start()
 }
+
+// function syncJadwal() {
+//     var job = new ClusterCronJob('0 1 * * *', async function () {
+//         try {
+//             // let curdate = moment().format('YYYY-MM-DD')
+//             let curdate= moment().add(2,'d').format('YYYY-MM-DD')
+//             let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`,s);
+//             if(cekJadwal.length>0){
+//                 console.log("data sudah ada");
+//             }else{
+//                 let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + curdate, config)
+//                 let datanya = kirim.data.data
+//                 let bulknya = []
+//                 // console.log(kirim.data.data);
+//                 for (let i = 0; i < datanya.length; i++) {
+//                     let awal = moment(datanya[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
+//                     let akhir = moment(datanya[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
+//                     if (datanya[i].isCuti == 0) {
+//                         // console.log(curdate+" "+awal);
+//                         bulknya.push({
+//                             id: uuid_v4(),
+//                             waktu_mulai: curdate + " " + awal,
+//                             waktu_selesai: curdate + " " + akhir,
+//                             kuota: datanya[i].kuota,
+//                             kuota_mobile: datanya[i].kuotaOnline,
+//                             dokter_id: datanya[i].idDokter,
+//                             poli_id: datanya[i].idPoli
+//                         })
+//                     }
+//                 }
+//                 await jadwal_dokter.bulkCreate(bulknya)
+//                 console.log("berhasil");
+//             }
+//         } catch (error) {
+//             console.log(error);
+//         }
+//     },
+//       null,
+//       true,
+//      "Asia/Jakarta"
+//     )
+//     job.start()
+// }
 syncJadwal()
 
 class Controller {
