@@ -16,7 +16,7 @@ client.connect().catch(console.error)
 
 
 function syncJadwal() {
-    var job = new ClusterCronJob('*/1 * * * * *', function () {
+    var job = new ClusterCronJob('5 * * * *', function () {
         console.log(moment().format(), "berhasil");
         // console.log("tessssssssssssssssss");
     },
