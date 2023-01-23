@@ -197,6 +197,7 @@ class Controller {
         }
     }
     
+    
     static async listAntrianAktif(req, res) {
         try {
             let data = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.master_loket_id notnull and al.status_antrian = 1`, s)
