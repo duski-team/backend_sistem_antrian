@@ -4,6 +4,10 @@ const { v4: uuid_v4 } = require("uuid");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT }
 const moment = require('moment');
+const axios = require('axios');
+
+const purworejo = process.env.HOST_PURWOREJO
+const config = require("../../helper/config").config
 
 class Controller {
 
@@ -196,7 +200,7 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }
     }
-    
+
 
     static async listAntrianAktif(req, res) {
         try {
@@ -210,11 +214,25 @@ class Controller {
     }
 
     static async listAntrianAktifPoli(req, res) {
-        let {poli_id} = req.body
+        let { poli_id, poli_layanan } = req.body
         try {
-            let data = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.master_loket_id notnull and al.status_antrian = 1 and date(al.tanggal_antrian) = date(now()) and al.poli_id = '${poli_id}'`, s)
+            let tgl = moment().format('YYYY-MM-DD')
+            let isi = ''
+            
+            let data = await sq.query(`select al.*,jd.dokter_id  from antrian_list al join jadwal_dokter jd on jd.id = al.jadwal_dokter_id where al."deletedAt" isnull and al.master_loket_id notnull and al.status_antrian = 1 and date(al.tanggal_antrian) = date(now()) and al.poli_id = '${poli_id}'`, s)
+            let sisa = await sq.query(`select count(*)as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_layanan = ${poli_layanan} and status_antrian in (0,1)`, s);
+            let kirim = await axios.get(purworejo + "/get-dokter", config)
+            let data_dokter = kirim.data.data
+            // console.log(data_dokter);
+            for (let i = 0; i < data_dokter.length; i++) {
+                for (let j = 0; j < data.length; j++) {
+                    if (data_dokter[i].id == data[j].dokter_id) {
+                        data[j].nama_dokter = data_dokter[i].nama
+                    } 
+                }
+            }
 
-            res.status(200).json({ status: 200, message: "sukses", data })
+            res.status(200).json({ status: 200, message: "sukses", data, sisa: sisa[0].total })
         } catch (error) {
             console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error })
