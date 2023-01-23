@@ -196,6 +196,17 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }
     }
+    
+    static async listAntrianAktif(req, res) {
+        try {
+            let data = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.master_loket_id notnull and al.status_antrian = 1`, s)
+
+            res.status(200).json({ status: 200, message: "sukses", data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
 
     // static async registerPoli(req,res){
     //     const{tanggal_antrian,is_master,poli_layanan,initial,antrian_no,is_cancel,is_process,status_antrian,antrian_list_id,jadwal_dokter_id,poli_id,master_loket_id}=req.body

@@ -7,5 +7,6 @@ router.post('/registerAntrian', Controller.registerAntrian)
 router.post('/update', Controller.update)
 router.post('/list',Controller.list)
 router.post('/listHalaman',Controller.listHalaman)
+router.get('/listAntrianAktif',Controller.listAntrianAktif)
 // router.post('/delete',authentification,Controller.delete)
 module.exports = router
