@@ -197,10 +197,10 @@ class Controller {
         }
     }
     
-    
+
     static async listAntrianAktif(req, res) {
         try {
-            let data = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.master_loket_id notnull and al.status_antrian = 1`, s)
+            let data = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.master_loket_id notnull and al.status_antrian = 1 and date(al.tanggal_antrian) = date(now())`, s)
 
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
