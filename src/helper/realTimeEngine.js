@@ -234,7 +234,7 @@ const koneksi_socket = koneksi_socket => {
                     // let kirim3 = await axios.post(purworejo + "/update-antrean", { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 })
 
                     await t.commit();
-                    io.emit("refresh_register_APM_mandiri", hasil);
+                    io.emit("refresh_register_APM_mandiri", {hasil});
                 }
             } catch (error) {
                 await t.rollback();
