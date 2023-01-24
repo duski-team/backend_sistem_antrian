@@ -88,162 +88,110 @@ class Controller {
                 let kirim = await axios.get(purworejo + `/get-pasien?no=${data[0].no_rm}`, config)
                 noTelp = kirim.data.data[0].noTelp
             }
+
             let html = `
             <!DOCTYPE html>
                 <html lang="en">
                 <head>
-                    <meta charset="UTF-8">
-                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <meta charset="UTF-8" />
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                     <title>Document</title>
                     <style>
-                        .contain{
-                            max-width:25%;
-                            /* border:1px solid red; */
-                        }
-                        table{
-                            border-collapse: collapse;
-                        }
-                    
+                    .contain {
+                        max-width: 25%;
+                        /* border:1px solid red; */
+                        margin-top: 1em;
+                    }
+                    .centering {
+                        text-align: center;
+                    }
+                    .topmargin {
+                        margin-bottom: 1.5em;
+                    }
+                    .botmargin {
+                        margin-top: 1.2em;
+                    }
+                    table {
+                        border-collapse: collapse;
+                    }
                     </style>
                 </head>
                 <body>
                     <div class="contain">
-                        <header>
-                            <center>
-                                BUKTI REGISTRASI <br>
-                                RSUD R.A.A Tjokronegoro
-                            </center>
-                        </header>
-                        <table style="margin-left:10px;">
+                    <header class="topmargin">
+                        <div class="centering">
+                        <!-- <center> -->
+                        BUKTI REGISTRASI <br />
+                        RSUD R.A.A Tjokronegoro
+                        <!-- </center> -->
+                        </div>
+                    </header>
+                    <table style="margin-left: 10px">
                         <tr>
-                            <td width="100px">
-                                No. SEP
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                                ${data.length==0?"":data[0].no_sep}
-                            </td>
+                        <td width="100px">No. SEP</td>
+                        <td>:</td>
+                        <td>${data.length==0?"":data[0].no_sep}</td>
                         </tr>
                         <tr>
-                            <td>
-                                Tgl. SEP
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                                ${data.length==0?"":data[0].data_sep.tglSep}
-                            </td>
+                        <td>Tgl. SEP</td>
+                        <td>:</td>
+                        <td>${data.length==0?"":data[0].data_sep.tglSep}</td>
                         </tr>
                         <tr>
-                            <td>
-                            No. Kartu
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                                ${data.length==0?"":data[0].data_sep.peserta.noKartu}
-                            </td>
+                        <td>No. Kartu</td>
+                        <td>:</td>
+                        <td>${data.length==0?"":data[0].data_sep.peserta.noKartu}</td>
                         </tr>
                         <tr>
-                            <td>
-                                No. RM
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                                ${data.length==0?"":data[0].no_rm}
-                            </td>
+                        <td>No. RM</td>
+                        <td>:</td>
+                        <td>${data.length==0?"":data[0].no_rm}</td>
                         </tr>
                         <tr>
-                            <td>
-                                Nama Peserta
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                                ${data.length==0?"":data[0].data_sep.peserta.nama}
-                            </td>
+                        <td>Nama Peserta</td>
+                        <td>:</td>
+                        <td>${data.length==0?"":data[0].data_sep.peserta.nama}</td>
                         </tr>
                         <tr>
-                            <td>
-                            No. Telp
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                                ${noTelp}
-                            </td>
+                        <td>No. Telp</td>
+                        <td>:</td>
+                        <td>${noTelp}</td>
                         </tr>
                         <tr>
-                            <td>
-                                Tgl. Lahir
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                                ${data.length==0?"":data[0].data_sep.peserta.tglLahir}
-                            </td>
+                        <td>Tgl. Lahir</td>
+                        <td>:</td>
+                        <td>${data.length==0?"":data[0].data_sep.peserta.tglLahir}</td>
                         </tr>
                         <tr>
-                            <td>
-                                Jenis Kelamin
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                                ${data.length==0?"":data[0].data_sep.peserta.kelamin}
-                            </td>
+                        <td>Jenis Kelamin</td>
+                        <td>:</td>
+                        <td>${data.length==0?"":data[0].data_sep.peserta.kelamin}</td>
                         </tr>
                         <tr>
-                            <td>
-                            Poli Tujuan
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                                ${data.length==0?"":data[0].poli_tujuan}
-                            </td>
+                        <td>Poli Tujuan</td>
+                        <td>:</td>
+                        <td>${data.length==0?"":data[0].poli_tujuan}</td>
                         </tr>
                         <tr>
-                            <td style="vertical-align: top;">
-                                Nama Dokter
-                            </td>
-                            <td style="vertical-align: top;">
-                                :
-                            </td>
-                            <td style="vertical-align: top;">
-                                ${data.length==0?"":data[0].nama_dokter}
-                            </td>
+                        <td style="vertical-align: top">Nama Dokter</td>
+                        <td style="vertical-align: top">:</td>
+                        <td style="vertical-align: top">${data.length==0?"":data[0].nama_dokter}</td>
                         </tr>
                         <tr>
-                            <td>
-                                No Urut
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                                ${data.length==0?"":data[0].antrian_no}
-                            </td>
+                        <td>No Urut</td>
+                        <td>:</td>
+                        <td>${data.length==0?"":data[0].antrian_no}</td>
                         </tr>
-                        </table>
-                        <footer>
-                            <center>
-                            RSUD R.A.A Tjokronegoro  <br>
-                                Mitra Tepercaya menuju sehat
-                            </center>
-                        </footer>
+                    </table>
+                    <footer class="botmargin">
+                        <div class="centering">
+                        <!-- <center> -->
+                        RSUD R.A.A Tjokronegoro <br />
+                        Mitra Tepercaya menuju sehat
+                        <!-- </center> -->
+                        </div>
+                    </footer>
                     </div>
                 </body>
                 </html>
@@ -252,7 +200,7 @@ class Controller {
             // res.status(200).json({status:200,message:"sukses",data:data})
         } catch (error) {
             console.log(error);
-            res.status(500).json({ status: 500, message: "gagal", data: error })
+            // res.status(500).json({ status: 500, message: "gagal", data: error })
         }
     }
 
@@ -262,158 +210,105 @@ class Controller {
     //         <!DOCTYPE html>
     //             <html lang="en">
     //             <head>
-    //                 <meta charset="UTF-8">
-    //                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    //                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    //                 <meta charset="UTF-8" />
+    //                 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    //                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     //                 <title>Document</title>
     //                 <style>
-    //                     .contain{
-    //                         max-width:25%;
-    //                         /* border:1px solid red; */
-    //                     }
-    //                     table{
-    //                         border-collapse: collapse;
-    //                     }
-                    
+    //                 .contain {
+    //                     max-width: 25%;
+    //                     /* border:1px solid red; */
+    //                     margin-top: 1em;
+    //                 }
+    //                 .centering {
+    //                     text-align: center;
+    //                 }
+    //                 .topmargin {
+    //                     margin-bottom: 1.5em;
+    //                 }
+    //                 .botmargin {
+    //                     margin-top: 1.2em;
+    //                 }
+    //                 table {
+    //                     border-collapse: collapse;
+    //                 }
     //                 </style>
     //             </head>
     //             <body>
     //                 <div class="contain">
-    //                     <header>
-    //                         <center>
-    //                             BUKTI REGISTRASI <br>
-    //                             RSUD R.A.A Tjokronegoro
-    //                         </center>
-    //                     </header>
-    //                     <table style="margin-left:10px;">
+    //                 <header class="topmargin">
+    //                     <div class="centering">
+    //                     <!-- <center> -->
+    //                     BUKTI REGISTRASI <br />
+    //                     RSUD R.A.A Tjokronegoro
+    //                     <!-- </center> -->
+    //                     </div>
+    //                 </header>
+    //                 <table style="margin-left: 10px">
     //                     <tr>
-    //                         <td width="100px">
-    //                             No. SEP
-    //                         </td>
-    //                         <td>
-    //                             :
-    //                         </td>
-    //                         <td>
-    //                             RSS1391665630526
-    //                         </td>
+    //                     <td width="100px">No. SEP</td>
+    //                     <td>:</td>
+    //                     <td>RSS1391665630526</td>
     //                     </tr>
     //                     <tr>
-    //                         <td>
-    //                             Tgl. SEP
-    //                         </td>
-    //                         <td>
-    //                             :
-    //                         </td>
-    //                         <td>
-    //                             13-10-2022
-    //                         </td>
+    //                     <td>Tgl. SEP</td>
+    //                     <td>:</td>
+    //                     <td>13-10-2022</td>
     //                     </tr>
     //                     <tr>
-    //                         <td>
-    //                         No. Kartu
-    //                         </td>
-    //                         <td>
-    //                             :
-    //                         </td>
-    //                         <td>
-    //                             0002580954917
-    //                         </td>
+    //                     <td>No. Kartu</td>
+    //                     <td>:</td>
+    //                     <td>0002580954917</td>
     //                     </tr>
     //                     <tr>
-    //                         <td>
-    //                             No. RM
-    //                         </td>
-    //                         <td>
-    //                             :
-    //                         </td>
-    //                         <td>
-    //                             02025139
-    //                         </td>
+    //                     <td>No. RM</td>
+    //                     <td>:</td>
+    //                     <td>02025139</td>
     //                     </tr>
     //                     <tr>
-    //                         <td>
-    //                             Nama Peserta
-    //                         </td>
-    //                         <td>
-    //                             :
-    //                         </td>
-    //                         <td>
-    //                         SUKISMI
-    //                         </td>
+    //                     <td>Nama Peserta</td>
+    //                     <td>:</td>
+    //                     <td>SUKISMI</td>
     //                     </tr>
     //                     <tr>
-    //                         <td>
-    //                         No. Telp
-    //                         </td>
-    //                         <td>
-    //                             :
-    //                         </td>
-    //                         <td>
-    //                         081328760101
-    //                         </td>
+    //                     <td>No. Telp</td>
+    //                     <td>:</td>
+    //                     <td>081328760101</td>
     //                     </tr>
     //                     <tr>
-    //                         <td>
-    //                             Tgl. Lahir
-    //                         </td>
-    //                         <td>
-    //                             :
-    //                         </td>
-    //                         <td>
-    //                             19-12-1960
-    //                         </td>
+    //                     <td>Tgl. Lahir</td>
+    //                     <td>:</td>
+    //                     <td>19-12-1960</td>
     //                     </tr>
     //                     <tr>
-    //                         <td>
-    //                             Jenis Kelamin
-    //                         </td>
-    //                         <td>
-    //                             :
-    //                         </td>
-    //                         <td>
-    //                         P
-    //                         </td>
+    //                     <td>Jenis Kelamin</td>
+    //                     <td>:</td>
+    //                     <td>P</td>
     //                     </tr>
     //                     <tr>
-    //                         <td>
-    //                         Poli Tujuan
-    //                         </td>
-    //                         <td>
-    //                             :
-    //                         </td>
-    //                         <td>
-    //                         008-Kanker Terpadu
-    //                         </td>
+    //                     <td>Poli Tujuan</td>
+    //                     <td>:</td>
+    //                     <td>008-Kanker Terpadu</td>
     //                     </tr>
     //                     <tr>
-    //                         <td style="vertical-align: top;">
-    //                             Nama Dokter
-    //                         </td>
-    //                         <td style="vertical-align: top;">
-    //                             :
-    //                         </td>
-    //                         <td style="vertical-align: top;">
-    //                         dr. Kartika Widayat I Sp. Pd-KHOM
-    //                         </td>
+    //                     <td style="vertical-align: top">Nama Dokter</td>
+    //                     <td style="vertical-align: top">:</td>
+    //                     <td style="vertical-align: top">dr. Kartika Widayat I Sp. Pd-KHOM</td>
     //                     </tr>
     //                     <tr>
-    //                         <td>
-    //                             No Urut
-    //                         </td>
-    //                         <td>
-    //                             :
-    //                         </td>
-    //                         <td>
-    //                         14
-    //                         </td>
+    //                     <td>No Urut</td>
+    //                     <td>:</td>
+    //                     <td>14</td>
     //                     </tr>
-    //                     </table>
-    //                     <footer>
-    //                         <center>
-    //                         RSUD R.A.A Tjokronegoro <br>
-    //                             Mitra Tepercaya menuju sehat
-    //                         </center>
-    //                     </footer>
+    //                 </table>
+    //                 <footer class="botmargin">
+    //                     <div class="centering">
+    //                     <!-- <center> -->
+    //                     RSUD R.A.A Tjokronegoro <br />
+    //                     Mitra Tepercaya menuju sehat
+    //                     <!-- </center> -->
+    //                     </div>
+    //                 </footer>
     //                 </div>
     //             </body>
     //             </html>
