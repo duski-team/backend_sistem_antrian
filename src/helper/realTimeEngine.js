@@ -356,6 +356,7 @@ const koneksi_socket = koneksi_socket => {
                     console.log(kirimSEP);
                     console.log(JSON.stringify(kirimSEP.data.data));
                     let sep = kirimSEP.data.data.sep
+                    console.log(sep);
                     // let sep={noSep:null}
                     let idAntrian = uuid_v4()
                     let hasil = await antrian_list.create({ id: idAntrian, tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id,no_rm: noRm, kode_booking }, { transaction: t })
