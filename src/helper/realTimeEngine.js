@@ -372,7 +372,7 @@ const koneksi_socket = koneksi_socket => {
                     // let SEP = kirimSEP.data.data.sep
                     console.log(JSON.stringify(kirimSEP.data.data));
                     // console.log(SEP, "SEP");
-                    io.emit("refresh_register_APM_mandiri", { hasil, hasilSEP });
+                    io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP });
                 }
 
             } catch (error) {
