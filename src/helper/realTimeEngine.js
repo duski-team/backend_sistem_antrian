@@ -369,6 +369,8 @@ const koneksi_socket = koneksi_socket => {
                     console.log(RAJAL, 'KIRIM RAJAL');
                     let SEP = kirimSEP.data.data.sep
                     console.log(SEP, "SEP");
+                    console.log("==========");
+                    console.log(kirimSEP.data.data.sep.data.sep);
                     io.emit("refresh_register_APM_mandiri", { hasil, hasilSEP });
                 }
 
