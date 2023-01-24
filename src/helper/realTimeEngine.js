@@ -356,6 +356,7 @@ const koneksi_socket = koneksi_socket => {
                     console.log(kirimSEP);
                     console.log(JSON.stringify(kirimSEP.data.data));
                     let sep = kirimSEP.data.data.sep
+                    console.log("");
                     console.log(sep);
                     // let sep={noSep:null}
                     let idAntrian = uuid_v4()
