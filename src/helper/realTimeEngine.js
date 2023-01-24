@@ -79,7 +79,7 @@ const koneksi_socket = koneksi_socket => {
             }
         })
 
-        socket.on('registerAntrianLoket', async (asd) => {
+        socket.on('registerAntrianLoket', async (asd,room_id) => {
             const { tanggal_antrian, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id, booking_id } = asd
 
             try {
@@ -102,7 +102,7 @@ const koneksi_socket = koneksi_socket => {
                     let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: no, sequence: sequence[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id, booking_id })
                     hasil.dataValues.sisa_antrian = +sisa[0].total
 
-                    io.emit("refresh_antrian_loket", hasil);
+                    io.to(room_id).emit("refresh_antrian_loket", hasil);
                 }
             } catch (error) {
                 await t.rollback();
