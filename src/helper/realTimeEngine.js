@@ -209,6 +209,7 @@ const koneksi_socket = koneksi_socket => {
                     let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
                     // console.log(kirimRajal, 'KIRIM RAJAL');
                     let kode_booking = moment().format("YYYYMMDD") + `${initial}${no}`
+                    let tgl_periksa = moment().format("YYYY-MM-DD")
                     let nomor_antrean = `${initial}-${no}`
                     let kirim = await axios.get(purworejo + "/get-poli", config)
                     let poli = kirim.data.data
