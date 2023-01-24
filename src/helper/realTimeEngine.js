@@ -352,7 +352,9 @@ const koneksi_socket = koneksi_socket => {
                     let idDaftar = kirimRajal.data.data.idDaftar
 
                     let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
-                    let sep = kirimSEP.data.data.sep.data.sep
+                    console.log("==========ini SEP ==========");
+                    console.log(JSON.stringify(kirimSEP));
+                    let sep = kirimSEP.data.data.sep
                     // let sep={noSep:null}
                     let idAntrian = uuid_v4()
                     let hasil = await antrian_list.create({ id: idAntrian, tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id,no_rm: noRm, kode_booking }, { transaction: t })
@@ -369,6 +371,8 @@ const koneksi_socket = koneksi_socket => {
                     console.log(RAJAL, 'KIRIM RAJAL');
                     let SEP = kirimSEP.data.data.sep
                     console.log(SEP, "SEP");
+                    // console.log("==========");
+                    // console.log(kirimSEP.data.data.sep.data.sep);
                     io.emit("refresh_register_APM_mandiri", { hasil, hasilSEP });
                 }
 
