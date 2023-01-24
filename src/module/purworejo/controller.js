@@ -302,7 +302,7 @@ class Controller {
     }
 
     static async registerAntreanBPJSLoket(req, res) {
-        const { jenis_pasien, nomor_kartu, poli_id, pasien_baru, no_rm, tanggal_periksa, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, nomor_referensi, nomor_antrean, angka_antrean, estimasi_dilayani, keterangan, id_antrian_list } = req.body
+        const { nomor_kartu, poli_id, pasien_baru, no_rm, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, nomor_referensi, nomor_antrean, angka_antrean, estimasi_dilayani, keterangan, id_antrian_list } = req.body
 
         const t = await sq.transaction();
 
@@ -320,21 +320,48 @@ class Controller {
                 }
             }
 
-            let kirim4 = await axios.get(purworejo + "/get-pasien?no=" + noRm, config)
+            let kirim4 = await axios.get(purworejo + "/get-pasien?no=" + no_rm, config)
 
             let nik = kirim4.data.data[0].nik
             let no_hp = kirim4.data.data[0].noTelp
 
-            let kirim2 = await axios.post(purworejo + "/create-antrean", { kodebooking: kode_booking, jenispasien: jenis_pasien, nomorkartu: nomor_kartu, nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: no_rm, tanggalperiksa: tanggal_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: nomor_referensi, nomorantrean: nomor_antrean, angkaantrean: angka_antrean, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan }, config)
+            let tgl_periksa = moment().format("YYYY-MM-DD")
+
+            let kirim2 = await axios.post(purworejo + "/create-antrean", { kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: nomor_kartu, nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: no_rm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: nomor_referensi, nomorantrean: nomor_antrean, angkaantrean: angka_antrean, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan }, config)
 
             let antrian = await antrian_list.update({ no_rm, kode_booking }, { where: { id: id_antrian_list } })
 
-            let kirim3 = await axios.post(purworejo + "/update-antrean", { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 })
+            let kirim3 = await axios.post(purworejo + "/update-antrean", { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }, config)
+            // console.log(kirim3);
 
+            // console.log(kirim2);
             res.status(200).json({ status: 200, message: "sukses", data: kirim2.data })
         } catch (error) {
             await t.rollback();
             console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+            // if (error.name = "AxiosError") {
+            //     let respon_error = error.response.data
+            //     console.log(respon_error);
+            //     socket.emit("error", respon_error);
+            // }
+            // else {
+            //     console.log(error);
+            //     socket.emit("error", error);
+            // }
+        }
+    }
+
+    static async updateAntrean(req, res) {
+        const { kodebooking, waktu } = req.body
+
+        try {
+            let kirim3 = await axios.post(purworejo + "/update-antrean", { kodebooking, waktu, taskid: 3 })
+
+            res.status(200).json({ status: 200, message: "sukses", data: kirim3.data })
+        } catch (error) {
+            console.log(error);
+            console.log(req.body);
             res.status(500).json({ status: 500, message: "gagal", data: error })
             // if (error.name = "AxiosError") {
             //     let respon_error = error.response.data
