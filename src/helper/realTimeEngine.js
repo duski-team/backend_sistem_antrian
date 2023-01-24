@@ -79,7 +79,7 @@ const koneksi_socket = koneksi_socket => {
             }
         })
 
-        socket.on('registerAntrianLoket', async (asd,room_id) => {
+        socket.on('registerAntrianLoket', async (asd) => {
             const { tanggal_antrian, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id, booking_id } = asd
 
             try {
@@ -102,7 +102,7 @@ const koneksi_socket = koneksi_socket => {
                     let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: no, sequence: sequence[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id, booking_id })
                     hasil.dataValues.sisa_antrian = +sisa[0].total
 
-                    io.to(room_id).emit("refresh_antrian_loket", hasil);
+                    io.emit("refresh_antrian_loket", hasil);
                 }
             } catch (error) {
                 await t.rollback();
@@ -110,6 +110,38 @@ const koneksi_socket = koneksi_socket => {
                 socket.emit("error", error);
             }
         })
+
+        // socket.on('registerAntrianLoket', async (asd,room_id) => {
+        //     const { tanggal_antrian, poli_layanan, initial, status_antrian, poli_id, master_loket_id, jenis_antrian_id, booking_id } = asd
+
+        //     try {
+        //         let cekBooking = []
+        //         let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
+
+        //         let sequence = await sq.query(`select count(*)+1 as nomor from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan =2`, s);
+        //         let sisa = await sq.query(`select count(*)as total from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan = 2 and al.status_antrian in (0,1)`, s);
+
+        //         if (booking_id) {
+        //             cekBooking = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.booking_id = '${booking_id}' and date(al.tanggal_antrian) = '${tgl}'`, s)
+        //         }
+
+        //         if (cekBooking.length > 0) {
+        //             cekBooking[0].sisa_antrian = sisa[0].total - 1
+        //             io.emit("refresh_antrian_loket", cekBooking[0]);
+        //         } else {
+        //             let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
+        //             let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
+        //             let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: no, sequence: sequence[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id, booking_id })
+        //             hasil.dataValues.sisa_antrian = +sisa[0].total
+
+        //             io.to(room_id).emit("refresh_antrian_loket", hasil);
+        //         }
+        //     } catch (error) {
+        //         await t.rollback();
+        //         console.log(error);
+        //         socket.emit("error", error);
+        //     }
+        // })
 
         socket.on('registerMandiri', async (asd) => {
             const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking } = asd
