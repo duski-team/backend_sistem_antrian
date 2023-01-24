@@ -164,11 +164,12 @@ class Controller {
             let kirim = await axios.post("https://rsutjokronegoro.purworejokab.go.id/headline/action.php", { getListHeadline }, {
                 headers: { Authorization: `Bearer ${process.env.TOKEN}`, 'Content-Type': 'application/x-www-form-urlencoded' }
             })
+            // console.log(kirim.data);
 
             res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
         } catch (error) {
-            console.log(error.response);
-            console.log(req.body);
+            // console.log(error.response);
+            // console.log(req.body);
             if (error.response.status == 404) {
                 res.status(200).json({ status: error.response.data.code, message: error.response.data.message })
             }

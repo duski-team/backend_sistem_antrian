@@ -131,6 +131,8 @@ class Controller {
             let kirim = await axios.get(purworejo + "/get-dokter", config)
             let data_dokter = kirim.data.data
 
+            // console.log(data);
+
             for (let i = 0; i < data.length; i++) {
                 for (let j = 0; j < data_dokter.length; j++) {
                     if (data_dokter[j].id == data[i].dokter_id) {
@@ -145,6 +147,7 @@ class Controller {
 
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (error) {
+            console.log(error);
             if (error.name = "AxiosError") {
                 // console.log(error.response.data);
                 let respon_error = error.response.data
