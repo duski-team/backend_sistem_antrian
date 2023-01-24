@@ -3,6 +3,7 @@ const axios = require('axios')
 const purworejo = process.env.HOST_PURWOREJO
 const config = require("../../helper/config").config
 const { QueryTypes } = require('sequelize');
+const { sq } = require("../../config/connection");
 const s = { type: QueryTypes.SELECT }
 
 class Controller {
@@ -85,9 +86,8 @@ class Controller {
             let noTelp = ""
             if(data.length>0){
                 let kirim = await axios.get(purworejo + `/get-pasien?no=${data[0].no_rm}`, config)
-                noTelp = kirim.data.data.noTelp
+                noTelp = kirim.data.data[0].noTelp
             }
-            
             let html = `
             <!DOCTYPE html>
                 <html lang="en">
@@ -249,7 +249,9 @@ class Controller {
                 </html>
             `
             res.send(html)
+            // res.status(200).json({status:200,message:"sukses",data:data})
         } catch (error) {
+            console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }
     }
