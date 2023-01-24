@@ -268,15 +268,15 @@ class Controller {
 
             res.status(200).json({ status: 200, message: "sukses", data: kirim.data.data })
         } catch (error) {
-              if (error.name = "AxiosError") {
-                    let respon_error = error.response.data
-                    console.log(respon_error);
-                    res.status(201).json({ status: respon_error.code, message: respon_error.message })
-                }
-                else {
-                    console.log(error);
-                    res.status(500).json({ status: 500, message: "gagal", data:error})
-                }
+            if (error.name = "AxiosError") {
+                let respon_error = error.response.data
+                console.log(respon_error);
+                res.status(201).json({ status: respon_error.code, message: respon_error.message })
+            }
+            else {
+                console.log(error);
+                 res.status(500).json({ status: 500, message: "gagal", data:error})
+            }
         }
     }
 }
