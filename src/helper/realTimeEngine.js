@@ -354,7 +354,7 @@ const koneksi_socket = koneksi_socket => {
                     let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
                     console.log("==========ini SEP ==========");
                     console.log(kirimSEP);
-                    console.log(JSON.stringify(kirimSEP.data));
+                    console.log(JSON.stringify(kirimSEP.data.data));
                     let sep = kirimSEP.data.data.sep
                     // let sep={noSep:null}
                     let idAntrian = uuid_v4()
