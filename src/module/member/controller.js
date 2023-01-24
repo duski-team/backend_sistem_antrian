@@ -18,11 +18,11 @@ class Controller {
             } else {
                 await member.create({ id: uuid_v4(), no_ktp, nama, no_bpjs, tempat_lahir, tanggal_lahir, alamat, alamat_domisili, no_hp, jenis_kelamin, status_kawin, pekerjaan, pendidikan, agama, suku_bangsa, id_provinsi, id_kota, id_kecamatan, id_kelurahan, nama_penanggung_jawab, hubungan_dengan_pasien, alamat_penanggung_jawab, no_hp_penanggung_jawab, keterangan, user_id: req.dataUsers.id }).then(data => {
                     res.status(200).json({ status: 200, message: "sukses", data })
-                }).catch(error => {
-                    console.log(error)
-                    res.status(500).json({ status: 500, message: "gagal", data: error })
                 })
             }
+        }).catch(error => {
+            console.log(error)
+            res.status(500).json({ status: 500, message: "gagal", data: error })
         })
     }
 
