@@ -99,7 +99,7 @@ class Controller {
                 <title>Document</title>
                 <style>
             
-                    @page { size: 58mm 100mm; margin:0;} /* output size */
+                    @page { size: 58mm 100mm; margin:0; height: 100mm;} /* output size */
                     /*
                     body.receipt .sheet { width: 58mm; height: 100mm; margin:0; }  sheet size 
                     */
