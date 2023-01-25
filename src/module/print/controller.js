@@ -9,177 +9,74 @@ const s = { type: QueryTypes.SELECT }
 class Controller {
 
     static async printAntrian(req, res) {
-        const { tgl, jam, no_antrian, tempat, sisa_antrian } = req.query
+        const {tgl,jam,no_antrian,tempat,sisa_antrian} = req.query
         try {
             let html = `
-                <!DOCTYPE html>
+            <!DOCTYPE html>
                 <html lang="en">
                 <head>
                     <meta charset="UTF-8">
                     <meta http-equiv="X-UA-Compatible" content="IE=edge">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>Document</title>
-                    <style>
-
-                        @page { size: 58mm 100mm; margin:2mm;} /* output size */
-                        body.receipt .sheet { width: 58mm; height: 100mm; margin:0; } /* sheet size */
-                        @media print { body.receipt { width: 58mm; margin:0; } } /* fix for Chrome */
+                <style>
+                    .container {
+                        /* background-color: 25%; */
+                        /* border:2px solid red; */
+                        max-width:100%;
+                        box-sizing:border-box;
+                    }
+                    header{
+                        border-top:2px solid black;
+                        border-bottom: 2px dashed black;
+                        text-align: center;
+                    }
+                    .tanggal{
+                        margin-top:10px;
+                    }
+                    .contain_nomor{
+                        text-align: center;
+                        border-bottom: 2px solid black;
+                    }
+                    .contain_nomor .nomor{
+                        font-size: 70px;
+                        font-weight: bold;
+                    }
                     
-                        table{
-                            border-collapse: collapse;
-                        }
-                        body{
-                            font-size: 2mm;
-                        }
-                    </style>
+                    .contain_nomor .loket{
+                        font-size: 20px;
+                        /* font-weight: bold; */
+                    }
+                </style>
                 </head>
                 <body>
-                    <div class="contain">
+                    <div class="container">
                         <header>
-                            <center>
-                                BUKTI REGISTRASI <br>
-                                RSUD R.A.A Tjokronegoro
-                            </center>
-                        </header><br>
-                        <table>
-                        <tr>
-                            <td width="60mm">
-                                No. SEP
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                            ${data.length==0?"":data[0].no_sep}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Tgl. SEP
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                            ${data.length==0?"":data[0].data_sep.tglSep}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                            No. Kartu
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                            ${data.length==0?"":data[0].data_sep.peserta.noKartu}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                No. RM
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                            ${data.length==0?"":data[0].no_rm}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Nama Peserta
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                            ${data.length==0?"":data[0].data_sep.peserta.nama}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                            No. Telp
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                            ${noTelp}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Tgl. Lahir
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                            ${data.length==0?"":data[0].data_sep.peserta.tglLahir}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Jenis Kelamin
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                            ${data.length==0?"":data[0].data_sep.peserta.kelamin}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                            Poli Tujuan
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                            ${data.length==0?"":data[0].poli_tujuan}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="vertical-align: top;">
-                                Nama Dokter
-                            </td>
-                            <td style="vertical-align: top;">
-                                :
-                            </td>
-                            <td style="vertical-align: top;">
-                            ${data.length==0?"":data[0].nama_dokter}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                No Urut
-                            </td>
-                            <td>
-                                :
-                            </td>
-                            <td>
-                            ${data.length==0?"":data[0].antrian_no}
-                            </td>
-                        </tr>
-                        </table><br>
-                        <footer>
-                            <center>
-                                RSUD R.A.A Tjokronegoro <br>
-                                Mitra Tepercaya menuju sehat
-                            </center>
-                        </footer>
+                            <p>RSUD <br>
+                            R.A.A Tjokronegoro</p>
+                        </header>
+                        <section class="tanggal">
+                            <small >${tgl}</small>
+                            <small style="float: right; "> ${jam} </small>
+                        </section>
+                        <section class="contain_nomor">
+                        <span class="nomor"> ${no_antrian} </span><br>
+                        <span class="loket">ANTRIAN ${tempat}</span><br><br>
+                        <small>
+                            Jumlah Antrian Yang belum Dipanggil: ${sisa_antrian} <br>
+                            <br>
+                            <br>
+                            <br>
+                        </small>
+                        </section>
                     </div>
                 </body>
-                </html>
-            `
+            </html>` 
             res.send(html)
-            // res.status(200).json({status:200,message:"sukses",data:data})
         } catch (error) {
-            console.log(error);
-            // res.status(500).json({ status: 500, message: "gagal", data: error })
+            res.status(500).json({ status: 500, message: "gagal", data: error })
         }
+
     }
 
     static async printSEP(req, res) {
