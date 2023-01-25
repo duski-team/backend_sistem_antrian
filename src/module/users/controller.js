@@ -265,8 +265,8 @@ class Controller {
 
         try {
             let kirim = await axios.post(purworejo + "/login",{username,password}, config)
-
-            res.status(200).json({ status: 200, message: "sukses", data: kirim.data.data })
+            let x = kirim.data.data
+            res.status(200).json({ status: 200, message: "sukses", data:x ,token:jwt.generateToken(x) })
         } catch (error) {
             if (error.name = "AxiosError") {
                 let respon_error = error.response.data
