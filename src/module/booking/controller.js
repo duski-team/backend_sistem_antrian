@@ -273,6 +273,21 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }
     }
+
+    static async cekSisaKuota(req, res) {
+        const { dokter_id, poli_id, tanggal } = req.body
+
+        try {
+            let total_kuota = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and jd.dokter_id = '${dokter_id}' and poli_id = '${poli_id}' and date(waktu_mulai) = '${tanggal}'`, s) 
+            let kuota_booking = await sq.query(`select count(*) as total_kuota_terbooking from booking b join jadwal_dokter jd on jd.id = b.jadwal_dokter_id where b."deletedAt" isnull and date(b.tanggal_booking) = '${tanggal}' and b.status_booking > 0 and jd.dokter_id = '${dokter_id}' and jd.poli_id = '${poli_id}'`,s)
+
+            let sisa_kuota = parseInt(total_kuota[0].kuota) - parseInt(kuota_booking[0].total_kuota_terbooking)
+            res.status(200).json({ status: 200, message: "sukses", sisa_kuota: sisa_kuota });
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
 }
 
 module.exports = Controller
