@@ -307,7 +307,7 @@ class Controller {
         const t = await sq.transaction();
 
         try {
-            let tanggal = moment().format("YYYYMMDD")
+            let tanggal = moment().format("YYYYMMDDHHmmss")
             let kode_booking = tanggal + nomor_antrean.replace("-", "")
             let kirim = await axios.get(purworejo + "/get-poli", config)
             let poli = kirim.data.data

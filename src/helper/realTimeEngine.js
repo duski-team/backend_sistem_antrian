@@ -208,7 +208,7 @@ const koneksi_socket = koneksi_socket => {
                     let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
                     let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
                     // console.log(kirimRajal, 'KIRIM RAJAL');
-                    let kode_booking = moment().format("YYYYMMDD") + `${initial}${no}`
+                    let kode_booking = moment().format("YYYYMMDDHHmmss") + `${initial}${no}`
                     let tgl_periksa = moment().format("YYYY-MM-DD")
                     let nomor_antrean = `${initial}-${no}`
                     let kirim = await axios.get(purworejo + "/get-poli", config)
@@ -334,7 +334,7 @@ const koneksi_socket = koneksi_socket => {
                     let kirim = await axios.get(purworejo + "/get-poli", config)
                     let poli = kirim.data.data
                     let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
-                    let kode_booking = moment().format("YYYYMMDD") + `${initial}${no}`
+                    let kode_booking = moment().format("YYYYMMDDHHmmss") + `${initial}${no}`
                     let nomor_antrean = `${initial}-${no}`
                     let kode_poli = ''
                     let nama_poli = ''
@@ -396,7 +396,7 @@ const koneksi_socket = koneksi_socket => {
             const t = await sq.transaction();
 
             try {
-                let tanggal = moment().format("YYYYMMDD")
+                let tanggal = moment().format("YYYYMMDDHHmmss")
                 let kode_booking = tanggal + nomor_antrean.replace("-", "")
                 let kirim = await axios.get(purworejo + "/get-poli", config)
                 let poli = kirim.data.data
