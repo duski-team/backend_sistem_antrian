@@ -235,8 +235,8 @@ const koneksi_socket = koneksi_socket => {
                     let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
                     let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
                     
-                    // console.log(objCreate);
-                    // console.log(objUpdate);
+                    console.log(objCreate);
+                    console.log(objUpdate);
                     console.log(kirim2.data, "CREATE-ANTREAN");
                     console.log(kirim3.data, "UPDATE-ANTREAN");
 
@@ -368,8 +368,8 @@ const koneksi_socket = koneksi_socket => {
                     hasil.dataValues.sisa_antrian = +sisa[0].total
                     hasilSEP.dataValues.status = 200
                     
-                    // console.log(objCreate);
-                    // console.log(objUpdate);
+                    console.log(objCreate);
+                    console.log(objUpdate);
                     console.log(kirim2.data, "CREATE-ANTREAN");
                     console.log(kirim3.data, "UPDATE-ANTREAN");
 
@@ -422,8 +422,8 @@ const koneksi_socket = koneksi_socket => {
                 let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
                 let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
 
-                // console.log(objCreate);
-                // console.log(objUpdate);
+                console.log(objCreate);
+                console.log(objUpdate);
                 console.log(kirim2.data, "CREATE-ANTREAN");
                 console.log(kirim3.data, "UPDATE-ANTREAN");
                 // io.emit("refresh_register_antrean_BPJS_loket", kirim2.data);
