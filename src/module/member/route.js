@@ -1,8 +1,9 @@
 const Controller = require('./controller')
 const router = require('express').Router()
+const upload = require('../../helper/upload')
 const authentification = require('../../middleware/authentification')
 
-router.post('/register',authentification,Controller.register)
+router.post('/register',authentification,upload,Controller.register)
 router.post('/acceptedPersetujuan',authentification,Controller.acceptedPersetujuan)
 router.post('/deleteMember',authentification,Controller.deleteMember)
 router.post('/update',authentification,Controller.update)

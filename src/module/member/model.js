@@ -79,6 +79,9 @@ const member = sq.define('member', {
     keterangan: {
         type: DataTypes.STRING
     },
+    foto_ktp: {
+        type: DataTypes.STRING
+    },
     status_persetujuan: {
         type: DataTypes.INTEGER,   // 0: ditolak || 1: baru dibuat || 2: disetujui
         defaultValue: 1
