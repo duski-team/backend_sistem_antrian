@@ -286,6 +286,10 @@ class Controller {
 
             let k = await sq.query(`select * from jadwal_dokter jd where date(jd.waktu_mulai) = '${tanggal}'`, s)
             for (let i = 0; i < data_poli.length; i++) {
+                data_poli[i].sisaKuota = 0
+                if (data_poli[i].kuota == '999') {
+                    data_poli[i].sisaKuota = data_poli[i].kuota
+                }
                 for (let j = 0; j < k.length; j++) {
                     if (data_poli[i].id == k[j].poli_id) {
                         data_poli[i].sisaKuota = k[j].kuota
