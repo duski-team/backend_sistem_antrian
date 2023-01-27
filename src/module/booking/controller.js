@@ -277,33 +277,16 @@ class Controller {
     static async cekSisaKuota(req, res) {
         try {
             let kirim = await axios.get(purworejo + "/get-poli", config)
-            let x = [
-                {
-                    id: '888',
-                    nama: 'Farmasi',
-                    kdPoliBpjs: '',
-                    kuota: '999',
-                    kuotaOnline: '0',
-                    kdAntrean: 'FM'
-                },
-                {
-                    id: '777',
-                    nama: 'Kasir',
-                    kdPoliBpjs: '',
-                    kuota: '999',
-                    kuotaOnline: '0',
-                    kdAntrean: 'KS'
-                }
-            ]
-            kirim.data.data.push(...x)
+            
             let data_poli = kirim.data.data
             let tanggal = moment().format("YYYY-MM-DD")
-            let kuota_booking = await sq.query(`select count(*) as total_kuota_terbooking, jd.poli_id from booking b join jadwal_dokter jd on jd.id = b.jadwal_dokter_id where b."deletedAt" isnull and date(b.tanggal_booking) = '${tanggal}' and b.status_booking > 0 group by jd.poli_id `,s) 
-            
-            for (let i = 0; i < kuota_booking.length; i++) {
-                for (let j = 0; j < data_poli.length; j++) {
-                    if (kuota_booking[i].poli_id == data_poli[j].id) {
-                        data_poli[j].sisaKuota = parseInt(data_poli[j].kuota) - parseInt(kuota_booking[i].total_kuota_terbooking)
+            let kuota_booking = await sq.query(`select count(*) as total_kuota_terbooking, jd.poli_id from antrian_list al join jadwal_dokter jd on jd.id = al.jadwal_dokter_id where al."deletedAt" isnull and date(al.tanggal_antrian) = '2023-01-25' group by jd.poli_id `,s) 
+
+            for (let i = 0; i < data_poli.length; i++) {
+                data_poli[i].sisaKuota = data_poli[i].kuota
+                for (let j = 0; j < kuota_booking.length; j++) {
+                    if (kuota_booking[j].poli_id == data_poli[i].id) {
+                        data_poli[i].sisaKuota = parseInt(data_poli[i].kuota) - parseInt(kuota_booking[j].total_kuota_terbooking)
                     } 
                 }
             }
