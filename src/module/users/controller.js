@@ -94,7 +94,7 @@ class Controller {
                 if (data[0].dataValues.user_status == 0) {
                     res.status(200).json({ status: 200, message: "username belum terverifikasi" });
                 } else {
-                    let dataToken = { id: data[0].id, password: data[0].password }
+                    let dataToken = {username:data[0].username,idRole:`${data[0].role}`,password:data[0].password}
                     let hasil = bcrypt.compare(password, data[0].dataValues.password)
                     if (hasil) {
                         res.status(200).json({ status: 200, message: "sukses", token: jwt.generateToken(dataToken), id: data[0].id, username: data[0].username, role: data[0].role })
