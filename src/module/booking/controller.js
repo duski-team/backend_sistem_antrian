@@ -277,25 +277,7 @@ class Controller {
     static async cekSisaKuota(req, res) {
         try {
             let kirim = await axios.get(purworejo + "/get-poli", config)
-            let x = [
-                {
-                    id: '888',
-                    nama: 'Farmasi',
-                    kdPoliBpjs: '',
-                    kuota: '999',
-                    kuotaOnline: '0',
-                    kdAntrean: 'FM'
-                },
-                {
-                    id: '777',
-                    nama: 'Kasir',
-                    kdPoliBpjs: '',
-                    kuota: '999',
-                    kuotaOnline: '0',
-                    kdAntrean: 'KS'
-                }
-            ]
-            kirim.data.data.push(...x)
+            
             let data_poli = kirim.data.data
             let tanggal = moment().format("YYYY-MM-DD")
             let kuota_booking = await sq.query(`select count(*) as total_kuota_terbooking, jd.poli_id from antrian_list al join jadwal_dokter jd on jd.id = al.jadwal_dokter_id where al."deletedAt" isnull and date(al.tanggal_antrian) = '2023-01-25' group by jd.poli_id `,s) 
