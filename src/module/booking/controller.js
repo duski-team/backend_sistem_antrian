@@ -280,14 +280,22 @@ class Controller {
             
             let data_poli = kirim.data.data
             let tanggal = moment().format("YYYY-MM-DD")
-            let kuota_booking = await sq.query(`select count(*) as total_kuota_terbooking, jd.poli_id, jd.kuota from antrian_list al join jadwal_dokter jd on jd.id = al.jadwal_dokter_id where al."deletedAt" isnull and date(al.tanggal_antrian) = '${tanggal}' group by jd.poli_id, jd.kuota `,s) 
+            let kuota_booking = await sq.query(`select jd.poli_id, jd.kuota , count(*) as total_kuota_terbooking 
+            from antrian_list al join jadwal_dokter jd on jd.id = al.jadwal_dokter_id 
+            where al."deletedAt" isnull and date(jd.waktu_mulai) = '${tanggal}' group by jd.poli_id ,jd.kuota`,s) 
 
+            let k = await sq.query(`select * from jadwal_dokter jd where date(jd.waktu_mulai) = '${tanggal}'`, s)
             for (let i = 0; i < data_poli.length; i++) {
-                for (let j = 0; j < kuota_booking.length; j++) {
-                    data_poli[i].sisaKuota = kuota_booking[j].kuota
-                    if (kuota_booking[j].poli_id == data_poli[i].id) {
-                        data_poli[i].sisaKuota = parseInt(kuota_booking[j].kuota) - parseInt(kuota_booking[j].total_kuota_terbooking)
-                    } 
+                for (let j = 0; j < k.length; j++) {
+                    if (data_poli[i].id == k[j].poli_id) {
+                        data_poli[i].kuota_jadwal = k[j].kuota
+                        for (let l = 0; l < kuota_booking.length; l++) {
+                            if (kuota_booking[l].poli_id == k[j].poli_id) {
+                                data_poli[i].kuota_terbooking = parseInt(kuota_booking[l].total_kuota_terbooking)
+                                data_poli[i].sisaKuota = parseInt(k[j].kuota) - parseInt(kuota_booking[l].total_kuota_terbooking)
+                            }
+                        }
+                    }
                 }
             }
             res.status(200).json({ status: 200, message: "sukses", data: data_poli });
