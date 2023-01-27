@@ -288,7 +288,7 @@ class Controller {
             for (let i = 0; i < data_poli.length; i++) {
                 for (let j = 0; j < k.length; j++) {
                     if (data_poli[i].id == k[j].poli_id) {
-                        data_poli[i].kuota_jadwal = k[j].kuota
+                        data_poli[i].sisaKuota = k[j].kuota
                         for (let l = 0; l < kuota_booking.length; l++) {
                             if (kuota_booking[l].poli_id == k[j].poli_id) {
                                 data_poli[i].kuota_terbooking = parseInt(kuota_booking[l].total_kuota_terbooking)
