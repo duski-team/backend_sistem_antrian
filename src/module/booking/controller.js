@@ -280,7 +280,7 @@ class Controller {
             
             let data_poli = kirim.data.data
             let tanggal = moment().format("YYYY-MM-DD")
-            let kuota_booking = await sq.query(`select count(*) as total_kuota_terbooking, jd.poli_id from antrian_list al join jadwal_dokter jd on jd.id = al.jadwal_dokter_id where al."deletedAt" isnull and date(al.tanggal_antrian) = '2023-01-25' group by jd.poli_id `,s) 
+            let kuota_booking = await sq.query(`select count(*) as total_kuota_terbooking, jd.poli_id from antrian_list al join jadwal_dokter jd on jd.id = al.jadwal_dokter_id where al."deletedAt" isnull and date(al.tanggal_antrian) = '${tanggal}' group by jd.poli_id `,s) 
 
             for (let i = 0; i < data_poli.length; i++) {
                 data_poli[i].sisaKuota = data_poli[i].kuota
