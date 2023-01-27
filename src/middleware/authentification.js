@@ -4,26 +4,21 @@ const user = require('../module/users/model')
 async function authentification(req, res, next) {
 
     try {
-        var decode = verifyToken(req.headers.token);
-        user.findAll({
-            where: {
-                id: decode.id,
-                password: decode.password
+        let decode = verifyToken(req.headers.token);
+        // let role = ["1","2","4","5","6","7","8","9",'11',"24","99","1017","9998","9999"];
+        if (decode) {
+            let data = await user.findAll({where: {username:decode.username}})
+            req.dataUsers = decode
+            if(data.length>0){
+                req.dataUsers = data[0]
             }
-        })
-            .then(data => {
-                //  console.log(data.length)
-                if (data.length > 0) {
-                    // console.log("masuk data")
-                    req.dataUsers = decode
-                    next()
-                }
-                else {
-                    // console.log("masuk else")
-                    res.status(201).json({ status: 201, message: "anda belum login" });
-                }
-            })
+
+            next()
+        }else {
+            res.status(201).json({ status: 201, message: "anda belum login" });
+        }
     } catch (err) {
+        console.log("error authen");
         res.status(201).json({ status: 201, message: "anda belum login" });
     }
 }
