@@ -246,7 +246,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                socket.emit("error", error);
+                io.to(room_id).emit("error", error);
             }
         })
 
@@ -386,7 +386,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                socket.emit("error", error);
+                io.to(room_id).emit("error", error);
             }
         })
 
@@ -431,7 +431,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                socket.emit("error", error);
+                io.to(room_id).emit("error", error);
             }
         })
 
