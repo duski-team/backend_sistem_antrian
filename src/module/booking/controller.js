@@ -298,7 +298,7 @@ class Controller {
             kirim.data.data.push(...x)
             let data_poli = kirim.data.data
             let tanggal = moment().format("YYYY-MM-DD")
-            let kuota_booking = await sq.query(`select count(*) as total_kuota_terbooking, jd.poli_id from booking b join jadwal_dokter jd on jd.id = b.jadwal_dokter_id where b."deletedAt" isnull and date(b.tanggal_booking) = '2023-01-25' and b.status_booking > 0 group by jd.poli_id `,s) 
+            let kuota_booking = await sq.query(`select count(*) as total_kuota_terbooking, jd.poli_id from booking b join jadwal_dokter jd on jd.id = b.jadwal_dokter_id where b."deletedAt" isnull and date(b.tanggal_booking) = '${tanggal}' and b.status_booking > 0 group by jd.poli_id `,s) 
             
             for (let i = 0; i < kuota_booking.length; i++) {
                 for (let j = 0; j < data_poli.length; j++) {
