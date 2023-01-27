@@ -5,7 +5,6 @@ const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT }
 const axios = require('axios');
 const moment = require('moment');
-const cron = require('node-cron');
 moment.locale('id')
 const purworejo = process.env.HOST_PURWOREJO
 const config = require("../../helper/config").config
@@ -74,10 +73,10 @@ syncJadwal()
 class Controller {
 
     static register(req, res) {
-        const { waktu_mulai, waktu_selesai, kode_jadwal, kuota, master_poliklinik_id, master_dokter_id, master_layanan_id } = req.body
+        const { waktu_mulai, waktu_selesai, kode_jadwal, kuota, kuota_mobile, dokter_id, poli_id } = req.body
 
-        jadwal_dokter.create({ id: uuid_v4(), waktu_mulai, waktu_selesai, kode_jadwal, kuota, master_poliklinik_id, master_dokter_id, master_layanan_id }).then(hasil2 => {
-            res.status(200).json({ status: 200, message: "sukses", data: hasil2 })
+        jadwal_dokter.create({ id: uuid_v4(), waktu_mulai, waktu_selesai, kode_jadwal, kuota, kuota_mobile, dokter_id, poli_id }).then(hasil => {
+            res.status(200).json({ status: 200, message: "sukses", data: hasil })
         }).catch(error => {
             console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error })
@@ -85,9 +84,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, waktu_mulai, waktu_selesai, kode_jadwal, kuota, master_poliklinik_id, master_dokter_id, master_layanan_id } = req.body
+        const { id, waktu_mulai, waktu_selesai, kode_jadwal, kuota, kuota_mobile, dokter_id, poli_id } = req.body
 
-        jadwal_dokter.update({ waktu_mulai, waktu_selesai, kode_jadwal, kuota, master_poliklinik_id, master_dokter_id, master_layanan_id }, { where: { id } }).then(hasil => {
+        jadwal_dokter.update({ waktu_mulai, waktu_selesai, kode_jadwal, kuota, kuota_mobile, dokter_id, poli_id }, { where: { id } }).then(hasil => {
             res.status(200).json({ status: 200, message: "sukses" })
         }).catch(error => {
             console.log(error);
@@ -96,8 +95,52 @@ class Controller {
     }
 
     static async list(req, res) {
+        const {tanggal,dokter_id,poli_id} = req.body
 
+        try {
+            let isi = ''
+            if(tanggal){
+                isi+=`and date(jd.waktu_mulai) = '${tanggal}' `
+            }
+            if(dokter_id){
+                isi+=`and jd.dokter_id = '${dokter_id}' `
+            }
+            if(poli_id){
+                isi+=`and jd.poli_id = '${poli_id}' `
+            }
 
+            let data = await sq.query(`select jd.id as jadwal_dokter_id,* from jadwal_dokter jd where jd."deletedAt" isnull ${isi} order by jd.waktu_mulai desc`,s)
+            let dataPoli = await axios.get(purworejo + "/get-poli", config)
+            let dataDokter = await axios.get(purworejo + "/get-dokter", config)
+            let poli = dataPoli.data.data
+            let dokter = dataDokter.data.data
+            
+            for (let i = 0; i < data.length; i++) {
+                data[i].nama_poli = ""
+                data[i].kode_poli_bpjs = ""
+                data[i].kode_antrean = ""
+                data[i].nama_dokter = ""
+                data[i].id_dokter_bpjs = ""
+                for (let j = 0; j < poli.length; j++) {
+                    if(data[i].poli_id == poli[j].id){
+                        data[i].nama_poli = poli[j].nama
+                        data[i].kode_poli_bpjs = poli[j].kdPoliBpjs
+                        data[i].kode_antrean = poli[j].kdAntrean
+                    }
+                }
+                for (let j = 0; j < dokter.length; j++) {
+                    if(data[i].dokter_id == dokter[j].id){
+                        data[i].nama_dokter = dokter[j].nama
+                        data[i].id_dokter_bpjs = dokter[j].idDokterBpjs
+                    }
+                }
+            }
+
+            res.status(200).json({ status: 200, message: "sukses", data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
     }
 
     static delete(req, res) {
@@ -112,7 +155,6 @@ class Controller {
     }
 
     static async syncJadwal(req, res) {
-
         try {
             // let curdate = moment().format('YYYY-MM-DD')
             let curdate= moment().add(2,'d').format('YYYY-MM-DD')
@@ -289,7 +331,6 @@ class Controller {
             }
         }
     }
-
 }
 
 module.exports = Controller

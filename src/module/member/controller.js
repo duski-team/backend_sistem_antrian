@@ -79,15 +79,28 @@ class Controller {
         }
     }
 
-    static update(req, res) {
-        const { id, no_rm_pasien, user_id, NIK, nama_member } = req.body
+    static async update(req, res) {
+        const { id, no_rm_pasien,no_ktp, nama, no_bpjs, tempat_lahir, tanggal_lahir, alamat, alamat_domisili, no_hp, jenis_kelamin, status_kawin, pekerjaan, pendidikan, agama, suku_bangsa, id_provinsi, id_kota, id_kecamatan, id_kelurahan, nama_penanggung_jawab, hubungan_dengan_pasien, alamat_penanggung_jawab, no_hp_penanggung_jawab, keterangan,user_id } = req.body
 
-        member.update({ no_rm_pasien, user_id, NIK, nama_member }, { where: { id } }).then(hasil => {
-            res.status(200).json({ status: 200, message: "sukses", data: hasil })
-        }).catch(error => {
+        const t = await sq.transaction();
+        try {
+
+            if (req.files) {
+                if (req.files.file1) {
+                    let foto_ktp = req.files.file1[0].filename
+                    await member.update({foto_ktp},{where:{id},transaction:t})
+                }
+            }
+
+            await member.update({ no_rm_pasien,no_ktp, nama, no_bpjs, tempat_lahir, tanggal_lahir, alamat, alamat_domisili, no_hp, jenis_kelamin, status_kawin, pekerjaan, pendidikan, agama, suku_bangsa, id_provinsi, id_kota, id_kecamatan, id_kelurahan, nama_penanggung_jawab, hubungan_dengan_pasien, alamat_penanggung_jawab, no_hp_penanggung_jawab, keterangan,user_id }, { where: { id },transaction:t })
+            
+            await t.commit();
+            res.status(200).json({ status: 200, message: "sukses" })
+        } catch (error) {
+            await t.rollback();
             console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error })
-        })
+        }
     }
 
     static deleteMember(req, res) {

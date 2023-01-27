@@ -4,7 +4,7 @@ const authentification = require('../../middleware/authentification')
 
 router.post('/register', authentification, Controller.register)
 router.post('/update', authentification, Controller.update)
-// router.post('/list',Controller.list)
+router.post('/list',authentification,Controller.list)
 router.post('/delete', authentification, Controller.delete)
 router.post('/syncJadwal', Controller.syncJadwal)
 router.post('/listDokterByTanggalPoli', Controller.listDokterByTanggalPoli)
