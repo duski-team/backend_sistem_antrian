@@ -90,8 +90,26 @@ class Controller {
                 isi += ` and b.tanggal_booking <= ${tanggal_akhir} `
             }
 
-            let data = await sq.query(`select * from booking b where b."deletedAt" isnull ${isi} order by b.id desc limit ${jumlah} offset ${offset}`, s)
-            let data2 = await sq.query(`select * from booking b where b."deletedAt" isnull ${isi} order by b.id desc limit ${jumlah} offset ${offset2}`, s)
+            let data = await sq.query(`select b.id as "booking_id", * from booking b join jadwal_dokter jd on jd.id = b.jadwal_dokter_id where b."deletedAt" isnull and jd."deletedAt" isnull ${isi} order by b.id desc limit ${jumlah} offset ${offset}`, s)
+            let data2 = await sq.query(`select b.id as "booking_id", * from booking b join jadwal_dokter jd on jd.id = b.jadwal_dokter_id where b."deletedAt" isnull and jd."deletedAt" isnull ${isi} order by b.id desc limit ${jumlah} offset ${offset2}`, s)
+
+            let dataPoli = await axios.get(purworejo + "/get-poli", config)
+            let dataDokter = await axios.get(purworejo + "/get-dokter", config)
+            let poli = dataPoli.data.data
+            let dokter = dataDokter.data.data
+
+            for (let i = 0; i < data.length; i++) {
+                for (let j = 0; j < poli.length; j++) {
+                    if (data[i].poli_id == poli[j].id) {
+                        data[i].nama_poli = poli[j].nama
+                    }
+                }
+                for (let k = 0; k < dokter.length; k++) {
+                    if (data[i].dokter_id == dokter[k].id) {
+                        data[i].nama_dokter = dokter[k].nama
+                    }
+                }
+            }
 
             let jml = await sq.query(`select count(*) as "total" from booking b where b."deletedAt" isnull ${isi} `, s)
 
