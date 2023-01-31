@@ -93,7 +93,7 @@ class Controller {
             let data = await sq.query(`select * from booking b where b."deletedAt" isnull ${isi} order by b.id desc limit ${jumlah} offset ${offset}`, s)
             let data2 = await sq.query(`select * from booking b where b."deletedAt" isnull ${isi} order by b.id desc limit ${jumlah} offset ${offset2}`, s)
 
-            let jml = await sq.query(`select count(*) from booking b where b."deletedAt" isnull ${isi} `, s)
+            let jml = await sq.query(`select count(*) as "total" from booking b where b."deletedAt" isnull ${isi} `, s)
 
             if (data2.length == 0) {
                 sisa = false
