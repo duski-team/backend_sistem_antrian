@@ -38,7 +38,7 @@ const koneksi_socket = koneksi_socket => {
                 if (kode_booking && taskid) {
                     let waktu = moment(new Date()).format('x')
                     let x = { kodebooking: kode_booking, taskid, waktu }
-                    let kirim = await axios.post(purworejo + "/update-antrean", x, config)
+                    // let kirim = await axios.post(purworejo + "/update-antrean", x, config)
                     console.log(x, "kode booking");
                     console.log(kirim.data.data);
                 }
@@ -235,10 +235,10 @@ const koneksi_socket = koneksi_socket => {
                     let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
                     // let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
                     
-                    console.log(objCreate);
-                    console.log(objUpdate);
-                    console.log(kirim2.data, "CREATE-ANTREAN");
-                    console.log(kirim3.data, "UPDATE-ANTREAN");
+                    // console.log(objCreate);
+                    // console.log(objUpdate);
+                    // console.log(kirim2.data, "CREATE-ANTREAN");
+                    // console.log(kirim3.data, "UPDATE-ANTREAN");
 
                     await t.commit();
                     io.to(room_id).emit("refresh_register_APM_mandiri", { hasil,hasilSEP:{status:500} });
