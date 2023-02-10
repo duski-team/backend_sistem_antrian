@@ -5,12 +5,14 @@ const config = require("../../helper/config").config
 const { QueryTypes } = require('sequelize');
 const { sq } = require("../../config/connection");
 const s = { type: QueryTypes.SELECT }
-
+moment().locale('id')
 class Controller {
 
     static async printAntrian(req, res) {
-        const {tgl,jam,no_antrian,tempat,sisa_antrian} = req.query
+        const {no_antrian,tempat,sisa_antrian} = req.query
         try {
+            let tgl = `${moment().format('dddd, LL')}`
+            let jam = `${moment().format('hh:mm:ss')}`
             let html = `
             <!DOCTYPE html>
                 <html lang="en">
@@ -61,7 +63,7 @@ class Controller {
                         </section>
                         <section class="contain_nomor">
                         <span class="nomor"> ${no_antrian} </span><br>
-                        <span class="loket">ANTRIAN ${tempat}</span><br><br>
+                        <span class="loket">ANTREAN ${tempat}</span><br><br>
                         <small>
                             Jumlah Antrian Yang belum Dipanggil: ${sisa_antrian} <br>
                             <br>
