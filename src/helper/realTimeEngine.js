@@ -451,6 +451,8 @@ const koneksi_socket = koneksi_socket => {
                     }
                     for (let j = 0; j < jadwal.length; j++) {
                         if (data_poli[i].id == jadwal[j].poli_id) {
+                            data_poli[i].kuota = `${jadwal[j].kuota}`
+                            data_poli[i].kuotaOnline = `${jadwal[j].kuota_mobile}`
                             let total_kuota = jadwal[j].kuota + jadwal[j].kuota_mobile
                             data_poli[i].sisaKuota = total_kuota
                             for (let l = 0; l < kuota_antrian.length; l++) {
