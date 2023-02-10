@@ -344,6 +344,7 @@ class Controller {
                     hasil.push(data_poli[i])
                     for (let j = 0; j < k.length; j++) {
                         if (k[j].poli_id == poli_id) {
+                            data_poli[i].kuota_terbooking = 0
                             data_poli[i].sisaKuota = k[j].kuota
                             for (let m = 0; m < kuota_booking.length; m++) {
                                 if (kuota_booking[m].poli_id == poli_id) {
