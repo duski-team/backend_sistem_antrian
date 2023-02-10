@@ -12,6 +12,7 @@ router.get('/detailsBookingByKodeBooking/:kode_booking', Controller.detailsBooki
 router.post('/listAllBooking', Controller.listAllBooking)
 router.post('/listBookingByTujuanBooking', Controller.listBookingByTujuanBooking)
 router.get('/cekSisaKuota', Controller.cekSisaKuota)
+router.post('/cekSisaKuotaPerPoli', Controller.cekSisaKuotaPerPoli)
 router.get('/qr', Controller.qr)
 // router.post('/delete',authentification,Controller.delete)
 module.exports = router

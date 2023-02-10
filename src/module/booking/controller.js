@@ -186,9 +186,9 @@ class Controller {
                 res.status(200).json({ status: 200, message: "data tidak ada" })
             } else {
                 let kirim = await axios.get(purworejo + "/get-pasien?no=" + data[0].no_rm, config)
-            
+
                 data[0].no_bpjs = kirim.data.data[0].noBpjs
-    
+
                 res.status(200).json({ status: 200, message: "sukses", data })
             }
 
@@ -251,7 +251,7 @@ class Controller {
             if (poli_id) {
                 isi += ` and jd.poli_id = '${poli_id}' `
             }
-            
+
             let data = await sq.query(`select b.id as "booking_id", * from booking b left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join users u on u.id = b.user_id where b."deletedAt" isnull and date(b.tanggal_booking) >= '${tgl}' and '${tgl}' <= date(b.tanggal_booking) ${isi}`, s)
 
             let kirim = await axios.get(purworejo + "/get-poli", config)
@@ -295,12 +295,12 @@ class Controller {
     static async cekSisaKuota(req, res) {
         try {
             let kirim = await axios.get(purworejo + "/get-poli", config)
-            
+
             let data_poli = kirim.data.data
             let tanggal = moment().format("YYYY-MM-DD")
             let kuota_booking = await sq.query(`select jd.poli_id, jd.kuota , count(*) as total_kuota_terbooking 
             from antrian_list al join jadwal_dokter jd on jd.id = al.jadwal_dokter_id 
-            where al."deletedAt" isnull and date(jd.waktu_mulai) = '${tanggal}' group by jd.poli_id ,jd.kuota`,s) 
+            where al."deletedAt" isnull and al.poli_layanan in (1,2) and date(jd.waktu_mulai) = '${tanggal}' group by jd.poli_id ,jd.kuota`, s)
 
             let k = await sq.query(`select * from jadwal_dokter jd where date(jd.waktu_mulai) = '${tanggal}'`, s)
             for (let i = 0; i < data_poli.length; i++) {
@@ -321,6 +321,42 @@ class Controller {
                 }
             }
             res.status(200).json({ status: 200, message: "sukses", data: data_poli });
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
+
+    static async cekSisaKuotaPerPoli(req, res) {
+        const { poli_id } = req.body
+        try {
+            let kirim = await axios.get(purworejo + "/get-poli", config)
+            let data_poli = kirim.data.data
+            let tanggal = moment().format("YYYY-MM-DD")
+            let kuota_booking = await sq.query(`select jd.poli_id, jd.kuota , count(*) as total_kuota_terbooking 
+            from antrian_list al join jadwal_dokter jd on jd.id = al.jadwal_dokter_id 
+            where al."deletedAt" isnull and al.poli_layanan in (1,2) and date(jd.waktu_mulai) = '${tanggal}' and jd.poli_id = '${poli_id}' group by jd.poli_id ,jd.kuota`, s)
+
+            let k = await sq.query(`select * from jadwal_dokter jd where date(jd.waktu_mulai) = '${tanggal}'`, s)
+            let hasil = []
+            for (let i = 0; i < data_poli.length; i++) {
+                data_poli[i].sisaKuota = 0
+                if (data_poli[i].id == poli_id) {
+                    hasil.push(data_poli[i])
+                    for (let j = 0; j < k.length; j++) {
+                        if (k[j].poli_id == poli_id) {
+                            data_poli[i].sisaKuota = k[j].kuota
+                            for (let m = 0; m < kuota_booking.length; m++) {
+                                if (kuota_booking[m].poli_id == poli_id) {
+                                    data_poli[i].kuota_terbooking = parseInt(kuota_booking[m].total_kuota_terbooking)
+                                    data_poli[i].sisaKuota = parseInt(k[j].kuota) - parseInt(kuota_booking[m].total_kuota_terbooking)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            res.status(200).json({ status: 200, message: "sukses", data: hasil });
         } catch (error) {
             console.log(error)
             res.status(500).json({ status: 500, message: "gagal", data: error })
