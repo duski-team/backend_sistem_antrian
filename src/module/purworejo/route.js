@@ -22,5 +22,6 @@ router.post('/createPasienBaru', Controller.createPasienBaru)
 router.post('/getFinger', Controller.getFinger)
 router.post('/registerAntreanBPJSLoket', Controller.registerAntreanBPJSLoket)
 router.post('/updateAntrean', Controller.updateAntrean)
+router.post('/testEmail', Controller.testEmail)
 
 module.exports = router

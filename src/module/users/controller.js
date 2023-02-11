@@ -46,14 +46,20 @@ class Controller {
                 let kode = y.substring(y.length - 4, y.length).toUpperCase()
                 let encryptedPassword = bcrypt.hashPassword(password);
                 await users.create({ id: uuid_v4(), username, password: encryptedPassword, role, kode_otp: kode, otp_time: moment().add(60, 'm').toDate() }, { returning: true }).then(async (respon) => {
-                    let fieldheader = `RSUD RAA TJOKRONEGORO PURWOREJO <br> Gunakan kode dibawah ini untuk verifikasi : <br> OTP : <b>${kode}</b>`
-                    await mg.messages.create(mg_domain, {
-                        from: mg_email,
-                        to: [username],
-                        subject: "OTP RSUD RAA TJOKRONEGORO PURWOREJO",
-                        text: " ",
-                        html: fieldheader
-                    })
+                    let fieldheader = `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+                    <div style="margin:50px auto;width:70%;padding:20px 0">
+                      <div style="border-bottom:1px solid #eee">
+                        <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">RSUD RAA TJOKRONEGORO PURWOREJO</a>
+                      </div>
+                      <p>Kamu berhasil mendaftar akun. Silahkan verifikasi akun kamu menggunakan OTP berikut untuk menyelesaikan prosedur Pendaftaran Anda</p>
+                      <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${kode}</h2>
+                      <p style="font-size:0.9em;">Regards,<br />RSUD RAA TJOKRONEGORO PURWOREJO</p>
+                      <hr style="border:none;border-top:1px solid #eee" />
+                    </div>
+                  </div>`
+                    let x = {emailTo:username,subject:"OTP RSUD RAA TJOKRONEGORO PURWOREJO",htmlContent:fieldheader}
+                    await axios.post(purworejo+ "/send-email",x,config)
+                   
                     res.status(200).json({ status: 200, message: "sukses", data: respon });
                 }).catch((err) => {
                     console.log(err);
