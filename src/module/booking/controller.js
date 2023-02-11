@@ -295,26 +295,33 @@ class Controller {
     static async cekSisaKuota(req, res) {
         try {
             let kirim = await axios.get(purworejo + "/get-poli", config)
-
             let data_poli = kirim.data.data
             let tanggal = moment().format("YYYY-MM-DD")
-            let kuota_booking = await sq.query(`select jd.poli_id, jd.kuota , count(*) as total_kuota_terbooking 
-            from antrian_list al join jadwal_dokter jd on jd.id = al.jadwal_dokter_id 
-            where al."deletedAt" isnull and al.poli_layanan in (1,2) and date(jd.waktu_mulai) = '${tanggal}' group by jd.poli_id ,jd.kuota`, s)
-
-            let k = await sq.query(`select * from jadwal_dokter jd where date(jd.waktu_mulai) = '${tanggal}'`, s)
+            let kuota_antrian = await sq.query(`select al.poli_id, count(*) as total_kuota_terbooking from antrian_list al where al."deletedAt" isnull and al.poli_layanan in (1,2) and date(al.tanggal_antrian) = '${tanggal}' and al.status_antrian < 2 group by al.poli_id `, s)
+            let kuota_booking = await sq.query(`select jd.poli_id ,jd.kuota ,jd.kuota_mobile ,count(*) as "jumlah_booking" from booking b join jadwal_dokter jd on jd.id = b.jadwal_dokter_id where b."deletedAt" isnull and jd."deletedAt" isnull and b.status_booking in (1,2,9) and date(jd.waktu_mulai) = '${tanggal}' group by jd.poli_id ,jd.kuota ,jd.kuota_mobile`,s)
+            let jadwal = await sq.query(`select * from jadwal_dokter jd where date(jd.waktu_mulai) = '${tanggal}'`, s)
             for (let i = 0; i < data_poli.length; i++) {
                 data_poli[i].sisaKuota = 0
+                data_poli[i].kuota_terbooking = 0
                 if (data_poli[i].kuota == '999') {
-                    data_poli[i].sisaKuota = data_poli[i].kuota
+                    data_poli[i].sisaKuota = data_poli[i].kuota 
                 }
-                for (let j = 0; j < k.length; j++) {
-                    if (data_poli[i].id == k[j].poli_id) {
-                        data_poli[i].sisaKuota = k[j].kuota
-                        for (let l = 0; l < kuota_booking.length; l++) {
-                            if (kuota_booking[l].poli_id == k[j].poli_id) {
-                                data_poli[i].kuota_terbooking = parseInt(kuota_booking[l].total_kuota_terbooking)
-                                data_poli[i].sisaKuota = parseInt(k[j].kuota) - parseInt(kuota_booking[l].total_kuota_terbooking)
+                for (let j = 0; j < jadwal.length; j++) {
+                    if (data_poli[i].id == jadwal[j].poli_id) {
+                        data_poli[i].kuota = `${jadwal[j].kuota}`
+                        data_poli[i].kuotaOnline = `${jadwal[j].kuota_mobile}`
+                        let total_kuota = jadwal[j].kuota + jadwal[j].kuota_mobile
+                        data_poli[i].sisaKuota = total_kuota
+                        for (let l = 0; l < kuota_antrian.length; l++) {
+                            if (kuota_antrian[l].poli_id == jadwal[j].poli_id) {
+                                data_poli[i].kuota_terbooking = parseInt(kuota_antrian[l].total_kuota_terbooking)
+                                data_poli[i].sisaKuota = parseInt(total_kuota) - parseInt(kuota_antrian[l].total_kuota_terbooking)
+                            }
+                        }
+                        for (let m = 0; m < kuota_booking.length; m++) {
+                            if (kuota_booking[m].poli_id == jadwal[j].poli_id) {
+                                data_poli[i].kuota_terbooking += parseInt(kuota_booking[m].jumlah_booking) 
+                                data_poli[i].sisaKuota = parseInt(total_kuota) - parseInt(kuota_booking[m].jumlah_booking)
                             }
                         }
                     }
@@ -333,23 +340,31 @@ class Controller {
             let kirim = await axios.get(purworejo + "/get-poli", config)
             let data_poli = kirim.data.data
             let tanggal = moment().format("YYYY-MM-DD")
-            let kuota_booking = await sq.query(`select jd.poli_id, jd.kuota , count(*) as total_kuota_terbooking 
-            from antrian_list al join jadwal_dokter jd on jd.id = al.jadwal_dokter_id 
-            where al."deletedAt" isnull and al.poli_layanan in (1,2) and date(jd.waktu_mulai) = '${tanggal}' and jd.poli_id = '${poli_id}' group by jd.poli_id ,jd.kuota`, s)
+            let kuota_antrian = await sq.query(`select al.poli_id, count(*) as total_kuota_terbooking from antrian_list al where al."deletedAt" isnull and al.poli_layanan in (1,2) and date(al.tanggal_antrian) = '${tanggal}' and al.status_antrian < 2 and al.poli_id = '${poli_id}' group by al.poli_id `, s)
+            let kuota_booking = await sq.query(`select jd.poli_id ,jd.kuota ,jd.kuota_mobile ,count(*) as "jumlah_booking" from booking b join jadwal_dokter jd on jd.id = b.jadwal_dokter_id where b."deletedAt" isnull and jd."deletedAt" isnull and b.status_booking in (1,2,9) and date(jd.waktu_mulai) = '${tanggal}' and jd.poli_id = '${poli_id}' group by jd.poli_id ,jd.kuota ,jd.kuota_mobile`,s)
+            let jadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(jd.waktu_mulai) = '${tanggal}'`, s)
 
-            let k = await sq.query(`select * from jadwal_dokter jd where date(jd.waktu_mulai) = '${tanggal}'`, s)
             let hasil = []
             for (let i = 0; i < data_poli.length; i++) {
                 if (data_poli[i].id == poli_id) {
                     hasil.push(data_poli[i])
-                    for (let j = 0; j < k.length; j++) {
-                        if (k[j].poli_id == poli_id) {
+                    for (let j = 0; j < jadwal.length; j++) {
+                        if (jadwal[j].poli_id == poli_id) {
+                            data_poli[i].kuota = `${jadwal[j].kuota}`
+                            data_poli[i].kuotaOnline = `${jadwal[j].kuota_mobile}`
                             data_poli[i].kuota_terbooking = 0
-                            data_poli[i].sisaKuota = k[j].kuota
+                            let total_kuota = jadwal[j].kuota + jadwal[j].kuota_mobile
+                            data_poli[i].sisaKuota = total_kuota
+                            for (let k = 0; k < kuota_antrian.length; k++) {
+                                if (kuota_antrian[k].poli_id == poli_id) {
+                                    data_poli[i].kuota_terbooking = parseInt(kuota_antrian[k].total_kuota_terbooking)
+                                    data_poli[i].sisaKuota = parseInt(total_kuota) - parseInt(kuota_antrian[k].total_kuota_terbooking)
+                                }
+                            }
                             for (let m = 0; m < kuota_booking.length; m++) {
                                 if (kuota_booking[m].poli_id == poli_id) {
-                                    data_poli[i].kuota_terbooking = parseInt(kuota_booking[m].total_kuota_terbooking)
-                                    data_poli[i].sisaKuota = parseInt(k[j].kuota) - parseInt(kuota_booking[m].total_kuota_terbooking)
+                                    data_poli[i].kuota_terbooking += parseInt(kuota_booking[m].jumlah_booking) 
+                                    data_poli[i].sisaKuota = parseInt(total_kuota) - parseInt(kuota_booking[m].jumlah_booking)
                                 }
                             }
                         }

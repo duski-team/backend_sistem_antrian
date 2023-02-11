@@ -186,7 +186,7 @@ const koneksi_socket = koneksi_socket => {
             }
         })
 
-        socket.on('registerAPMMandiri', async (asd,room_id) => {
+        socket.on('registerAPMMandiri', async (asd, room_id) => {
             const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id, jenis_pasien, pasien_baru, tanggal_periksa, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, estimasi_dilayani, keterangan } = asd
 
             const t = await sq.transaction();
@@ -202,7 +202,7 @@ const koneksi_socket = koneksi_socket => {
                 }
                 if (cekBooking.length > 0) {
                     cekBooking[0].sisa_antrian = sisa[0].total - 1
-                    io.to(room_id).emit("refresh_register_APM_mandiri", {hasil:cekBooking[0],hasilSEP:{status:500}});
+                    io.to(room_id).emit("refresh_register_APM_mandiri", { hasil: cekBooking[0], hasilSEP: { status: 500 } });
                 } else {
                     let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
                     let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
@@ -234,14 +234,14 @@ const koneksi_socket = koneksi_socket => {
                     let kirim2 = await axios.post(purworejo + "/create-antrean", objCreate, config)
                     let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
                     let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
-                    
+
                     // console.log(objCreate);
                     // console.log(objUpdate);
                     // console.log(kirim2.data, "CREATE-ANTREAN");
                     // console.log(kirim3.data, "UPDATE-ANTREAN");
 
                     await t.commit();
-                    io.to(room_id).emit("refresh_register_APM_mandiri", { hasil,hasilSEP:{status:500} });
+                    io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP: { status: 500 } });
                 }
             } catch (error) {
                 await t.rollback();
@@ -309,7 +309,7 @@ const koneksi_socket = koneksi_socket => {
         //     }
         // })
 
-        socket.on('registerAPMBPJS', async (asd,room_id) => {
+        socket.on('registerAPMBPJS', async (asd, room_id) => {
             const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id, noSuratKontrol, pasien_baru, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, estimasi_dilayani, keterangan } = asd
 
             const t = await sq.transaction();
@@ -324,10 +324,10 @@ const koneksi_socket = koneksi_socket => {
                     cekBooking = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.booking_id = '${booking_id}' and date(al.tanggal_antrian) = '${tgl}'`, s);
                 }
                 if (cekBooking.length > 0) {
-                    let printSEP = await sq.query(`select s.* from sep s join antrian_list al on al.id = s.antrian_list_id where s."deletedAt" isnull and al."deletedAt" isnull and al.booking_id = '${booking_id}' and date(al.tanggal_antrian)='${tgl}'`,s)
+                    let printSEP = await sq.query(`select s.* from sep s join antrian_list al on al.id = s.antrian_list_id where s."deletedAt" isnull and al."deletedAt" isnull and al.booking_id = '${booking_id}' and date(al.tanggal_antrian)='${tgl}'`, s)
                     printSEP[0].status = 200
                     cekBooking[0].sisa_antrian = sisa[0].total - 1
-                    io.to(room_id).emit("refresh_register_APM_mandiri", { hasil:cekBooking[0], hasilSEP:printSEP[0] });
+                    io.to(room_id).emit("refresh_register_APM_mandiri", { hasil: cekBooking[0], hasilSEP: printSEP[0] });
                 } else {
                     let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
 
@@ -364,10 +364,10 @@ const koneksi_socket = koneksi_socket => {
                     let kirim2 = await axios.post(purworejo + "/create-antrean", objCreate, config)
                     let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
                     let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
-                    
+
                     hasil.dataValues.sisa_antrian = +sisa[0].total
                     hasilSEP.dataValues.status = 200
-                    
+
                     // console.log(objCreate);
                     // console.log(objUpdate);
                     // console.log(kirim2.data, "CREATE-ANTREAN");
@@ -416,7 +416,7 @@ const koneksi_socket = koneksi_socket => {
                 let tgl_periksa = moment().format("YYYY-MM-DD")
 
                 let objCreate = { kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: nomor_kartu, nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: no_rm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: noRujukan, nomorantrean: nomor_antrean, angkaantrean: angka_antrean, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
-                
+
                 let kirim2 = await axios.post(purworejo + "/create-antrean", objCreate, config)
                 let antrian = await antrian_list.update({ no_rm, kode_booking }, { where: { id: id_antrian_list } })
                 let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
@@ -432,6 +432,48 @@ const koneksi_socket = koneksi_socket => {
                 await t.rollback();
                 console.log(error);
                 io.to(room_id).emit("error", error);
+            }
+        })
+
+        socket.on('listKuotaPoli', async (asd) => {
+            try {
+                let kirim = await axios.get(purworejo + "/get-poli", config)
+                let data_poli = kirim.data.data
+                let tanggal = moment().format("YYYY-MM-DD")
+                let kuota_antrian = await sq.query(`select al.poli_id, count(*) as total_kuota_terbooking from antrian_list al where al."deletedAt" isnull and al.poli_layanan in (1,2) and date(al.tanggal_antrian) = '${tanggal}' and al.status_antrian < 2 group by al.poli_id `, s)
+                let kuota_booking = await sq.query(`select jd.poli_id ,jd.kuota ,jd.kuota_mobile ,count(*) as "jumlah_booking" from booking b join jadwal_dokter jd on jd.id = b.jadwal_dokter_id where b."deletedAt" isnull and jd."deletedAt" isnull and b.status_booking in (1,2,9) and date(jd.waktu_mulai) = '${tanggal}' group by jd.poli_id ,jd.kuota ,jd.kuota_mobile`, s)
+                let jadwal = await sq.query(`select * from jadwal_dokter jd where date(jd.waktu_mulai) = '${tanggal}'`, s)
+                for (let i = 0; i < data_poli.length; i++) {
+                    data_poli[i].sisaKuota = 0
+                    data_poli[i].kuota_terbooking = 0
+                    if (data_poli[i].kuota == '999') {
+                        data_poli[i].sisaKuota = data_poli[i].kuota
+                    }
+                    for (let j = 0; j < jadwal.length; j++) {
+                        if (data_poli[i].id == jadwal[j].poli_id) {
+                            data_poli[i].kuota = `${jadwal[j].kuota}`
+                            data_poli[i].kuotaOnline = `${jadwal[j].kuota_mobile}`
+                            let total_kuota = jadwal[j].kuota + jadwal[j].kuota_mobile
+                            data_poli[i].sisaKuota = total_kuota
+                            for (let l = 0; l < kuota_antrian.length; l++) {
+                                if (kuota_antrian[l].poli_id == jadwal[j].poli_id) {
+                                    data_poli[i].kuota_terbooking = parseInt(kuota_antrian[l].total_kuota_terbooking)
+                                    data_poli[i].sisaKuota = parseInt(total_kuota) - parseInt(kuota_antrian[l].total_kuota_terbooking)
+                                }
+                            }
+                            for (let m = 0; m < kuota_booking.length; m++) {
+                                if (kuota_booking[m].poli_id == jadwal[j].poli_id) {
+                                    data_poli[i].kuota_terbooking += parseInt(kuota_booking[m].jumlah_booking)
+                                    data_poli[i].sisaKuota = parseInt(total_kuota) - parseInt(kuota_booking[m].jumlah_booking)
+                                }
+                            }
+                        }
+                    }
+                }
+                io.emit("refresh_list_kuota_poli", data_poli);
+            } catch (error) {
+                console.log(error);
+                io.emit("error", error);
             }
         })
 
