@@ -75,7 +75,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                socket.emit("error", error);
+                socket.emit("error", {status:500,message:"gagal"});
             }
         })
 
@@ -107,7 +107,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                socket.emit("error", error);
+                socket.emit("error", {status:500,message:"gagal"});
             }
         })
 
@@ -140,7 +140,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                socket.emit("error", error);
+                socket.emit("error", {status:500,message:"gagal"});
             }
         })
 
@@ -170,7 +170,7 @@ const koneksi_socket = koneksi_socket => {
                 if (kode_booking && taskid) {
                     let waktu = moment(new Date()).format('x')
                     let x = { kodebooking: kode_booking, taskid, waktu }
-                    // let kirim = await axios.post(purworejo + "/update-antrean", x, config)
+                    let kirim = await axios.post(purworejo + "/update-antrean", x, config)
                     console.log(x, "kode_booking");
                     console.log(kirim.data.data);
                 }
@@ -182,7 +182,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                socket.emit("error", error);
+                socket.emit("error", {status:500,message:"gagal"});
             }
         })
 
@@ -207,7 +207,7 @@ const koneksi_socket = koneksi_socket => {
                     let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
                     let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
                     let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
-                    // console.log(kirimRajal, 'KIRIM RAJAL');
+                    console.log(kirimRajal, 'KIRIM RAJAL');
                     let kode_booking = moment().format("YYYYMMDDHHmmss") + `${initial}${no}`
                     let tgl_periksa = moment().format("YYYY-MM-DD")
                     let nomor_antrean = `${initial}-${no}`
@@ -246,7 +246,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                io.to(room_id).emit("error", error);
+                io.to(room_id).emit("error", {status:500,message:"gagal"});
             }
         })
 
@@ -386,7 +386,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                io.to(room_id).emit("error", error);
+                io.to(room_id).emit("error", {status:500,message:"gagal"});
             }
         })
 
@@ -431,7 +431,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                io.to(room_id).emit("error", error);
+                io.to(room_id).emit("error", {status:500,message:"gagal"});
             }
         })
 
@@ -473,7 +473,7 @@ const koneksi_socket = koneksi_socket => {
                 io.emit("refresh_list_kuota_poli", data_poli);
             } catch (error) {
                 console.log(error);
-                io.emit("error", error);
+                io.emit("error", {status:500,message:"gagal"});
             }
         })
 
