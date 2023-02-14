@@ -75,7 +75,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                socket.emit("error", {status:500,message:"gagal"});
+                socket.emit("error", { status: 500, message: "gagal" });
             }
         })
 
@@ -107,7 +107,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                socket.emit("error", {status:500,message:"gagal"});
+                socket.emit("error", { status: 500, message: "gagal" });
             }
         })
 
@@ -140,7 +140,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                socket.emit("error", {status:500,message:"gagal"});
+                socket.emit("error", { status: 500, message: "gagal" });
             }
         })
 
@@ -182,7 +182,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                socket.emit("error", {status:500,message:"gagal"});
+                socket.emit("error", { status: 500, message: "gagal" });
             }
         })
 
@@ -206,8 +206,7 @@ const koneksi_socket = koneksi_socket => {
                 } else {
                     let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
                     let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
-                    let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
-                    console.log(kirimRajal, 'KIRIM RAJAL');
+
                     let kode_booking = moment().format("YYYYMMDDHHmmss") + `${initial}${no}`
                     let tgl_periksa = moment().format("YYYY-MM-DD")
                     let nomor_antrean = `${initial}-${no}`
@@ -237,16 +236,26 @@ const koneksi_socket = koneksi_socket => {
 
                     // console.log(objCreate);
                     // console.log(objUpdate);
-                    // console.log(kirim2.data, "CREATE-ANTREAN");
-                    // console.log(kirim3.data, "UPDATE-ANTREAN");
+                    console.log(kirim2.data, "CREATE-ANTREAN");
+                    console.log(kirim3.data, "UPDATE-ANTREAN");
 
-                    await t.commit();
-                    io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP: { status: 500 } });
+                    if (kirim2.data.code == 200) {
+                        let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
+                        console.log(kirimRajal, 'KIRIM RAJAL');
+                        await t.commit();
+                        io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP: { status: 500 } });
+                    } else {
+                        io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP: { status: 500 } });
+                    }
                 }
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                io.to(room_id).emit("error", {status:500,message:"gagal"});
+                if (error.name = "AxiosError") {
+                    io.to(room_id).emit("error", { status: error.response.data.code, message: error.response.data.message });
+                } else {
+                    io.to(room_id).emit("error", { status: 500, message: "gagal" });
+                }
             }
         })
 
@@ -386,7 +395,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                io.to(room_id).emit("error", {status:500,message:"gagal"});
+                io.to(room_id).emit("error", { status: 500, message: "gagal" });
             }
         })
 
@@ -431,7 +440,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                io.to(room_id).emit("error", {status:500,message:"gagal"});
+                io.to(room_id).emit("error", { status: 500, message: "gagal" });
             }
         })
 
@@ -473,7 +482,7 @@ const koneksi_socket = koneksi_socket => {
                 io.emit("refresh_list_kuota_poli", data_poli);
             } catch (error) {
                 console.log(error);
-                io.emit("error", {status:500,message:"gagal"});
+                io.emit("error", { status: 500, message: "gagal" });
             }
         })
 
