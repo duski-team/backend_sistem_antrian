@@ -236,22 +236,22 @@ const koneksi_socket = koneksi_socket => {
 
                     // console.log(objCreate);
                     // console.log(objUpdate);
-                    console.log(kirim2.data, "CREATE-ANTREAN");
-                    console.log(kirim3.data, "UPDATE-ANTREAN");
+                    // console.log(kirim2.data, "CREATE-ANTREAN");
+                    // console.log(kirim3.data, "UPDATE-ANTREAN");
 
-                    if (kirim2.data.code == 200) {
+                    if (kirim2.data.code == 200 && kirim3.data.code == 200) {
                         let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
-                        console.log(kirimRajal, 'KIRIM RAJAL');
+                        // console.log(kirimRajal, 'KIRIM RAJAL');
                         await t.commit();
                         io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP: { status: 500 } });
                     } else {
-                        io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP: { status: 500 } });
+                        io.to(room_id).emit("error", { status: 500, message: kirim2.data.code==201?kirim2.data.message:kirim3.data.message });
                     }
                 }
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                if (error.name = "AxiosError") {
+                if (error.name = "AxiosError" && error.response.data) {
                     io.to(room_id).emit("error", { status: error.response.data.code, message: error.response.data.message });
                 } else {
                     io.to(room_id).emit("error", { status: 500, message: "gagal" });
