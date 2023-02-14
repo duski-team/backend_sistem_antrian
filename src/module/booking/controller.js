@@ -180,7 +180,7 @@ class Controller {
     static async detailsBookingByKodeBooking(req, res) {
         let { kode_booking } = req.params
         try {
-            let data = await sq.query(`select b.* , al.id as "antrian_list_id", al.tanggal_antrian ,al.is_master ,al.poli_layanan ,al.initial ,al.antrian_no ,al."sequence" ,al.is_cancel ,al.is_process ,al.status_antrian ,al.booking_id ,al.poli_id as "antrian_list_poli_id" ,al.master_loket_id ,al.jenis_antrian_id, jd.* from booking b join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join antrian_list al on al.booking_id = b.id where b."deletedAt" isnull and b.kode_booking = '${kode_booking}'`, s)
+            let data = await sq.query(`select b.id as booking_id,b.* , al.id as "antrian_list_id", al.tanggal_antrian ,al.is_master ,al.poli_layanan ,al.initial ,al.antrian_no ,al."sequence" ,al.is_cancel ,al.is_process ,al.status_antrian,al.poli_id as "antrian_list_poli_id" ,al.master_loket_id ,al.jenis_antrian_id, jd.* from booking b join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join antrian_list al on al.booking_id = b.id where b."deletedAt" isnull and b.kode_booking = '${kode_booking}'`, s)
 
             if (data.length == 0) {
                 res.status(200).json({ status: 200, message: "data tidak ada" })
