@@ -445,11 +445,20 @@ const koneksi_socket = koneksi_socket => {
                 // console.log(kirim2.data, "CREATE-ANTREAN");
                 // console.log(kirim3.data, "UPDATE-ANTREAN");
                 // io.emit("refresh_register_antrean_BPJS_loket", kirim2.data);
-                io.emit("refresh_register_antrean_BPJS_loket", antrian);
+
+                if (kirim2.data.code == 200 && kirim3.data.code == 200) {
+                    io.emit("refresh_register_antrean_BPJS_loket", antrian);
+                } else {
+                    io.to(room_id).emit("error", { status: 500, message: kirim2.data.code == 201 ? kirim2.data.message : kirim3.data.message });
+                }
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                io.to(room_id).emit("error", { status: 500, message: "gagal" });
+                if (error.name = "AxiosError") {
+                    io.to(room_id).emit("error", { status: error.response.data.code, message: error.response.data.message });
+                } else {
+                    io.to(room_id).emit("error", { status: 500, message: "gagal" });
+                }
             }
         })
 
