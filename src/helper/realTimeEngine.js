@@ -75,7 +75,11 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                socket.emit("error", { status: 500, message: "gagal" });
+                if (error.name == "AxiosError") {
+                    socket.emit("error", { status: error.response.data.code, message: error.response.data.message });
+                } else {
+                    socket.emit("error", { status: 500, message: "gagal" });
+                }
             }
         })
 
@@ -182,7 +186,11 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                socket.emit("error", { status: 500, message: "gagal" });
+                if (error.name == "AxiosError") {
+                    socket.emit("error", { status: error.response.data.code, message: error.response.data.message });
+                } else {
+                    socket.emit("error", { status: 500, message: "gagal" });
+                }
             }
         })
 
