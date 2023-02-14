@@ -400,7 +400,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                if (error.name = "AxiosError") {
+                if (error.name = "AxiosError" && error.response.data) {
                     io.to(room_id).emit("error", { status: error.response.data.code, message: error.response.data.message });
                 } else {
                     io.to(room_id).emit("error", { status: 500, message: "gagal" });
