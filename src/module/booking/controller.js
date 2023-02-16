@@ -16,7 +16,7 @@ client.connect().catch(console.error)
 
 
 function batalBooking() {
-    var job = new ClusterCronJob('35 21 * * *', async function () {
+    var job = new ClusterCronJob('0 1 * * *', async function () {
         try {
             await sq.query(`update booking set status_booking = 0 where status_booking in (1,2) and date(tanggal_booking) < date(now())`,s)
             console.log('berhasil batalkan booking');
