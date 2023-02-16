@@ -9,27 +9,27 @@ const sha1 = require('sha1');
 const axios = require('axios');
 const { createClient } = require("redis")
 const client = createClient({ url: `redis://${process.env.HOST_REDIS}:${process.env.PORT_REDIS}`, legacyMode: true });
-const ClusterCronJob = require('cron-cluster')(client, { key: "leaderKey" }).CronJob;
+const ClusterCronJob = require('cron-cluster')(client, { key: "leaderKey2" }).CronJob;
 
 const purworejo = process.env.HOST_PURWOREJO
 const config = require("../../helper/config").config
 
-function batalBooking() {
-    var job = new ClusterCronJob('0 1 * * *', async function () {
-        try {
-            let cek_booking = await sq.query(`update booking set status_booking = 0 where b."deletedAt" isnull and b.status_booking in (1,2) and date(b.tanggal_booking) < date(now())`,s)
-            console.log('berhasil');
-        } catch (error) {
-            console.log(error);
-        }
-    },
-      null,
-      true,
-     "Asia/Jakarta"
-    )
-    job.start()
-}
-batalBooking()
+// function batalBooking() {
+//     var job = new ClusterCronJob('0 1 * * *', async function () {
+//         try {
+//             let cek_booking = await sq.query(`update booking set status_booking = 0 where b."deletedAt" isnull and b.status_booking in (1,2) and date(b.tanggal_booking) < date(now())`,s)
+//             console.log('berhasil');
+//         } catch (error) {
+//             console.log(error);
+//         }
+//     },
+//       null,
+//       true,
+//      "Asia/Jakarta"
+//     )
+//     job.start()
+// }
+// batalBooking()
 
 class Controller {
 
