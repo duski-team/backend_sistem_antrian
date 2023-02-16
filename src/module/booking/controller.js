@@ -11,6 +11,23 @@ const axios = require('axios');
 const purworejo = process.env.HOST_PURWOREJO
 const config = require("../../helper/config").config
 
+function batalBooking() {
+    var job = new ClusterCronJob('0 1 * * *', async function () {
+        try {
+            let cek_booking = await sq.query(`update booking set status_booking = 0 where b."deletedAt" isnull and b.status_booking in (1,2) and date(b.tanggal_booking) < date(now())`,s)
+            console.log('berhasil');
+        } catch (error) {
+            console.log(error);
+        }
+    },
+      null,
+      true,
+     "Asia/Jakarta"
+    )
+    job.start()
+}
+batalBooking()
+
 class Controller {
 
     static async registerDenganRM(req, res) {
@@ -148,6 +165,8 @@ class Controller {
             where b."deletedAt" isnull and u."deletedAt" isnull and b.user_id = '${user_id}' order by b."createdAt" desc`, s)
             let kirim = await axios.get(purworejo + "/get-dokter", config)
             let data_dokter = kirim.data.data
+            let kirim2 = await axios.get(purworejo + "/get-poli", config)
+            let poli = kirim2.data.data
 
             // console.log(data);
 
@@ -155,6 +174,11 @@ class Controller {
                 for (let j = 0; j < data_dokter.length; j++) {
                     if (data_dokter[j].id == data[i].dokter_id) {
                         data[i].nama_dokter = data_dokter[j].nama
+                    }
+                }
+                for (let k = 0; k < poli.length; k++) {
+                    if (poli[k].id == data[i].poli_id) {
+                        data[i].nama_poli = poli[k].nama
                     }
                 }
                 if (data[i].no_rm) {
