@@ -7,6 +7,8 @@ var QRCode = require('qrcode')
 const moment = require('moment');
 const sha1 = require('sha1');
 const axios = require('axios');
+const { createClient } = require("redis")
+const client = createClient({ url: `redis://${process.env.HOST_REDIS}:${process.env.PORT_REDIS}`, legacyMode: true });
 const ClusterCronJob = require('cron-cluster')(client, { key: "leaderKey" }).CronJob;
 
 const purworejo = process.env.HOST_PURWOREJO
