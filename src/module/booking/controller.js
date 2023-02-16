@@ -7,6 +7,7 @@ var QRCode = require('qrcode')
 const moment = require('moment');
 const sha1 = require('sha1');
 const axios = require('axios');
+const ClusterCronJob = require('cron-cluster')(client, { key: "leaderKey" }).CronJob;
 
 const purworejo = process.env.HOST_PURWOREJO
 const config = require("../../helper/config").config
