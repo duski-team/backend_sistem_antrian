@@ -38,7 +38,7 @@ const koneksi_socket = koneksi_socket => {
                 if (kode_booking && taskid) {
                     let waktu = moment(new Date()).format('x')
                     let x = { kodebooking: kode_booking, taskid, waktu }
-                    // let kirim = await axios.post(purworejo + "/update-antrean", x, config)
+                    let kirim = await axios.post(purworejo + "/update-antrean", x, config)
                     console.log(x, "kode booking");
                     console.log(kirim.data.data);
                 }
