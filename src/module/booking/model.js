@@ -54,6 +54,10 @@ const booking = sq.define('booking', {
     foto_surat_rujukan: {
         type: DataTypes.STRING
     },
+    tanggal_rujukan: {
+        type: DataTypes.DATE,
+        defaultValue: null
+    },
 },
     {
         paranoid: true,
