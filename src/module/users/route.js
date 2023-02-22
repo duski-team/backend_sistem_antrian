@@ -15,5 +15,6 @@ router.get('/detailsById/:id', authentification, Controller.detailsById)
 router.post('/delete', authentification, Controller.delete)
 router.post('/resetPassword', Controller.resetPassword)
 router.post('/changePassword', Controller.changePassword)
+router.get('/listUserMobile', authentification, Controller.listUserMobile)
 
 module.exports = router

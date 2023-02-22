@@ -300,6 +300,16 @@ class Controller {
             }
         }
     }
+
+    static async listUserMobile(req, res) {
+        try {
+            let data = await sq.query(`select * from users u where u."deletedAt" isnull and u."role" = 9998`, s)
+            res.status(200).json({ status: 200, message: "sukses", data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
 }
 
 module.exports = Controller
