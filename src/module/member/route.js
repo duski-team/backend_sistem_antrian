@@ -13,6 +13,6 @@ router.get('/listMemberBelumDiverifikasiByUserId/:user_id', Controller.listMembe
 router.get('/listMemberDitolakByUserId/:user_id', Controller.listMemberDitolakByUserId)
 router.get('/listMemberBaru', Controller.listMemberBaru)
 router.get('/detailsById/:id', Controller.detailsById)
-router.post('/listAllMember', Controller.detailsById)
+router.post('/listAllMember', Controller.listAllMember)
 
 module.exports = router
