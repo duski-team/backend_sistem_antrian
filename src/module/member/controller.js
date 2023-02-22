@@ -114,6 +114,17 @@ class Controller {
         })
     }
 
+    static delete (req, res) {
+        const { id } = req.body
+
+        member.destroy({where:{id}}).then(hasil => {
+            res.status(200).json({ status: 200, message: "sukses" })
+        }).catch(error => {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        })
+    }
+
     static async listMemberByUserId(req, res) {
         const { user_id } = req.params
 
