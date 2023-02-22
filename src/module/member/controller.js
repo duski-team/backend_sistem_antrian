@@ -170,6 +170,35 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }
     }
+
+    static async listAllMember(req, res) {
+        const {no_rm_pasien,nama,no_ktp,no_bpjs,username} = req.body;
+        try {
+            let isi = '';
+            if(no_rm_pasien){
+                isi+=` and m.no_rm_pasien ilike '%${no_rm_pasien}%'`
+            }
+            if(nama){
+                isi+=` and m.nama ilike '%${nama}%'`
+            }
+            if(no_ktp){
+                isi+=` and m.no_ktp ilike '%${no_ktp}%'`
+            }
+            if(no_bpjs){
+                isi+=` and m.no_bpjs ilike '%${no_bpjs}%'`
+            }
+            if(username){
+                isi+=` and u.username ilike '%${username}%'`
+            }
+
+            let data = await sq.query(`select m.id as member_id,* from "member" m  join users u on u.id = m.user_id where m."deletedAt" isnull${isi} order by m."createdAt" desc`, s)
+
+            res.status(200).json({ status: 200, message: "sukses", data: data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
 }
 
 module.exports = Controller
