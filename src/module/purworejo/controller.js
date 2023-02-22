@@ -106,7 +106,7 @@ class Controller {
             tambahan += `&tipe=${type}`
         }
         try {
-            let kirim = await axios.get(purworejo + "/get-list-rujukan?noPeserta=" + noPeserta, config)
+            let kirim = await axios.get(purworejo + `/get-list-rujukan?noPeserta=${noPeserta}${tambahan}`, config)
             let data = kirim.data.data.rujukan;
             let asalFaskes = kirim.data.data.asalFaskes
             let hasil = []
