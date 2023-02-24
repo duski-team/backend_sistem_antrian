@@ -30,7 +30,7 @@ function syncJadwal() {
     var job = new ClusterCronJob('0 1 * * *', async function () {
         try {
             // let curdate = moment().format('YYYY-MM-DD')
-            let curdate= moment().add(2,'d').format('YYYY-MM-DD')
+            let curdate= moment().add(3,'d').format('YYYY-MM-DD')
             let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`,s);
             if(cekJadwal.length>0){
                 console.log("data sudah ada");
@@ -157,7 +157,7 @@ class Controller {
     static async syncJadwal(req, res) {
         try {
             // let curdate = moment().format('YYYY-MM-DD')
-            let curdate= moment().add(2,'d').format('YYYY-MM-DD')
+            let curdate= moment().add(3,'d').format('YYYY-MM-DD')
             let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`, s);
             if (cekJadwal.length > 0) {
                 res.status(201).json({ status: 204, message: "data sudah ada", data: cekJadwal })
@@ -243,7 +243,7 @@ class Controller {
             let polinya = kirim.data.data
             let kirim2 = await axios.get(purworejo + "/get-dokter", config)
             let dokternya = kirim2.data.data
-            
+
             for (let i = 0; i < data.length; i++) {
                 data[i].kuota_terbooking = kuota[0].total
                 data[i].sisa_kuota = +data[i].kuota_mobile - +kuota[0].total
