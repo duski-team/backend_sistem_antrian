@@ -38,9 +38,10 @@ const koneksi_socket = koneksi_socket => {
                 if (kode_booking && taskid) {
                     let waktu = moment(new Date()).format('x')
                     let x = { kodebooking: kode_booking, taskid, waktu }
-                    let kirim = await axios.post(purworejo + "/update-antrean", x, config)
+                    // let kirim = await axios.post(purworejo + "/update-antrean", x, config)
+                    axios.post(purworejo + "/update-antrean", x, config)
                     console.log(x, "kode booking");
-                    console.log(kirim.data.data);
+                    // console.log(kirim.data.data);
                 }
                 if (status_antrian == 0) {
                     let tgl = moment(tanggal_antrian).format('YYYY-MM-DD')
@@ -174,9 +175,10 @@ const koneksi_socket = koneksi_socket => {
                 if (kode_booking && taskid) {
                     let waktu = moment(new Date()).format('x')
                     let x = { kodebooking: kode_booking, taskid, waktu }
-                    let kirim = await axios.post(purworejo + "/update-antrean", x, config)
+                    // let kirim = await axios.post(purworejo + "/update-antrean", x, config)
+                    axios.post(purworejo + "/update-antrean", x, config)
                     console.log(x, "kode_booking");
-                    console.log(kirim.data.data);
+                    // console.log(kirim.data.data);
                 }
 
                 let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].nomor, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking }, { transaction: t })
@@ -238,23 +240,25 @@ const koneksi_socket = koneksi_socket => {
                     hasil.dataValues.sisa_antrian = +sisa[0].total
 
                     let objCreate = { kodebooking: kode_booking, jenispasien: "NON JKN", nomorkartu: "", nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: 0, norm: noRm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: "", nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
-                    let kirim2 = await axios.post(purworejo + "/create-antrean", objCreate, config)
+                    // let kirim2 = await axios.post(purworejo + "/create-antrean", objCreate, config)
+                    axios.post(purworejo + "/create-antrean", objCreate, config)
                     let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
-                    let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
+                    // let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
+                    axios.post(purworejo + "/update-antrean", objUpdate, config)
 
                     // console.log(objCreate);
                     // console.log(objUpdate);
                     // console.log(kirim2.data, "CREATE-ANTREAN");
                     // console.log(kirim3.data, "UPDATE-ANTREAN");
 
-                    if (kirim2.data.code == 200 && kirim3.data.code == 200) {
+                    // if (kirim2.data.code == 200 && kirim3.data.code == 200) {
                         let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
                         // console.log(kirimRajal, 'KIRIM RAJAL');
                         await t.commit();
                         io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP: { status: 500 } });
-                    } else {
-                        io.to(room_id).emit("error", { status: 500, message: kirim2.data.code == 201 ? kirim2.data.message : kirim3.data.message });
-                    }
+                    // } else {
+                    //     io.to(room_id).emit("error", { status: 500, message: kirim2.data.code == 201 ? kirim2.data.message : kirim3.data.message });
+                    // }
                 }
             } catch (error) {
                 await t.rollback();
@@ -371,9 +375,11 @@ const koneksi_socket = koneksi_socket => {
                     let hasil = await antrian_list.create({ id: idAntrian, tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking }, { transaction: t })
 
                     let objCreate = { kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: noBpjs, nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: noRm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: noRujukan ? noRujukan : "", nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
-                    let kirim2 = await axios.post(purworejo + "/create-antrean", objCreate, config)
+                    // let kirim2 = await axios.post(purworejo + "/create-antrean", objCreate, config)
+                    axios.post(purworejo + "/create-antrean", objCreate, config)
                     let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
-                    let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
+                    // let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
+                    axios.post(purworejo + "/update-antrean", objUpdate, config)
 
                     hasil.dataValues.sisa_antrian = +sisa[0].total
                     
@@ -389,7 +395,7 @@ const koneksi_socket = koneksi_socket => {
                     // console.log(JSON.stringify(kirimSEP.data.data));
                     // console.log(SEP, "SEP");
 
-                    if (kirim2.data.code == 200 && kirim3.data.code == 200) {
+                    // if (kirim2.data.code == 200 && kirim3.data.code == 200) {
                         let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, noSuratKontrol, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
                         let idDaftar = kirimRajal.data.data.idDaftar
 
@@ -400,9 +406,9 @@ const koneksi_socket = koneksi_socket => {
                         hasilSEP.dataValues.status = 200
                         await t.commit();
                         io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP });
-                    } else {
-                        io.to(room_id).emit("error", { status: 500, message: kirim2.data.code == 201 ? kirim2.data.message : kirim3.data.message });
-                    }
+                    // } else {
+                    //     io.to(room_id).emit("error", { status: 500, message: kirim2.data.code == 201 ? kirim2.data.message : kirim3.data.message });
+                    // }
                 }
 
             } catch (error) {
@@ -443,10 +449,12 @@ const koneksi_socket = koneksi_socket => {
 
                 let objCreate = { kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: nomor_kartu, nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: no_rm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: noRujukan, nomorantrean: nomor_antrean, angkaantrean: angka_antrean, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
 
-                let kirim2 = await axios.post(purworejo + "/create-antrean", objCreate, config)
+                // let kirim2 = await axios.post(purworejo + "/create-antrean", objCreate, config)
+                axios.post(purworejo + "/create-antrean", objCreate, config)
                 let antrian = await antrian_list.update({ no_rm, kode_booking }, { where: { id: id_antrian_list } })
                 let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
-                let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
+                // let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
+                axios.post(purworejo + "/update-antrean", objUpdate, config)
 
                 // console.log(objCreate);
                 // console.log(objUpdate);
@@ -454,11 +462,11 @@ const koneksi_socket = koneksi_socket => {
                 // console.log(kirim3.data, "UPDATE-ANTREAN");
                 // io.emit("refresh_register_antrean_BPJS_loket", kirim2.data);
 
-                if (kirim2.data.code == 200 && kirim3.data.code == 200) {
+                // if (kirim2.data.code == 200 && kirim3.data.code == 200) {
                     io.emit("refresh_register_antrean_BPJS_loket", antrian);
-                } else {
-                    io.to(room_id).emit("error", { status: 500, message: kirim2.data.code == 201 ? kirim2.data.message : kirim3.data.message });
-                }
+                // } else {
+                //     io.to(room_id).emit("error", { status: 500, message: kirim2.data.code == 201 ? kirim2.data.message : kirim3.data.message });
+                // }
             } catch (error) {
                 await t.rollback();
                 console.log(error);
