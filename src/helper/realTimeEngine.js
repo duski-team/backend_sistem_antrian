@@ -422,6 +422,45 @@ const koneksi_socket = koneksi_socket => {
             }
         })
 
+        socket.on('registerAPMKLL', async (asd, room_id) => {
+            const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id, noSuratKontrol, pasien_baru, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, estimasi_dilayani, keterangan } = asd
+
+            const t = await sq.transaction();
+
+            try {
+                let cekBooking = []
+                let tgl = moment().format('YYYY-MM-DD');
+                let sequence_no = await sq.query(`select count(*)+1 as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and al.poli_layanan = 2`, s);
+                let sisa = await sq.query(`select count(*)as total from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan = 2 and al.status_antrian in (0,1)`, s);
+
+                if (booking_id) {
+                    cekBooking = await sq.query(`select * from antrian_list al where al."deletedAt" isnull and al.booking_id = '${booking_id}' and date(al.tanggal_antrian) = '${tgl}'`, s);
+                }
+
+                if (cekBooking.length > 0) {
+                    cekBooking[0].sisa_antrian = sisa[0].total - 1
+                    io.to(room_id).emit("refresh_register_APM_KLL", { hasil: cekBooking[0], hasilSEP:{ status: 500 }});
+                } else {
+                    let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s);
+                    let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
+                    let hasil = await antrian_list.create({ id: idAntrian, tanggal_antrian: tgl, is_master: 1, poli_layanan: 2, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking })
+                    hasil.dataValues.sisa_antrian = +sisa[0].total
+                    let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, noSuratKontrol, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
+                    
+                    await t.commit();
+                    io.to(room_id).emit("refresh_register_APM_KLL", { hasil, hasilSEP: { status: 500 }});
+                }
+            } catch (error) {
+                await t.rollback()
+                console.log(error);
+                if (error.name = "AxiosError" && error.response.data) {
+                    io.to(room_id).emit("error", { status: error.response.data.code, message: error.response.data.message });
+                } else {
+                    io.to(room_id).emit("error", { status: 500, message: "gagal" });
+                }
+            }
+        })
+
         socket.on('registerAntreanBPJSLoket', async (asd) => {
             const { nomor_kartu, poli_id, pasien_baru, no_rm, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, nomor_referensi, nomor_antrean, angka_antrean, estimasi_dilayani, keterangan, id_antrian_list, noRujukan } = asd
 
