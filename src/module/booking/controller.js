@@ -227,60 +227,62 @@ class Controller {
     }
 
     static async listAllBooking(req, res) {
-        let { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, flag_layanan, jadwal_dokter_id, user_id, poli_id } = req.body
+        let { tanggal_awal_booking, tanggal_akhir_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, status_booking, no_rm, kode_booking, flag_layanan, jadwal_dokter_id, user_id, poli_id, tanggal_poli } = req.body;
+
         try {
-            let tgl = moment().format('YYYY-MM-DD')
+
             let isi = ''
-            if (tanggal_booking) {
-                isi += ` and b.tanggal_booking = '${tanggal_booking}' `
+            
+            if (tanggal_awal_booking) {
+                isi += ` and date(b.tanggal_booking) >= '${tanggal_awal_booking}'`
+            }
+            if (tanggal_akhir_booking) {
+                isi += ` and date(b.tanggal_booking) <= '${tanggal_akhir_booking}'`
             }
             if (jenis_booking) {
-                isi += ` and b.jenis_booking = '${jenis_booking}' `
+                isi += ` and b.jenis_booking = '${jenis_booking}'`
             }
             if (NIK) {
-                isi += ` and b.NIK = '${NIK}' `
+                isi += ` and b.NIK = '${NIK}'`
             }
             if (nama_booking) {
-                isi += ` and b.nama_booking = '${nama_booking}' `
+                isi += ` and b.nama_booking ilike '%${nama_booking}%'`
             }
             if (no_hp_booking) {
-                isi += ` and b.no_hp_booking = '${no_hp_booking}' `
+                isi += ` and b.no_hp_booking ilike '%${no_hp_booking}%'`
             }
             if (no_rujukan) {
-                isi += ` and b.no_rujukan = '${no_rujukan}' `
+                isi += ` and b.no_rujukan ilike '%${no_rujukan}%'`
             }
             if (no_kontrol) {
-                isi += ` and b.no_kontrol = '${no_kontrol}' `
-            }
-            if (is_verified) {
-                isi += ` and b.is_verified = '${is_verified}' `
-            }
-            if (is_registered) {
-                isi += ` and b.is_registered = '${is_registered}' `
+                isi += ` and b.no_kontrol ilike '%${no_kontrol}%'`
             }
             if (status_booking) {
-                isi += ` and b.status_booking = '${status_booking}' `
+                isi += ` and b.status_booking = '${status_booking}'`
             }
             if (no_rm) {
-                isi += ` and b.no_rm = '${no_rm}' `
+                isi += ` and b.no_rm ilike '%${no_rm}'`
             }
             if (kode_booking) {
-                isi += ` and b.kode_booking = '${kode_booking}' `
+                isi += ` and b.kode_booking = '${kode_booking}'`
             }
             if (flag_layanan) {
-                isi += ` and b.flag_layanan = '${flag_layanan}' `
+                isi += ` and b.flag_layanan = '${flag_layanan}'`
             }
             if (jadwal_dokter_id) {
-                isi += ` and b.jadwal_dokter_id = '${jadwal_dokter_id}' `
+                isi += ` and b.jadwal_dokter_id = '${jadwal_dokter_id}'`
             }
             if (user_id) {
-                isi += ` and b.user_id = '${user_id}' `
+                isi += ` and b.user_id = '${user_id}'`
             }
             if (poli_id) {
-                isi += ` and jd.poli_id = '${poli_id}' `
+                isi += ` and jd.poli_id = '${poli_id}'`
+            }
+            if(tanggal_poli){
+                isi += ` date(jd.waktu_mulai)= '${tanggal_poli}'`
             }
 
-            let data = await sq.query(`select b.id as "booking_id", * from booking b left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join users u on u.id = b.user_id where b."deletedAt" isnull and date(b.tanggal_booking) >= '${tgl}' and '${tgl}' <= date(b.tanggal_booking) ${isi}`, s)
+            let data = await sq.query(`select b.id as "booking_id", b.*,jd.*, u.username, u.user_status, u."role" from booking b left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join users u on u.id = b.user_id where b."deletedAt" isnull ${isi}`, s)
 
             let kirim = await axios.get(purworejo + "/get-poli", config)
             let polinya = kirim.data.data
@@ -306,6 +308,87 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }
     }
+
+    // static async listAllBooking(req, res) {
+    //     let { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, flag_layanan, jadwal_dokter_id, user_id, poli_id } = req.body
+    //     try {
+    //         let tgl = moment().format('YYYY-MM-DD')
+    //         let isi = ''
+    //         if (tanggal_booking) {
+    //             isi += ` and b.tanggal_booking = '${tanggal_booking}' `
+    //         }
+    //         if (jenis_booking) {
+    //             isi += ` and b.jenis_booking = '${jenis_booking}' `
+    //         }
+    //         if (NIK) {
+    //             isi += ` and b.NIK = '${NIK}' `
+    //         }
+    //         if (nama_booking) {
+    //             isi += ` and b.nama_booking = '${nama_booking}' `
+    //         }
+    //         if (no_hp_booking) {
+    //             isi += ` and b.no_hp_booking = '${no_hp_booking}' `
+    //         }
+    //         if (no_rujukan) {
+    //             isi += ` and b.no_rujukan = '${no_rujukan}' `
+    //         }
+    //         if (no_kontrol) {
+    //             isi += ` and b.no_kontrol = '${no_kontrol}' `
+    //         }
+    //         if (is_verified) {
+    //             isi += ` and b.is_verified = '${is_verified}' `
+    //         }
+    //         if (is_registered) {
+    //             isi += ` and b.is_registered = '${is_registered}' `
+    //         }
+    //         if (status_booking) {
+    //             isi += ` and b.status_booking = '${status_booking}' `
+    //         }
+    //         if (no_rm) {
+    //             isi += ` and b.no_rm = '${no_rm}' `
+    //         }
+    //         if (kode_booking) {
+    //             isi += ` and b.kode_booking = '${kode_booking}' `
+    //         }
+    //         if (flag_layanan) {
+    //             isi += ` and b.flag_layanan = '${flag_layanan}' `
+    //         }
+    //         if (jadwal_dokter_id) {
+    //             isi += ` and b.jadwal_dokter_id = '${jadwal_dokter_id}' `
+    //         }
+    //         if (user_id) {
+    //             isi += ` and b.user_id = '${user_id}' `
+    //         }
+    //         if (poli_id) {
+    //             isi += ` and jd.poli_id = '${poli_id}' `
+    //         }
+
+    //         let data = await sq.query(`select b.id as "booking_id", * from booking b left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join users u on u.id = b.user_id where b."deletedAt" isnull and date(b.tanggal_booking) >= '${tgl}' and '${tgl}' <= date(b.tanggal_booking) ${isi}`, s)
+
+    //         let kirim = await axios.get(purworejo + "/get-poli", config)
+    //         let polinya = kirim.data.data
+    //         let kirim2 = await axios.get(purworejo + "/get-dokter", config)
+    //         let dokternya = kirim2.data.data
+
+    //         for (let i = 0; i < data.length; i++) {
+    //             for (let j = 0; j < polinya.length; j++) {
+    //                 if (data[i].poli_id == polinya[j].id) {
+    //                     data[i].nama_poli = polinya[j].nama
+    //                 }
+    //             }
+    //             for (let l = 0; l < dokternya.length; l++) {
+    //                 if (data[i].dokter_id == dokternya[l].id) {
+    //                     data[i].nama_dokter = dokternya[l].nama
+    //                 }
+    //             }
+    //         }
+
+    //         res.status(200).json({ status: 200, message: "sukses", data })
+    //     } catch (error) {
+    //         console.log(error);
+    //         res.status(500).json({ status: 500, message: "gagal", data: error })
+    //     }
+    // }
 
     static async listBookingByTujuanBooking(req, res) {
         const { tujuan_booking } = req.body
