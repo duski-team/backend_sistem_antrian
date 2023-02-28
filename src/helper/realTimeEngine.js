@@ -108,6 +108,7 @@ const koneksi_socket = koneksi_socket => {
                     hasil.dataValues.sisa_antrian = +sisa[0].total
 
                     io.to(room_id).emit("refresh_antrian_loket", hasil);
+                    io.emit("refresh_admin", hasil);
                 }
             } catch (error) {
                 await t.rollback();
