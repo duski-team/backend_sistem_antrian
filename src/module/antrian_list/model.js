@@ -50,6 +50,9 @@ const antrian_list = sq.define('antrian_list', {
     kode_booking: {
         type: DataTypes.STRING
     },
+    nama_pasien: {
+        type: DataTypes.STRING
+    },
 },
     {
         paranoid: true,

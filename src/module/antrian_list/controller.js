@@ -101,7 +101,7 @@ class Controller {
     }
 
     static async list(req, res) {
-        const { tanggal_antrian, poli_layanan, initial, is_cancel, is_process, status_antrian, jadwal_dokter_id, booking_id, poli_id, master_loket_id, jenis_antrian_id } = req.body;
+        const { tanggal_antrian, poli_layanan, initial, is_cancel, is_process, status_antrian, jadwal_dokter_id, booking_id, poli_id, master_loket_id, jenis_antrian_id,nama_pasien } = req.body;
 
         try {
             let isi = ''
@@ -139,6 +139,9 @@ class Controller {
             if (jenis_antrian_id) {
                 isi += ` and al.jenis_antrian_id = '${jenis_antrian_id}' `
             }
+            if (nama_pasien) {
+                isi += ` and al.nama_pasien ilike '%${nama_pasien}%' `
+            }
 
             let data = await sq.query(`select al.id as "antrian_list_id", al.*, jd.waktu_mulai ,jd.waktu_selesai ,jd.kode_jadwal ,jd.kuota ,jd.kuota_mobile ,jd.dokter_id ,ml.nama_loket ,
             b.tanggal_booking ,b.nama_booking ,b.no_rujukan ,b.no_rm , ja.nama_jenis_antrian ,ja.kode_jenis_antrian  from antrian_list al left join jadwal_dokter jd on jd.id = al.jadwal_dokter_id left join master_loket ml on ml.id = al.master_loket_id left join booking b on b.id = al.booking_id left join jenis_antrian ja on ja.id = al.jenis_antrian_id where al."deletedAt" isnull ${isi} order by al."sequence"`, s)
@@ -151,7 +154,7 @@ class Controller {
     }
 
     static async listHalaman(req, res) {
-        const { halaman, jumlah, tanggal_antrian, poli_layanan, initial, is_cancel, is_process, status_antrian, jadwal_dokter_id, booking_id, poli_id, master_loket_id, jenis_antrian_id } = req.body;
+        const { halaman, jumlah, tanggal_antrian, poli_layanan, initial, is_cancel, is_process, status_antrian, jadwal_dokter_id, booking_id, poli_id, master_loket_id, jenis_antrian_id,nama_pasien } = req.body;
 
         try {
             let isi = ''
@@ -190,6 +193,9 @@ class Controller {
             if (jenis_antrian_id) {
                 isi += `and al.jenis_antrian_id = '${jenis_antrian_id}' `
             }
+            if (nama_pasien) {
+                isi += `and al.nama_pasien ilike '%${nama_pasien}%' `
+            }
 
             let data = await sq.query(`select al.id as antrian_list_id,* from antrian_list al left join jadwal_dokter jd on jd.id = al.jadwal_dokter_id left join master_loket ml on ml.id = al.master_loket_id left join booking b on b.id = al.booking_id left join jenis_antrian ja on ja.id = al.jenis_antrian_id where al."deletedAt" isnull ${isi} order by al."sequence" limit ${jumlah} offset ${offset}`, s)
             let jml = await sq.query(`select count(*) as total from antrian_list al left join jadwal_dokter jd on jd.id = al.jadwal_dokter_id left join master_loket ml on ml.id = al.master_loket_id left join booking b on b.id = al.booking_id left join jenis_antrian ja on ja.id = al.jenis_antrian_id where al."deletedAt" isnull ${isi}`, s)
@@ -200,7 +206,6 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: error })
         }
     }
-
 
     static async listAntrianAktif(req, res) {
         try {

@@ -118,7 +118,7 @@ const koneksi_socket = koneksi_socket => {
         })
 
         socket.on('registerMandiri', async (asd) => {
-            const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking } = asd
+            const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking,nama_pasien } = asd
 
             const t = await sq.transaction();
 
@@ -138,7 +138,7 @@ const koneksi_socket = koneksi_socket => {
                     await antrian_list.update({ status_antrian: 2 }, { where: { id: id_antrian_list }, transaction: t })
                 }
 
-                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].total, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking }, { transaction: t })
+                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].total, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking,nama_pasien }, { transaction: t })
                 hasil.dataValues.sisa_antrian = +sisa[0].total
                 await t.commit();
 
@@ -151,7 +151,7 @@ const koneksi_socket = koneksi_socket => {
         })
 
         socket.on('registerAntrianLayanan', async (asd) => {
-            const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking, taskid } = asd
+            const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking, taskid, nama_pasien } = asd
 
             // console.log(asd);
             //room_id = poli layanan
@@ -182,7 +182,7 @@ const koneksi_socket = koneksi_socket => {
                     // console.log(kirim.data.data);
                 }
 
-                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].nomor, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking }, { transaction: t })
+                let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master, poli_layanan, initial, antrian_no: nomer_antrian, sequence: +sequence[0].nomor, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking,nama_pasien }, { transaction: t })
                 hasil.dataValues.sisa_antrian = +sisa[0].total
                 await t.commit();
                 io.emit("refresh_antrian_layanan", asd);
@@ -198,7 +198,7 @@ const koneksi_socket = koneksi_socket => {
         })
 
         socket.on('registerAPMMandiri', async (asd, room_id) => {
-            const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id, jenis_pasien, pasien_baru, tanggal_periksa, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, estimasi_dilayani, keterangan } = asd
+            const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id, jenis_pasien, pasien_baru, tanggal_periksa, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, estimasi_dilayani, keterangan, nama_pasien } = asd
 
             const t = await sq.transaction();
 
@@ -237,7 +237,7 @@ const koneksi_socket = koneksi_socket => {
                     let nik = kirim4.data.data[0].nik
                     let no_hp = kirim4.data.data[0].noTelp
 
-                    let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking }, { transaction: t })
+                    let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking, nama_pasien }, { transaction: t })
                     hasil.dataValues.sisa_antrian = +sisa[0].total
 
                     let objCreate = { kodebooking: kode_booking, jenispasien: "NON JKN", nomorkartu: "", nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: 0, norm: noRm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: "", nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
@@ -332,7 +332,7 @@ const koneksi_socket = koneksi_socket => {
         // })
 
         socket.on('registerAPMBPJS', async (asd, room_id) => {
-            const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id, noSuratKontrol, pasien_baru, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, estimasi_dilayani, keterangan } = asd
+            const { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, initial, jadwal_dokter_id, booking_id, master_loket_id, noSuratKontrol, pasien_baru, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, estimasi_dilayani, keterangan, nama_pasien } = asd
 
             const t = await sq.transaction();
 
@@ -373,7 +373,7 @@ const koneksi_socket = koneksi_socket => {
                     let tgl_periksa = moment().format("YYYY-MM-DD")
 
                     let idAntrian = uuid_v4()
-                    let hasil = await antrian_list.create({ id: idAntrian, tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking }, { transaction: t })
+                    let hasil = await antrian_list.create({ id: idAntrian, tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking, nama_pasien }, { transaction: t })
 
                     let objCreate = { kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: noBpjs, nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: noRm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: noRujukan ? noRujukan : "", nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
                     // let kirim2 = await axios.post(purworejo + "/create-antrean", objCreate, config)
@@ -463,7 +463,7 @@ const koneksi_socket = koneksi_socket => {
         })
 
         socket.on('registerAntreanBPJSLoket', async (asd) => {
-            const { nomor_kartu, poli_id, pasien_baru, no_rm, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, nomor_referensi, nomor_antrean, angka_antrean, estimasi_dilayani, keterangan, id_antrian_list, noRujukan } = asd
+            const { nomor_kartu, poli_id, pasien_baru, no_rm, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, nomor_referensi, nomor_antrean, angka_antrean, estimasi_dilayani, keterangan, id_antrian_list, noRujukan,nama_pasien } = asd
 
             const t = await sq.transaction();
 
@@ -491,7 +491,7 @@ const koneksi_socket = koneksi_socket => {
 
                 // let kirim2 = await axios.post(purworejo + "/create-antrean", objCreate, config)
                 axios.post(purworejo + "/create-antrean", objCreate, config)
-                let antrian = await antrian_list.update({ no_rm, kode_booking }, { where: { id: id_antrian_list } })
+                let antrian = await antrian_list.update({ no_rm, kode_booking,nama_pasien }, { where: { id: id_antrian_list } })
                 let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
                 // let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
                 axios.post(purworejo + "/update-antrean", objUpdate, config)
