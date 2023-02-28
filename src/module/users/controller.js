@@ -225,14 +225,20 @@ class Controller {
             } else {
                 let passwordnya = bcrypt.hashPassword(password)
                 users.update({ password: passwordnya }, { where: { username } }).then(async data6 => {
-                    let fieldheader = `RSUD RAA TJOKRONEGORO PURWOREJO <br> Gunakan password dibawah ini untuk login : <br> Password : <b>${password}</b>`
-                    await mg.messages.create(mg_domain, {
-                        from: mg_email,
-                        to: [username],
-                        subject: "OTP RSUD RAA TJOKRONEGORO PURWOREJO",
-                        text: " ",
-                        html: fieldheader
-                    })
+                    let fieldheader = `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+                        <div style="margin:50px auto;width:70%;padding:20px 0">
+                        <div style="border-bottom:1px solid #eee">
+                            <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">RSUD RAA TJOKRONEGORO PURWOREJO</a>
+                        </div>
+                        <p>Gunakan password dibawah ini untuk login : <br> Password : </p>
+                        <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${passwordnya}</h2>
+                        <p style="font-size:0.9em;">Regards,<br />RSUD RAA TJOKRONEGORO PURWOREJO</p>
+                        <hr style="border:none;border-top:1px solid #eee" />
+                        </div>
+                    </div>`
+                    let x = {emailTo:username,subject:"PASSWORD RSUD RAA TJOKRONEGORO PURWOREJO",htmlContent:fieldheader}
+    
+                    axios.post(purworejo+ "/send-email",x,config)
                     res.status(200).json({ status: 200, message: "sukses" })
                 })
             }
@@ -305,6 +311,40 @@ class Controller {
         try {
             let data = await sq.query(`select * from users u where u."deletedAt" isnull and u."role" = 9998`, s)
             res.status(200).json({ status: 200, message: "sukses", data })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
+
+    static async kirimOTP(req, res) {
+        const {username} = req.body;
+        try {
+            let cekUsername = await sq.query(`select * from users u where u."deletedAt" isnull and u.username ilike '%${username}%'`, s);
+            if(cekUsername.length==0){
+                res.status(201).json({status:204,message:"username tidak ditemukan"})
+            }else{
+                let y = uuid_v4()
+                let kode = y.substring(y.length - 4, y.length).toUpperCase();
+                await users.update({kode_otp: kode, otp_time: moment().add(60, 'm').toDate()},{where:{id:cekUsername[0].id}});
+
+                let fieldheader = `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+                <div style="margin:50px auto;width:70%;padding:20px 0">
+                  <div style="border-bottom:1px solid #eee">
+                    <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">RSUD RAA TJOKRONEGORO PURWOREJO</a>
+                  </div>
+                  <p>Kamu berhasil mendaftar akun. Silahkan verifikasi akun kamu menggunakan OTP berikut untuk menyelesaikan prosedur Pendaftaran Anda</p>
+                  <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${kode}</h2>
+                  <p style="font-size:0.9em;">Regards,<br />RSUD RAA TJOKRONEGORO PURWOREJO</p>
+                  <hr style="border:none;border-top:1px solid #eee" />
+                </div>
+              </div>`
+                let x = {emailTo:data[0].username,subject:"OTP RSUD RAA TJOKRONEGORO PURWOREJO",htmlContent:fieldheader}
+
+                axios.post(purworejo+ "/send-email",x,config)
+
+                res.status(200).json({ status: 200, message: "sukses" })
+            }
         } catch (error) {
             console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error })
