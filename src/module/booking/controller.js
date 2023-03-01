@@ -424,7 +424,7 @@ class Controller {
             let dataPoli = kirim.data.data
             let tanggal = moment().format("YYYY-MM-DD")
             let jadwal = await sq.query(`select * from jadwal_dokter jd where date(jd.waktu_mulai) = '${tanggal}'`, s)
-            let antrian = await sq.query(`select al.poli_id, (count(*) filter (where al.poli_layanan = 1 ) + count(*) filter (where al.poli_layanan = 2 and al.status_antrian<2) ) as total from antrian_list al where al."deletedAt" isnull and date(al.tanggal_antrian) = '${tanggal}' group by al.poli_id`, s)
+            let antrian = await sq.query(`select al.poli_id, (count(*) filter (where al.poli_layanan = 1 ) + count(*) filter (where al.poli_layanan = 2 and al.status_antrian<2) ) as total from antrian_list al where al."deletedAt" isnull and date(al.tanggal_antrian) = '${tanggal}' and al.booking_id isnull group by al.poli_id`, s)
             let booking = await sq.query(`select jd.poli_id ,jd.kuota ,jd.kuota_mobile ,count(*) as "jumlah_booking" from booking b join jadwal_dokter jd on jd.id = b.jadwal_dokter_id where b."deletedAt" isnull and jd."deletedAt" isnull and b.status_booking in (1,2,9) and date(jd.waktu_mulai) = '${tanggal}' group by jd.poli_id ,jd.kuota ,jd.kuota_mobile`,s)
 
             for (let i = 0; i < dataPoli.length; i++) {
