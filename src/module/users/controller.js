@@ -333,13 +333,13 @@ class Controller {
                   <div style="border-bottom:1px solid #eee">
                     <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">RSUD RAA TJOKRONEGORO PURWOREJO</a>
                   </div>
-                  <p>Kamu berhasil mendaftar akun. Silahkan verifikasi akun kamu menggunakan OTP berikut untuk menyelesaikan prosedur Pendaftaran Anda</p>
+                  <p>Silahkan verifikasi akun kamu menggunakan OTP berikut untuk menyelesaikan prosedur Pendaftaran Anda</p>
                   <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${kode}</h2>
                   <p style="font-size:0.9em;">Regards,<br />RSUD RAA TJOKRONEGORO PURWOREJO</p>
                   <hr style="border:none;border-top:1px solid #eee" />
                 </div>
               </div>`
-                let x = {emailTo:data[0].username,subject:"OTP RSUD RAA TJOKRONEGORO PURWOREJO",htmlContent:fieldheader}
+                let x = {emailTo:cekUsername[0].username,subject:"OTP RSUD RAA TJOKRONEGORO PURWOREJO",htmlContent:fieldheader}
 
                 axios.post(purworejo+ "/send-email",x,config)
 
