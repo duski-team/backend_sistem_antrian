@@ -59,7 +59,8 @@ class Controller {
             let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}' and b.status_booking > 0 `, s)
 
             if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
-                let cekBooking = await sq.query(`select * from booking b where b."deletedAt" isnull and b.NIK = '${NIK}' and date(b.tanggal_booking) = '${tanggal_booking}' and b.flag_layanan = 1`, s)
+                let cekBooking = await sq.query(`select * from booking b where b."deletedAt" isnull and b."NIK" = '${NIK}' and date(b.tanggal_booking) = '${tanggal_booking}' and b.flag_layanan = 1`, s)
+                
                 if (cekBooking.length > 0) {
                     res.status(201).json({ status: 204, message: "data sudah ada" })
                 } else {
