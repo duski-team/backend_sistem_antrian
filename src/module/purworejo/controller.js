@@ -4,6 +4,7 @@ const purworejo = process.env.HOST_PURWOREJO
 const config = require("../../helper/config").config
 const antrian_list = require('../antrian_list/model');
 const { sq } = require("../../config/connection");
+moment().locale('id')
 
 class Controller {
 
@@ -368,6 +369,35 @@ class Controller {
             //     console.log(error);
             //     socket.emit("error", error);
             // }
+        }
+    }
+
+    static async cekLibur(req, res) {
+        const { tanggal } = req.body
+
+        try {
+            let tgl = moment(tanggal).format('dddd');
+            if(tgl.toLowerCase() == 'minggu'){
+                res.status(201).json({ status: 204, message: "hari minggu" })
+            }else{
+                let kirim = await axios.get(purworejo + `/is-libur?tanggal=${tanggal}`,config)
+
+                res.status(200).json({ status: 200, message: kirim.data.message })
+            }
+        } catch (error) {
+            if (error.name = "AxiosError") {
+                if(error.response.data){
+                    let respon = error.response.data
+                    // console.log(respon);
+                    res.status(201).json({ status: 204, message: respon.message })
+                }else{
+                    res.status(500).json({ status: 500, message: "gagal", data: error })
+                }
+            }else {
+                console.log(req.body);
+                console.log(error);
+                res.status(500).json({ status: 500, message: "gagal", data: error })
+            }
         }
     }
 
