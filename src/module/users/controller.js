@@ -133,13 +133,17 @@ class Controller {
 
     static verifikasiOTP(req, res) {
         const { username, kode_otp } = req.body
-        users.findAll({ where: { username, kode_otp } }).then(async (data) => {
+        users.findAll({ where: { username } }).then(async (data) => {
             if (data.length) {
-                await users.update({ user_status: 1 }, { where: { username } }).then((data2) => {
-                    res.status(200).json({ status: 200, message: "sukses" })
-                })
+                if (data[0].dataValues.kode_otp != kode_otp) {
+                    res.status(201).json({ status: 204, message: "kode otp salah" })
+                } else {
+                    await users.update({ user_status: 1 }, { where: { username } }).then((data2) => {
+                        res.status(200).json({ status: 200, message: "sukses" })
+                    })
+                }
             } else {
-                res.status(200).json({ status: 200, message: "username tidak terdaftar" });
+                res.status(201).json({ status: 204, message: "username tidak terdaftar" });
             }
         }).catch((err) => {
             console.log(err);
