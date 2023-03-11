@@ -38,7 +38,7 @@ class Controller {
     static register(req, res) {
         const { username, password, role } = req.body;
 
-        users.findAll({ where: {[Op.iLike]:{username}} }).then(async (data) => {
+        users.findAll({where:{username:{[Op.iLike]:username}}}).then(async (data) => {
             if (data.length) {
                 res.status(200).json({ status: 200, message: "username sudah terdaftar" });
             } else {
