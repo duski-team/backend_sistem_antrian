@@ -4,7 +4,7 @@ const { sq } = require("../../config/connection");
 const bcrypt = require("../../helper/bcrypt.js");
 const jwt = require("../../helper/jwt");
 const { v4: uuid_v4 } = require("uuid");
-const { QueryTypes } = require('sequelize');
+const { QueryTypes, Op } = require('sequelize');
 const s = { type: QueryTypes.SELECT }
 const moment = require('moment');
 const formData = require('form-data');
@@ -38,7 +38,7 @@ class Controller {
     static register(req, res) {
         const { username, password, role } = req.body;
 
-        users.findAll({ where: { username } }).then(async (data) => {
+        users.findAll({ where: {[Op.iLike]:{username}} }).then(async (data) => {
             if (data.length) {
                 res.status(200).json({ status: 200, message: "username sudah terdaftar" });
             } else {
