@@ -70,8 +70,8 @@ class Controller {
             let kirim = await axios.get(purworejo + "/get-pasien?no=" + no, config)
             res.status(200).json({ status: 200, message: "sukses", data: kirim.data })
         } catch (error) {
-            // console.log(error.response.status);
-            if (error.response.status = 404) {
+            // console.log(error.response);
+            if (error.response.status == 404) {
                 res.status(200).json({ status: 200, message: "data pasien tidak ada" })
             } else {
                 res.status(500).json({ status: 500, message: "gagal", data: error.code })

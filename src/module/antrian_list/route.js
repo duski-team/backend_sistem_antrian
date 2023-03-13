@@ -9,5 +9,5 @@ router.post('/list',Controller.list)
 router.post('/listHalaman',Controller.listHalaman)
 router.get('/listAntrianAktif',Controller.listAntrianAktif)
 router.post('/listAntrianAktifPoli',Controller.listAntrianAktifPoli)
-// router.post('/delete',authentification,Controller.delete)
+router.post('/delete',authentification,Controller.delete)
 module.exports = router
