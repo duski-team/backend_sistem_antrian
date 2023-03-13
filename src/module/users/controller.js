@@ -36,7 +36,7 @@ createSuperUser()
 class Controller {
 
     static register(req, res) {
-        const { username, password, role } = req.body;
+        const { username, password, role, nomor_wa } = req.body;
 
         users.findAll({where:{username:{[Op.iLike]:username}}}).then(async (data) => {
             if (data.length) {
@@ -45,7 +45,7 @@ class Controller {
                 let y = uuid_v4()
                 let kode = y.substring(y.length - 4, y.length).toUpperCase()
                 let encryptedPassword = bcrypt.hashPassword(password);
-                await users.create({ id: uuid_v4(), username, password: encryptedPassword, role, kode_otp: kode, otp_time: moment().add(60, 'm').toDate() }, { returning: true }).then(async (respon) => {
+                await users.create({ id: uuid_v4(), username, password: encryptedPassword, role, kode_otp: kode, otp_time: moment().add(60, 'm').toDate(), nomor_wa }, { returning: true }).then(async (respon) => {
                     let fieldheader = `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
                     <div style="margin:50px auto;width:70%;padding:20px 0">
                       <div style="border-bottom:1px solid #eee">
@@ -73,14 +73,14 @@ class Controller {
     }
 
     static registerADMIN(req, res) {
-        const { username, password, role, user_status } = req.body;
+        const { username, password, role, user_status, nomor_wa } = req.body;
 
-        users.findAll({ where: { username } }).then(async (data) => {
+        users.findAll({ where: {username:{[Op.iLike]:username}}}).then(async (data) => {
             if (data.length) {
                 res.status(200).json({ status: 200, message: "username sudah terdaftar" });
             } else {
                 let encryptedPassword = bcrypt.hashPassword(password);
-                await users.create({ id: uuid_v4(), username, password: encryptedPassword, role, user_status }).then(async (respon) => {
+                await users.create({ id: uuid_v4(), username, password: encryptedPassword, role, user_status, nomor_wa }).then(async (respon) => {
                     res.status(200).json({ status: 200, message: "sukses", data: respon });
                 }).catch((err) => {
                     console.log(err);
@@ -122,8 +122,8 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, role } = req.body
-        users.update({ role }, { where: { id } }).then(hasil => {
+        const { id, role, username, password, user_status, nomor_wa } = req.body
+        users.update({role, username, password, user_status, nomor_wa}, { where: { id } }).then(hasil => {
             res.status(200).json({ status: 200, message: "sukses" })
         }).catch(error => {
             console.log(error);

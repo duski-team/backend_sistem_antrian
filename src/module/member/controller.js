@@ -34,7 +34,7 @@ class Controller {
     }
 
     static async acceptedPersetujuan(req, res) {
-        const { id, no_ktp, nama, no_bpjs, tempat_lahir, tanggal_lahir, alamat, alamat_domisili, no_hp, jenis_kelamin, status_kawin, pekerjaan, pendidikan, agama, suku_bangsa, id_provinsi, id_kota, id_kecamatan, id_kelurahan, nama_penanggung_jawab, hubungan_dengan_pasien, alamat_penanggung_jawab, no_hp_penanggung_jawab, keterangan, status_persetujuan } = req.body
+        const { id, no_ktp, nama, no_bpjs, tempat_lahir, tanggal_lahir, alamat, alamat_domisili, no_hp, jenis_kelamin, status_kawin, pekerjaan, pendidikan, agama, suku_bangsa, id_provinsi, id_kota, id_kecamatan, id_kelurahan, nama_penanggung_jawab, hubungan_dengan_pasien, alamat_penanggung_jawab, no_hp_penanggung_jawab, keterangan, status_persetujuan, alasan_tolak } = req.body
         try {
             if (status_persetujuan == 2) {
                 let kirim = await axios.post(purworejo + "/create-pasien-baru", { noKtp: no_ktp, nama: nama, noBpjs: no_bpjs, tempatLahir: tempat_lahir, tglLahir: tanggal_lahir, alamat: alamat, alamatDomisili: alamat_domisili, noHp: no_hp, jenisKelamin: jenis_kelamin, statusKawin: status_kawin, pekerjaan: pekerjaan, pendidikan: pendidikan, agama: agama, sukuBangsa: suku_bangsa, idProv: id_provinsi, idKota: id_kota, idKec: id_kecamatan, idKel: id_kelurahan, namaPenanggungjawab: nama_penanggung_jawab, hubunganDenganPasien: hubungan_dengan_pasien, alamatPenanggungjawab: alamat_penanggung_jawab, noHpPenanggungjawab: no_hp_penanggung_jawab, keterangan: keterangan }, config)
@@ -45,7 +45,7 @@ class Controller {
 
                 res.status(200).json({ status: 200, message: "sukses", data: data_member[1][0] })
             } else {
-                let data_member = await member.update({ status_persetujuan }, { where: { id }, returning: true })
+                let data_member = await member.update({ status_persetujuan, alasan_tolak }, { where: { id }, returning: true })
                 res.status(200).json({ status: 200, message: "sukses", data: data_member[1][0] })
             }
         } catch (error) {

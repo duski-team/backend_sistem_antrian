@@ -85,6 +85,9 @@ const member = sq.define('member', {
     status_persetujuan: {
         type: DataTypes.INTEGER,   // 0: ditolak || 1: baru dibuat || 2: disetujui
         defaultValue: 1
+    },
+    alasan_tolak: {
+        type: DataTypes.TEXT
     }
 },
     {
