@@ -5,6 +5,7 @@ const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT }
 const moment = require('moment');
 const axios = require('axios');
+const kuota = require('../../helper/kuota')
 
 const purworejo = process.env.HOST_PURWOREJO
 const config = require("../../helper/config").config
@@ -238,6 +239,18 @@ class Controller {
             }
 
             res.status(200).json({ status: 200, message: "sukses", data, sisa: sisa[0].total })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
+
+    static async cekKuotaPoli(req, res) {
+        let { poli_id } = req.body
+        try {
+            let hasil = await kuota({poli_id})
+            console.log(hasil[0]);
+            res.status(200).json({ status: 200, message: "sukses", data: hasil })
         } catch (error) {
             console.log(error);
             res.status(500).json({ status: 500, message: "gagal", data: error })

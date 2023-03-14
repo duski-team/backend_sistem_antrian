@@ -10,4 +10,5 @@ router.post('/listHalaman',Controller.listHalaman)
 router.get('/listAntrianAktif',Controller.listAntrianAktif)
 router.post('/listAntrianAktifPoli',Controller.listAntrianAktifPoli)
 router.post('/delete',authentification,Controller.delete)
+router.post('/cekKuotaPoli',Controller.cekKuotaPoli)
 module.exports = router
