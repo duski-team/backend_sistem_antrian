@@ -221,7 +221,7 @@ const koneksi_socket = koneksi_socket => {
                     cekBooking[0].sisa_antrian = sisa[0].total - 1
                     io.to(room_id).emit("refresh_register_APM_mandiri", { hasil: cekBooking[0], hasilSEP: { status: 500 } });
                 } else {
-                    let cekKuota = await kuota({poli_id})
+                    let cekKuota = await kuota({poli_id:idPoli})
                     if(cekKuota[0].sisaKuota > 0){
                         let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
                         let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
@@ -362,7 +362,7 @@ const koneksi_socket = koneksi_socket => {
                     cekBooking[0].sisa_antrian = sisa[0].total - 1
                     io.to(room_id).emit("refresh_register_APM_mandiri", { hasil: cekBooking[0], hasilSEP: printSEP[0] });
                 } else {
-                    let cekKuota = await kuota({poli_id})
+                    let cekKuota = await kuota({poli_id:idPoli})
                     if(cekKuota[0].sisaKuota > 0){
                         let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
 
