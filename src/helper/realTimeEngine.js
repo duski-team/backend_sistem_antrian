@@ -261,14 +261,14 @@ const koneksi_socket = koneksi_socket => {
                         let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
                         // console.log(kirimRajal, 'KIRIM RAJAL');
                         await t.commit();
-                        io.to(room_id).emit("refresh_register_APM_mandiri", { hasil:[], hasilSEP: { status: 500 } });
+                        io.to(room_id).emit("refresh_register_APM_mandiri", { hasil:hasil, hasilSEP: { status: 500 } });
                     }else{
                         io.to(room_id).emit("error", { status: 500, message: "kuota tidak cukup" });
                     }
                 }
             } catch (error) {
                 await t.rollback();
-                console.log(error);
+                // console.log(error);
                 if (error.name = "AxiosError" && error.response) {
                     io.to(room_id).emit("error", { status: error.response.data.code, message: error.response.data.message });
                 } else {
