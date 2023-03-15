@@ -51,7 +51,8 @@ function syncJadwal() {
                             kuota: datanya[i].kuota,
                             kuota_mobile: datanya[i].kuotaOnline,
                             dokter_id: datanya[i].idDokter,
-                            poli_id: datanya[i].idPoli
+                            poli_id: datanya[i].idPoli,
+                            kode_jadwal: `${moment().format("YYMMDD")}${datanya[i].idJadwal}`
                         })
                     }
                 }
@@ -157,7 +158,7 @@ class Controller {
     static async syncJadwal(req, res) {
         try {
             // let curdate = moment().format('YYYY-MM-DD')
-            let curdate= moment().add(3,'d').format('YYYY-MM-DD')
+            let curdate= moment().add(4,'d').format('YYYY-MM-DD')
             let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`, s);
             if (cekJadwal.length > 0) {
                 res.status(201).json({ status: 204, message: "data sudah ada", data: cekJadwal })
@@ -178,11 +179,12 @@ class Controller {
                             kuota: datanya[i].kuota,
                             kuota_mobile: datanya[i].kuotaOnline,
                             dokter_id: datanya[i].idDokter,
-                            poli_id: datanya[i].idPoli
+                            poli_id: datanya[i].idPoli,
+                            kode_jadwal: `${moment().format("YYMMDD")}${datanya[i].idJadwal}`
                         })
                     }
                 }
-                await jadwal_dokter.bulkCreate(bulknya)
+                // await jadwal_dokter.bulkCreate(bulknya)
                 res.status(200).json({ status: 200, message: "sukses", data: bulknya })
             }
         } catch (error) {
@@ -329,6 +331,90 @@ class Controller {
                 console.log(error);
                 res.status(500).json({ status: 500, message: "gagal", data: error })
             }
+        }
+    }
+    
+    static async syncJadwalDokter (req,res){
+        try {
+            let h0= moment().add(0,'d').format('YYYY-MM-DD')
+            let h1= moment().add(1,'d').format('YYYY-MM-DD')
+            let h2= moment().add(2,'d').format('YYYY-MM-DD')
+            let h3= moment().add(3,'d').format('YYYY-MM-DD')
+            let cekH0 = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${h0}'`, s);
+            let cekH1 = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${h1}'`, s);
+            let cekH2 = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${h2}'`, s);
+            let cekH3 = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${h3}'`, s);
+            let hasil = []
+
+            if(cekH0.length>0){
+                let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + h0, config)
+                let data = kirim.data.data
+                for (let i = 0; i < cekH0.length; i++) {
+                    for (let j = 0; j < data.length; j++) {
+                    }
+                }
+                console.log(data);
+                console.log("=================H0=================");
+                console.log(cekH0);
+            }
+            if(cekH1.length>0){
+                // console.log("================H1==================");
+                // console.log(cekH1);
+            }
+            if(cekH2.length>0){
+                // console.log("===============H2===================");
+                // console.log(cekH2);
+            }
+            if(cekH3.length > 0){
+                // console.log("===============H3===================");
+                // console.log(cekH3);
+            }
+
+            // console.log(cekH3.length);
+            res.status(200).json({ status: 200, message: "sukses" })
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err })
+        }
+    }
+
+    static async updateJadwalDokter (req,res){
+        try {
+            let tgl= moment().add(0,'d').format('YYYY-MM-DD')
+            let cekTgl = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${tgl}'`, s);
+            let hasil = []
+
+            if(cekTgl.length>0){
+                let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + tgl, config)
+                let data = kirim.data.data
+                console.log(data);
+                console.log("=================Kirim=================");
+                console.log(cekTgl);
+                for (let i = 0; i < cekTgl.length; i++) {
+                    for (let j = 0; j < data.length; j++) {
+                        if(cekTgl[i].dokter_id == data[j].idDokter && cekTgl[i].poli_id == data[j].idPoli ){
+                            let awal = moment(datanya[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
+                            let akhir = moment(datanya[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
+
+                            hasil.push({
+                                id: uuid_v4(),
+                                waktu_mulai: curdate + " " + awal,
+                                waktu_selesai: curdate + " " + akhir,
+                                kuota: datanya[i].kuota,
+                                kuota_mobile: datanya[i].kuotaOnline,
+                                dokter_id: datanya[i].idDokter,
+                                poli_id: datanya[i].idPoli,
+                                kode_jadwal: `${moment().format("YYMMDD")}${datanya[i].idJadwal}`
+                            })
+                        }
+                    }
+                }
+            }
+
+            res.status(200).json({ status: 200, message: "sukses" })
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err })
         }
     }
 }

@@ -249,7 +249,7 @@ class Controller {
         let { poli_id } = req.body
         try {
             let hasil = await kuota({poli_id})
-            console.log(hasil[0]);
+            // console.log(`${moment().format("YYMMDD")}`);
             res.status(200).json({ status: 200, message: "sukses", data: hasil })
         } catch (error) {
             console.log(error);

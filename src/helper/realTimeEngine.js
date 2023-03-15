@@ -244,15 +244,13 @@ const koneksi_socket = koneksi_socket => {
 
                         let nik = kirim4.data.data[0].nik
                         let no_hp = kirim4.data.data[0].noTelp
-
                         let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking, nama_pasien }, { transaction: t })
                         hasil.dataValues.sisa_antrian = +sisa[0].total
-
+                        hasil.dataValues.nama_poli = nama_poli
+                       
                         let objCreate = { kodebooking: kode_booking, jenispasien: "NON JKN", nomorkartu: "", nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: 0, norm: noRm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: "", nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
-                        // let kirim2 = await axios.post(purworejo + "/create-antrean", objCreate, config)
                         axios.post(purworejo + "/create-antrean", objCreate, config)
                         let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
-                        // let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
                         axios.post(purworejo + "/update-antrean", objUpdate, config)
 
                         // console.log(objCreate);
@@ -260,22 +258,18 @@ const koneksi_socket = koneksi_socket => {
                         // console.log(kirim2.data, "CREATE-ANTREAN");
                         // console.log(kirim3.data, "UPDATE-ANTREAN");
 
-                        // if (kirim2.data.code == 200 && kirim3.data.code == 200) {
-                            let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
-                            // console.log(kirimRajal, 'KIRIM RAJAL');
-                            await t.commit();
-                            io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP: { status: 500 } });
-                        // } else {
-                        //     io.to(room_id).emit("error", { status: 500, message: kirim2.data.code == 201 ? kirim2.data.message : kirim3.data.message });
-                        // }
+                        let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
+                        // console.log(kirimRajal, 'KIRIM RAJAL');
+                        await t.commit();
+                        io.to(room_id).emit("refresh_register_APM_mandiri", { hasil:[], hasilSEP: { status: 500 } });
                     }else{
                         io.to(room_id).emit("error", { status: 500, message: "kuota tidak cukup" });
                     }
                 }
             } catch (error) {
                 await t.rollback();
-                // console.log(error);
-                if (error.name = "AxiosError" && error.response.data) {
+                console.log(error);
+                if (error.name = "AxiosError" && error.response) {
                     io.to(room_id).emit("error", { status: error.response.data.code, message: error.response.data.message });
                 } else {
                     io.to(room_id).emit("error", { status: 500, message: "gagal" });
@@ -389,13 +383,12 @@ const koneksi_socket = koneksi_socket => {
                         let hasil = await antrian_list.create({ id: idAntrian, tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking, nama_pasien }, { transaction: t })
 
                         let objCreate = { kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: noBpjs, nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: noRm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: noRujukan ? noRujukan : "", nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
-                        // let kirim2 = await axios.post(purworejo + "/create-antrean", objCreate, config)
                         axios.post(purworejo + "/create-antrean", objCreate, config)
                         let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
-                        // let kirim3 = await axios.post(purworejo + "/update-antrean", objUpdate, config)
                         axios.post(purworejo + "/update-antrean", objUpdate, config)
 
                         hasil.dataValues.sisa_antrian = +sisa[0].total
+                        hasil.dataValues.nama_poli = +sisa[0].nama_poli
                         
 
                         // console.log(objCreate);
@@ -409,20 +402,15 @@ const koneksi_socket = koneksi_socket => {
                         // console.log(JSON.stringify(kirimSEP.data.data));
                         // console.log(SEP, "SEP");
 
-                        // if (kirim2.data.code == 200 && kirim3.data.code == 200) {
-                            let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, noSuratKontrol, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
-                            let idDaftar = kirimRajal.data.data.idDaftar
+                        let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, noSuratKontrol, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
+                        let idDaftar = kirimRajal.data.data.idDaftar
 
-                            let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
-                            let sep = kirimSEP.data.data.sep
-                            // let sep = {noSep:01}
-                            let hasilSEP = await sepModel.create({ id: uuid_v4(), no_sep: sep.noSep, nama_dokter, data_sep: sep, antrian_list_id: idAntrian, poli_tujuan }, { transaction: t })
-                            hasilSEP.dataValues.status = 200
-                            await t.commit();
-                            io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP });
-                        // } else {
-                        //     io.to(room_id).emit("error", { status: 500, message: kirim2.data.code == 201 ? kirim2.data.message : kirim3.data.message });
-                        // }
+                        let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
+                        let sep = kirimSEP.data.data.sep
+                        let hasilSEP = await sepModel.create({ id: uuid_v4(), no_sep: sep.noSep, nama_dokter, data_sep: sep, antrian_list_id: idAntrian, poli_tujuan }, { transaction: t })
+                        hasilSEP.dataValues.status = 200
+                        await t.commit();
+                        io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP });
                     }else{
                         io.to(room_id).emit("error", { status: 500, message: "kuota tidak cukup" });
                     }
@@ -430,7 +418,7 @@ const koneksi_socket = koneksi_socket => {
             } catch (error) {
                 await t.rollback();
                 console.log(error);
-                if (error.name = "AxiosError" && error.response.data) {
+                if (error.name = "AxiosError" && error.response) {
                     io.to(room_id).emit("error", { status: error.response.data.code, message: error.response.data.message });
                 } else {
                     io.to(room_id).emit("error", { status: 500, message: "gagal" });
