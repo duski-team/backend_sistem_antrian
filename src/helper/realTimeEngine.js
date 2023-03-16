@@ -117,7 +117,6 @@ const koneksi_socket = koneksi_socket => {
                     }
                 }
             } catch (error) {
-                await t.rollback();
                 console.log(error);
                 io.to(room_id).emit("error", { status: 500, message: "gagal" });
             }
