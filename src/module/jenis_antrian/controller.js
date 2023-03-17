@@ -23,7 +23,7 @@ class Controller{
     static update(req,res){
         const {id,nama_jenis_antrian,kode_jenis_antrian,status_jenis_antrian}= req.body
 
-        jenis_antrian.update({id:uuid_v4(),nama_jenis_antrian,kode_jenis_antrian,status_jenis_antrian},{where:{
+        jenis_antrian.update({nama_jenis_antrian,kode_jenis_antrian,status_jenis_antrian},{where:{
             id
         }})
         .then(hasil=>{
