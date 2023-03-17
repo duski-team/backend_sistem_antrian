@@ -259,6 +259,8 @@ const koneksi_socket = koneksi_socket => {
                         // console.log(kirim3.data, "UPDATE-ANTREAN");
 
                         let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
+                        let idDaftar = kirimRajal.data.data.idDaftar
+                        hasil.dataValues.idDaftar = idDaftar
                         // console.log(kirimRajal, 'KIRIM RAJAL');
                         await t.commit();
                         io.to(room_id).emit("refresh_register_APM_mandiri", { hasil:hasil, hasilSEP: { status: 500 } });
@@ -409,6 +411,8 @@ const koneksi_socket = koneksi_socket => {
                         let sep = kirimSEP.data.data.sep
                         let hasilSEP = await sepModel.create({ id: uuid_v4(), no_sep: sep.noSep, nama_dokter, data_sep: sep, antrian_list_id: idAntrian, poli_tujuan }, { transaction: t })
                         hasilSEP.dataValues.status = 200
+                        hasil.dataValues.idDaftar = idDaftar
+
                         await t.commit();
                         io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP });
                     }else{

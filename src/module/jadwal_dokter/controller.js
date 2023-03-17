@@ -387,31 +387,33 @@ class Controller {
             if(cekTgl.length>0){
                 let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + tgl, config)
                 let data = kirim.data.data
-                console.log(data);
-                console.log("=================Kirim=================");
-                console.log(cekTgl);
+                // console.log(data);
+                // console.log("=================Kirim=================");
+                // console.log(cekTgl);
                 for (let i = 0; i < cekTgl.length; i++) {
                     for (let j = 0; j < data.length; j++) {
                         if(cekTgl[i].dokter_id == data[j].idDokter && cekTgl[i].poli_id == data[j].idPoli ){
-                            let awal = moment(datanya[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
-                            let akhir = moment(datanya[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
-
+                            let awal = moment(data[j].dariJam,"hh:mm").format();
+                            let akhir = moment(data[j].sampaiJam, "hh:mm").format();
                             hasil.push({
-                                id: uuid_v4(),
-                                waktu_mulai: curdate + " " + awal,
-                                waktu_selesai: curdate + " " + akhir,
-                                kuota: datanya[i].kuota,
-                                kuota_mobile: datanya[i].kuotaOnline,
-                                dokter_id: datanya[i].idDokter,
-                                poli_id: datanya[i].idPoli,
-                                kode_jadwal: `${moment().format("YYMMDD")}${datanya[i].idJadwal}`
+                                id: cekTgl[j].id,
+                                // waktu_mulai: awal,
+                                // waktu_selesai: akhir,
+                                // kuota: data[j].kuota,
+                                // kuota_mobile: data[j].kuotaOnline,
+                                // dokter_id: data[j].idDokter,
+                                // poli_id: data[j].idPoli,
+                                kode_jadwal: `${moment().format("YYMMDD")}${data[j].idJadwal}`
                             })
                         }
                     }
                 }
+                // console.log(cekTgl.length);
+                // console.log("=====================");
+                // console.log(hasil.length);
             }
 
-            res.status(200).json({ status: 200, message: "sukses" })
+            res.status(200).json({ status: 200, message: "sukses",hasil })
         } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err })
