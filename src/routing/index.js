@@ -20,6 +20,7 @@ router.use("/purworejo",require('../module/purworejo/route'))
 router.use("/member",require('../module/member/route'))
 router.use("/registrasi",require('../module/registrasi/route'))
 router.use("/print",require('../module/print/route'))
+router.use("/version",require('../module/version/route'))
 
 
 module.exports = router;
