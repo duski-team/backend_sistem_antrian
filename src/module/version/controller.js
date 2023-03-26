@@ -10,7 +10,7 @@ class Controller {
     static register(req, res) {
         const { nama_version } = req.body;
 
-        version.findAll({where:{username:{[Op.iLike]:nama_version}}}).then(async (data) => {
+        version.findAll({where:{nama_version:{[Op.iLike]:nama_version}}}).then(async (data) => {
             if(data.length>0){
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             }else{
@@ -60,7 +60,7 @@ class Controller {
 
     static delete(req, res) {
         const { id } = req.body
-        
+
         version.destroy({ where: { id } }).then(hasil => {
             res.status(200).json({ status: 200, message: "sukses" })
         }).catch(error => {
@@ -69,7 +69,22 @@ class Controller {
         })
     }
 
+    static async cekVersion(req, res) {
+        const { nama_version } = req.body
 
+        try {
+            let cek = false
+            let lastVersion = await sq.query(`select * from "version" v where v."deletedAt" isnull order by v."createdAt" desc limit 1`,s);
+            if(nama_version.toLowerCase() == lastVersion[0].nama_version.toLowerCase()){
+                cek = true
+            }
+
+            res.status(200).json({ status: 200, message: "sukses",data:cek })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
 }
 
 module.exports = Controller
