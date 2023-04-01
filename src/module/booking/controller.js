@@ -490,6 +490,9 @@ class Controller {
                                     data_poli[i].sisaKuota = parseInt(total_kuota) - parseInt(kuota_booking[m].jumlah_booking)
                                 }
                             }
+                            if(data_poli[i].sisaKuota<=0){
+                                data_poli[i].sisaKuota = 0
+                            }
                         }
                     }
                     hasil.push(data_poli[i])
