@@ -51,7 +51,8 @@ function syncJadwal() {
                             kuota: datanya[i].kuota,
                             kuota_mobile: datanya[i].kuotaOnline,
                             dokter_id: datanya[i].idDokter,
-                            poli_id: datanya[i].idPoli
+                            poli_id: datanya[i].idPoli,
+                            kode_jadwal: `${moment(curdate).format("YYMMDD")}${datanya[i].idJadwal}`
                         })
                     }
                 }
@@ -157,7 +158,7 @@ class Controller {
     static async syncJadwal(req, res) {
         try {
             // let curdate = moment().format('YYYY-MM-DD')
-            let curdate= moment().add(3,'d').format('YYYY-MM-DD')
+            let curdate= moment().add(4,'d').format('YYYY-MM-DD')
             let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`, s);
             if (cekJadwal.length > 0) {
                 res.status(201).json({ status: 204, message: "data sudah ada", data: cekJadwal })
@@ -178,11 +179,12 @@ class Controller {
                             kuota: datanya[i].kuota,
                             kuota_mobile: datanya[i].kuotaOnline,
                             dokter_id: datanya[i].idDokter,
-                            poli_id: datanya[i].idPoli
+                            poli_id: datanya[i].idPoli,
+                            kode_jadwal: `${moment().format("YYMMDD")}${datanya[i].idJadwal}`
                         })
                     }
                 }
-                await jadwal_dokter.bulkCreate(bulknya)
+                // await jadwal_dokter.bulkCreate(bulknya)
                 res.status(200).json({ status: 200, message: "sukses", data: bulknya })
             }
         } catch (error) {
@@ -329,6 +331,134 @@ class Controller {
                 console.log(error);
                 res.status(500).json({ status: 500, message: "gagal", data: error })
             }
+        }
+    }
+    
+    static async syncJadwalDokter (req,res){
+        try {
+            let h0= moment().add(0,'d').format('YYYY-MM-DD')
+            let h1= moment().add(1,'d').format('YYYY-MM-DD')
+            let h2= moment().add(2,'d').format('YYYY-MM-DD')
+            let h3= moment().add(3,'d').format('YYYY-MM-DD')
+            let cekH0 = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${h0}'`, s);
+            let cekH1 = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${h1}'`, s);
+            let cekH2 = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${h2}'`, s);
+            let cekH3 = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${h3}'`, s);
+            let hasil = []
+
+            if(cekH0.length>0){
+                let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + h0, config)
+                let data = kirim.data.data
+                for (let i = 0; i < data.length; i++) {
+                    let awal = moment(data[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
+                    let akhir = moment(data[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
+                    let x = {}
+                    x.id = uuid_v4();
+                    x.waktu_mulai= h0 + " " + awal
+                    x.waktu_selesai= h0 + " " + akhir
+                    x.kode_jadwal= `${moment(h0).format("YYMMDD")}${data[i].idJadwal}`
+                    x.kuota= data[i].kuota
+                    x.kuota_mobile= data[i].kuotaOnline
+                    x.dokter_id= data[i].idDokter
+                    x.poli_id= data[i].idPoli
+                    for (let j = 0; j < cekH0.length; j++) {
+                        if(cekH0[j].kode_jadwal == x.kode_jadwal){
+                            x.id = cekH0[j].id
+                        }
+                    }
+                    hasil.push(x)
+                }
+                // console.log(data);
+                // console.log("=================H0=================");
+                // console.log(cekH0);
+            }
+            if(cekH1.length>0){
+                let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + h1, config)
+                let data = kirim.data.data
+                for (let i = 0; i < data.length; i++) {
+                    let awal = moment(data[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
+                    let akhir = moment(data[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
+                    let x = {}
+                    x.id = uuid_v4();
+                    x.waktu_mulai= h1 + " " + awal
+                    x.waktu_selesai= h1 + " " + akhir
+                    x.kode_jadwal= `${moment(h1).format("YYMMDD")}${data[i].idJadwal}`
+                    x.kuota= data[i].kuota
+                    x.kuota_mobile= data[i].kuotaOnline
+                    x.dokter_id= data[i].idDokter
+                    x.poli_id= data[i].idPoli
+                    for (let j = 0; j < cekH1.length; j++) {
+                        if(cekH1[j].kode_jadwal == x.kode_jadwal){
+                            x.id = cekH1[j].id
+                        }
+                    }
+                    hasil.push(x)
+                }
+                // console.log(data);
+                // console.log("================H1==================");
+                // console.log(cekH1);
+
+            }
+            if(cekH2.length>0){
+                let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + h2, config)
+                let data = kirim.data.data
+                for (let i = 0; i < data.length; i++) {
+                    let awal = moment(data[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
+                    let akhir = moment(data[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
+                    let x = {}
+                    x.id = uuid_v4();
+                    x.waktu_mulai= h2 + " " + awal
+                    x.waktu_selesai= h2 + " " + akhir
+                    x.kode_jadwal= `${moment(h2).format("YYMMDD")}${data[i].idJadwal}`
+                    x.kuota= data[i].kuota
+                    x.kuota_mobile= data[i].kuotaOnline
+                    x.dokter_id= data[i].idDokter
+                    x.poli_id= data[i].idPoli
+                    for (let j = 0; j < cekH2.length; j++) {
+                        if(cekH2[j].kode_jadwal == x.kode_jadwal){
+                            x.id = cekH2[j].id
+                        }
+                    }
+                    hasil.push(x)
+                }
+                // console.log(data);
+                // console.log("===============H2===================");
+                // console.log(cekH2);
+                // console.log(cekH2.length);
+            }
+            if(cekH3.length > 0){
+                let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + h3, config)
+                let data = kirim.data.data
+                for (let i = 0; i < data.length; i++) {
+                    let awal = moment(data[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
+                    let akhir = moment(data[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
+                    let x = {}
+                    x.id = uuid_v4();
+                    x.waktu_mulai= h3 + " " + awal
+                    x.waktu_selesai= h3 + " " + akhir
+                    x.kode_jadwal= `${moment(h3).format("YYMMDD")}${data[i].idJadwal}`
+                    x.kuota= data[i].kuota
+                    x.kuota_mobile= data[i].kuotaOnline
+                    x.dokter_id= data[i].idDokter
+                    x.poli_id= data[i].idPoli
+                    for (let j = 0; j < cekH3.length; j++) {
+                        if(cekH3[j].kode_jadwal == x.kode_jadwal){
+                            x.id = cekH3[j].id
+                        }
+                    }
+                    hasil.push(x)
+                }
+                // console.log(data);
+                // console.log("===============H3===================");
+                // console.log(cekH3);
+                // console.log(cekH3.length);
+            }
+
+            // await jadwal_dokter.bulkCreate(hasil,{updateOnDuplicate:['waktu_mulai','waktu_selesai','kode_jadwal','kuota','kuota_mobile','dokter_id','poli_id','updatedAt']})
+            res.status(200).json({ status: 200, message: "sukses",total:hasil.length,data:hasil })
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err })
         }
     }
 }

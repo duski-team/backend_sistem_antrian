@@ -432,6 +432,27 @@ class Controller {
             }
         }
     }
+    
+    static async jadawalPerTanggal(req, res) {
+        const { tgl } = req.body
+
+        try {
+            let curdate= moment(tgl).format('YYYY-MM-DD')
+            let hasil = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + curdate, config)
+
+            res.status(200).json({ status: 200, message: "sukses",data:hasil.data})
+        } catch (error) {
+            if (error.name = "AxiosError") {
+                let respon_error = error.response.data
+                console.log(respon_error);
+                res.status(201).json({ status: respon_error.code, message: respon_error.message })
+            }
+            else {
+                console.log(error);
+                 res.status(500).json({ status: 500, message: "gagal", data:error})
+            }
+        }
+    }
 }
 
 

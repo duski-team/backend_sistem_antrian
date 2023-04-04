@@ -25,6 +25,9 @@ const users = sq.define('users', {
     kode_otp: {
         type: DataTypes.STRING
     },
+    nomor_wa: {
+        type: DataTypes.STRING
+    },
 },
     {
         paranoid: true,

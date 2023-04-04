@@ -24,5 +24,6 @@ router.post('/registerAntreanBPJSLoket', Controller.registerAntreanBPJSLoket)
 router.post('/updateAntrean', Controller.updateAntrean)
 router.post('/testEmail', Controller.testEmail)
 router.post('/cekLibur', Controller.cekLibur)
+router.post('/jadawalPerTanggal', Controller.jadawalPerTanggal)
 
 module.exports = router
