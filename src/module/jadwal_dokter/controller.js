@@ -193,6 +193,49 @@ class Controller {
         }
     }
 
+    static async syncJadwalDokter(req, res) {
+        const {lama} = req.body;
+        // lama => 0-2
+        try {
+            let curdate= moment().add(lama,'d').format('YYYY-MM-DD')
+            let cekJadwal = await sq.query(`select * from jadwal_dokter jd where jd."deletedAt" isnull and date(waktu_mulai) = '${curdate}' and date(waktu_selesai) = '${curdate}'`, s);
+            if (cekJadwal.length == 0) {
+                res.status(201).json({ status: 204, message: "jadwal tidak tersedia", data: cekJadwal })
+            } else {
+                let kirim = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + curdate, config)
+                let data = kirim.data.data
+                let bulknya = []
+                for (let i = 0; i < data.length; i++) {
+                    let cek = false
+                    let awal = moment(data[i].dariJam, ["h:mm A"]).format("HH:mm:ss");
+                    let akhir = moment(data[i].sampaiJam, ["h:mm A"]).format("HH:mm:ss");
+                    let x = {}
+                    x.id = uuid_v4();
+                    x.waktu_mulai= curdate + " " + awal
+                    x.waktu_selesai= curdate + " " + akhir
+                    x.kode_jadwal= `${moment(curdate).format("YYMMDD")}${data[i].idJadwal}`
+                    x.kuota= data[i].kuota
+                    x.kuota_mobile= data[i].kuotaOnline
+                    x.dokter_id= data[i].idDokter
+                    x.poli_id= data[i].idPoli
+                    for (let j = 0; j < cekJadwal.length; j++) {
+                        if(cekJadwal[j].kode_jadwal == x.kode_jadwal){
+                            cek = true;
+                        }
+                    }
+                    if(!cek){
+                        bulknya.push(x)
+                    }
+                }
+                // await jadwal_dokter.bulkCreate(bulknya)
+                res.status(200).json({ status: 200, message: "sukses", data: bulknya })
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 500, message: "gagal", data: error })
+        }
+    }
+
     static async listDokterByTanggalPoli(req, res) {
         const { poli_id, tanggal } = req.body
         try {
@@ -334,7 +377,7 @@ class Controller {
         }
     }
     
-    static async syncJadwalDokter (req,res){
+    static async syncAllJadwalDokter3 (req,res){
         try {
             let h0= moment().add(0,'d').format('YYYY-MM-DD')
             let h1= moment().add(1,'d').format('YYYY-MM-DD')
