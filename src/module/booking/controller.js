@@ -98,8 +98,12 @@ class Controller {
         }
     }
 
-    static update(req, res) {
+    static async update(req, res) {
         const { id, tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, user_id, tujuan_booking, tanggal_rujukan, jadwal_dokter_id } = req.body
+        if(status_booking == 2){
+            let asd = await sq.query(`select b.id as "booking_id", b.*,jd.*, u.username, u.user_status, u."role" from booking b left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join users u on u.id = b.user_id where b.id = '${id}'`, s)
+            await axios.post(purworejo + "/kirim-booking", asd[0], config)
+        }
 
         booking.update({ tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, user_id, tujuan_booking, tanggal_rujukan, jadwal_dokter_id }, { where: { id } }).then(hasil => {
             res.status(200).json({ status: 200, message: "sukses" })
