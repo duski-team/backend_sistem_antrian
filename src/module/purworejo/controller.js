@@ -380,7 +380,7 @@ class Controller {
             if(tgl.toLowerCase() == 'minggu'){
                 res.status(201).json({ status: 204, message: "hari minggu" })
             }else{
-                let kirim = await axios.get(purworejo + `/is-libur?tanggal=${tanggal}`,config)
+                let kirim = await axios.get(purworejo + `/is-libur?tanggal=${moment(tanggal).format('YYYY-MM-DD')}`,config)
 
                 res.status(200).json({ status: 200, message: kirim.data.message })
             }
