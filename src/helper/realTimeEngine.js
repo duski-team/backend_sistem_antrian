@@ -569,6 +569,84 @@ const koneksi_socket = koneksi_socket => {
             }
         })
 
+        socket.on('registerBykdbooking', async (asd, room_id) => {            
+            const t = await sq.transaction();
+            const kode_booking = asd
+            try {
+                let prep = await axios.get(purworejo + "/get-prep-booking?kdBooking=" + kode_booking, config)
+                console.log(prep)
+                let jam_praktek = prep.data.data.jamPraktek
+                let jadwal_dokter_id = prep.data.data.jadwalDokterId
+                let idPoli = prep.data.data.idPoli
+                let kode_poli = prep.data.data.idPoliBpjs
+                let nama_poli = prep.data.data.namaPoli
+                let booking_id = prep.data.data.bookingId
+                let initial = prep.data.data.kdAntrean
+                let noRm = prep.data.data.norm
+                let nama_pasien = prep.data.data.namaPasien
+                let tgl = moment().format('YYYY-MM-DD')
+                let sequence_no = await sq.query(`select count(*)+1 as total from antrian_list al where date(tanggal_antrian) = '${tgl}' and poli_id = ${idPoli}`, s);
+                let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
+                let sisa = await sq.query(`select count(*)as total from antrian_list al where date(al.tanggal_antrian) = '${tgl}' and al.poli_layanan = 1 and al.status_antrian in (0,1) and al.poli_id = ${idPoli}`, s);
+                let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
+                let nomor_antrean = `${initial}-${no}`
+                let poli_tujuan = `${kode_poli}-${nama_poli}`
+                let nik = prep.data.data.nik
+                let no_hp = prep.data.data.nohp
+                let jenispasien = prep.data.data.idJaminan == 5 ? "JKN":"NON JKN"
+                let idAntrian = uuid_v4()
+                let noBpjs = prep.data.data.noBpjs
+                let kode_dokter = prep.data.data.idDokterBpjs
+                let nama_dokter = prep.data.data.namaDokter
+                let noRujukan = prep.data.data.noRujukan
+                let estimasi_dilayani = parseInt(moment(new Date()).format("x"))
+                let kdBooking = kode_booking
+                let new_kode_booking = moment().format("YYYYMMDDHHmmss") + `${initial}${no}`
+
+                let kirim = await axios.post(purworejo + "/register-bykdbooking", { kdBooking }, config)  //SEP
+
+                let hasilSEP = { no_sep: ""}
+                console.log(kirim)
+                let noSep = kirim.data.data.noSep
+                hasilSEP.no_sep = noSep
+
+                let hasil = await antrian_list.create({ id: idAntrian, tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, 
+                    antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli,
+                    no_rm: noRm, kode_booking, nama_pasien }, { transaction: t })
+
+                hasil.dataValues.sisa_antrian = +sisa[0].total
+                hasil.dataValues.nama_poli = nama_poli
+                hasil.dataValues.idDaftar = kirim.data.data.idDaftar
+                
+                if(noSep != ''){
+                    let dataSep = kirim.data.data.dataSep
+                    hasilSEP = await sepModel.create({ id: uuid_v4(), no_sep: noSep, nama_dokter, data_sep: dataSep, antrian_list_id: idAntrian, poli_tujuan }, { transaction: t })
+                }
+
+                // tembak antrean BPJS
+                let objCreate = { kodebooking: new_kode_booking, jenispasien, nomorkartu: noBpjs, nik: nik, nohp: no_hp, kodepoli: kode_poli, 
+                    namapoli: nama_poli, pasienbaru: 0, norm: noRm, tanggalperiksa: tgl, kodedokter: kode_dokter, 
+                    namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: 3, nomorreferensi: noRujukan ? noRujukan : "", 
+                    nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, 
+                    sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: "-" }
+                axios.post(purworejo + "/create-antrean", objCreate, config)
+
+                let objUpdate = { kodebooking: new_kode_booking, waktu: estimasi_dilayani, taskid: 3 }
+                axios.post(purworejo + "/update-antrean", objUpdate, config)
+
+                io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP });
+                await t.commit();                
+            } catch (error) {
+                await t.rollback();
+                console.log(error, "ini yang error");
+                if (error.name = "AxiosError" && error.response) {
+                    io.to(room_id).emit("error", { status: error.response.data.code, message: error.response.data.message });
+                } else {
+                    io.to(room_id).emit("error", { status: 500, message: "gagal" });
+                }
+            }
+        })
+
         socket.on('joinRoom', (room_id) => {
             socket.join(room_id);
             console.log(`join ${room_id}`);
