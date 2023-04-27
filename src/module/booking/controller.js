@@ -304,7 +304,7 @@ class Controller {
                 isi += ` date(jd.waktu_mulai)= '${tanggal_poli}'`
             }
 
-            let data = await sq.query(`select b.id as "booking_id", b.*,jd.*, u.username, u.user_status, u."role" from booking b left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join users u on u.id = b.user_id where b."deletedAt" isnull ${isi} order by b."updatedAt" desc`, s)
+            let data = await sq.query(`select b.id as "booking_id", b.*, jd.waktu_mulai ,jd.waktu_selesai ,jd.kode_jadwal ,jd.kuota ,jd.kuota_mobile ,jd.dokter_id ,jd.poli_id, u.username, u.user_status, u."role" from booking b left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id left join users u on u.id = b.user_id where b."deletedAt" isnull ${isi} order by b."updatedAt" desc`, s)
 
             let kirim = await axios.get(purworejo + "/get-poli", config)
             let polinya = kirim.data.data
