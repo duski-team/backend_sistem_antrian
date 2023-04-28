@@ -240,7 +240,7 @@ class Controller {
                         <hr style="border:none;border-top:1px solid #eee" />
                         </div>
                     </div>`
-                    let x = {emailTo:username,subject:"PASSWORD RSUD RAA TJOKRONEGORO PURWOREJO",htmlContent:fieldheader,noWa:nomor_wa}
+                    let x = {emailTo:username,subject:"PASSWORD RSUD RAA TJOKRONEGORO PURWOREJO",htmlContent:fieldheader}
     
                     axios.post(purworejo+ "/send-email",x,config)
                     res.status(200).json({ status: 200, message: "sukses" })
@@ -343,7 +343,7 @@ class Controller {
                   <hr style="border:none;border-top:1px solid #eee" />
                 </div>
               </div>`
-                let x = {emailTo:cekUsername[0].username,subject:"OTP RSUD RAA TJOKRONEGORO PURWOREJO",htmlContent:fieldheader,noWa:nomor_wa}
+                let x = {emailTo:cekUsername[0].username,subject:"OTP RSUD RAA TJOKRONEGORO PURWOREJO",htmlContent:fieldheader,noWa:cekUsername[0].nomor_wa}
 
                 axios.post(purworejo+ "/send-email",x,config)
 
