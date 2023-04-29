@@ -406,7 +406,7 @@ const koneksi_socket = koneksi_socket => {
                         hasilSEP.dataValues.status = 200                        
                         hasil.dataValues.idDaftar = idDaftar
 
-                        let objCreate = { kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: noBpjs, nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: noRm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: noRujukan ? noRujukan : "", nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
+                        let objCreate = { kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: noBpjs, nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: noRm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: noRujukan, nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
                         axios.post(purworejo + "/create-antrean", objCreate, config)
                         let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
                         axios.post(purworejo + "/update-antrean", objUpdate, config)
@@ -625,7 +625,7 @@ const koneksi_socket = koneksi_socket => {
                 // tembak antrean BPJS
                 let objCreate = { kodebooking: new_kode_booking, jenispasien, nomorkartu: noBpjs, nik: nik, nohp: no_hp, kodepoli: kode_poli, 
                     namapoli: nama_poli, pasienbaru: 0, norm: noRm, tanggalperiksa: tgl, kodedokter: kode_dokter, 
-                    namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: 3, nomorreferensi: noRujukan ? noRujukan : "", 
+                    namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: 3, nomorreferensi: noRujukan, 
                     nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, 
                     sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: "-" }
                 axios.post(purworejo + "/create-antrean", objCreate, config)
