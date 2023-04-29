@@ -411,8 +411,8 @@ const koneksi_socket = koneksi_socket => {
                         hasil.dataValues.nama_poli = +sisa[0].nama_poli
                         hasil.dataValues.idDaftar = idDaftar
 
-                        io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP });
                         await t.commit();
+                        io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP });                        
                     }else{
                         io.to(room_id).emit("error", { status: 500, message: "kuota tidak cukup" });
                     }
