@@ -305,8 +305,6 @@ class Controller {
     static async registerAntreanBPJSLoket(req, res) {
         const { nomor_kartu, poli_id, pasien_baru, no_rm, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, nomor_referensi, nomor_antrean, angka_antrean, estimasi_dilayani, keterangan, id_antrian_list, nama_pasien } = req.body
 
-        const t = await sq.transaction();
-
         try {
             let tanggal = moment().format("YYYYMMDDHHmmss")
             let kode_booking = tanggal + nomor_antrean.replace("-", "")
@@ -330,19 +328,21 @@ class Controller {
 
             let objCreate = { kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: nomor_kartu, nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: no_rm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: nomor_referensi, nomorantrean: nomor_antrean, angkaantrean: angka_antrean, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
 
-            let kirim2 = axios.post(purworejo + "/create-antrean", objCreate, config)
-            let antrian = await antrian_list.update({ no_rm, kode_booking, nama_pasien }, { where: { id: id_antrian_list }, transaction: t })
-            let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
-            let kirim3 = axios.post(purworejo + "/update-antrean", objUpdate, config)
+            let antrian = await antrian_list.update({ no_rm, kode_booking, nama_pasien }, { where: { id: id_antrian_list }})
+            axios.post(purworejo + "/create-antrean", objCreate, config).then(response => {
+                if(response.data.code == 200){
+                    let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
+                    axios.post(purworejo + "/update-antrean", objUpdate, config)
+                }                            
+            })
             
             // console.log(objCreate);
             // console.log(objUpdate);
             // console.log(kirim2.data, "CREATE-ANTREAN");
             // console.log(kirim3.data, "UPDATE-ANTREAN");
 
-            res.status(200).json({ status: 200, message: "sukses", data: kirim2.data })
+            res.status(200).json({ status: 200, message: "sukses" })
         } catch (error) {
-            await t.rollback();
             console.log(error);
             console.log(req.body);
             res.status(500).json({ status: 500, message: "gagal", data: error })
