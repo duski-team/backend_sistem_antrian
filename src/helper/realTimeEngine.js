@@ -379,6 +379,17 @@ const koneksi_socket = koneksi_socket => {
                         let nik = kirim4.data.data[0].nik
                         let no_hp = kirim4.data.data[0].noTelp
                         let tgl_periksa = moment().format("YYYY-MM-DD")
+
+                        let idAntrian = uuid_v4()
+                        let hasil = await antrian_list.create({ id: idAntrian, tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking, nama_pasien }, { transaction: t })
+
+                        let objCreate = { kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: noBpjs, nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: noRm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: noRujukan ? noRujukan : "", nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
+                        axios.post(purworejo + "/create-antrean", objCreate, config)
+                        let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
+                        axios.post(purworejo + "/update-antrean", objUpdate, config)
+
+                        hasil.dataValues.sisa_antrian = +sisa[0].total
+                        hasil.dataValues.nama_poli = +sisa[0].nama_poli
                         
                         // console.log(objCreate);
                         // console.log(objUpdate);
@@ -397,22 +408,11 @@ const koneksi_socket = koneksi_socket => {
                         let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
                         let sep = kirimSEP.data.data.sep
                         let hasilSEP = await sepModel.create({ id: uuid_v4(), no_sep: sep.noSep, nama_dokter, data_sep: sep, antrian_list_id: idAntrian, poli_tujuan }, { transaction: t })
-                        hasilSEP.dataValues.status = 200
-
-                        let idAntrian = uuid_v4()
-                        let hasil = await antrian_list.create({ id: idAntrian, tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking, nama_pasien }, { transaction: t })
-
-                        let objCreate = { kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: noBpjs, nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: noRm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: noRujukan ? noRujukan : "", nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
-                        axios.post(purworejo + "/create-antrean", objCreate, config)
-                        let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
-                        axios.post(purworejo + "/update-antrean", objUpdate, config)
-
-                        hasil.dataValues.sisa_antrian = +sisa[0].total
-                        hasil.dataValues.nama_poli = +sisa[0].nama_poli
+                        hasilSEP.dataValues.status = 200                        
                         hasil.dataValues.idDaftar = idDaftar
 
                         await t.commit();
-                        io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP });                        
+                        io.to(room_id).emit("refresh_register_APM_mandiri", { hasil, hasilSEP });                                                
                     }else{
                         io.to(room_id).emit("error", { status: 500, message: "kuota tidak cukup" });
                     }
