@@ -621,7 +621,7 @@ const koneksi_socket = koneksi_socket => {
 
                 let hasil = await antrian_list.create({ id: idAntrian, tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, 
                     antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli,
-                    no_rm: noRm, kode_booking, nama_pasien }, { transaction: t })
+                    no_rm: noRm, kode_booking:new_kode_booking, nama_pasien }, { transaction: t })
 
                 hasil.dataValues.sisa_antrian = +sisa[0].total
                 hasil.dataValues.nama_poli = nama_poli
