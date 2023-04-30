@@ -107,7 +107,9 @@ const koneksi_socket = koneksi_socket => {
                     if(cekKuota[0].sisaKuota > 0 || booking_id){
                         let antrian_no = await sq.query(`select al.antrian_no from antrian_list al where date(al.tanggal_antrian) = '${tgl}'and al.initial = '${initial}' order by al.antrian_no desc limit 1`, s)
                         let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
-                        let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: no, sequence: sequence[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id, booking_id })
+                        let kode_booking = moment().format("YYYYMMDDHHmmss") + `${initial}${no}`
+
+                        let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian, is_master: 1, poli_layanan, initial, antrian_no: no, sequence: sequence[0].nomor, status_antrian, master_loket_id, poli_id, jenis_antrian_id, booking_id, kode_booking })
                         hasil.dataValues.sisa_antrian = +sisa[0].total
 
                         io.to(room_id).emit("refresh_antrian_loket", hasil);
@@ -123,7 +125,7 @@ const koneksi_socket = koneksi_socket => {
         })
 
         socket.on('registerMandiri', async (asd) => {
-            const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking,nama_pasien } = asd
+            const { id_antrian_list, tanggal_antrian, is_master, poli_layanan, initial, antrian_no, is_cancel, is_process, status_antrian, jadwal_dokter_id, poli_id, master_loket_id, jenis_antrian_id, booking_id, kode_booking, nama_pasien } = asd
 
             const t = await sq.transaction();
 

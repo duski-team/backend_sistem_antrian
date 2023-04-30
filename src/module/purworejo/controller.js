@@ -303,11 +303,11 @@ class Controller {
     }
 
     static async registerAntreanBPJSLoket(req, res) {
-        const { nomor_kartu, poli_id, pasien_baru, no_rm, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, nomor_referensi, nomor_antrean, angka_antrean, estimasi_dilayani, keterangan, id_antrian_list, nama_pasien } = req.body
+        const { nomor_kartu, poli_id, pasien_baru, no_rm, kode_dokter, nama_dokter, jam_praktek, jenis_kunjungan, nomor_referensi, nomor_antrean, angka_antrean, estimasi_dilayani, keterangan, id_antrian_list, nama_pasien,kode_booking } = req.body
 
         try {
-            let tanggal = moment().format("YYYYMMDDHHmmss")
-            let kode_booking = tanggal + nomor_antrean.replace("-", "")
+            // let tanggal = moment().format("YYYYMMDDHHmmss")
+            // let kode_booking = tanggal + nomor_antrean.replace("-", "")
             let kirim = await axios.get(purworejo + "/get-poli", config)
             let poli = kirim.data.data
             let kode_poli = ''
@@ -328,7 +328,7 @@ class Controller {
 
             let objCreate = { kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: nomor_kartu, nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: no_rm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: nomor_referensi, nomorantrean: nomor_antrean, angkaantrean: angka_antrean, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
 
-            let antrian = await antrian_list.update({ no_rm, kode_booking, nama_pasien }, { where: { id: id_antrian_list }})
+            // let antrian = await antrian_list.update({ no_rm, kode_booking, nama_pasien }, { where: { id: id_antrian_list }})
             axios.post(purworejo + "/create-antrean", objCreate, config).then(response => {
                 if(response.data.code == 200){
                     let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
