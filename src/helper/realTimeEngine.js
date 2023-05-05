@@ -402,9 +402,13 @@ const koneksi_socket = koneksi_socket => {
 
                         let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, noSuratKontrol, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
                         let idDaftar = kirimRajal.data.data.idDaftar
-
+                        
                         let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
+                        if(kirimSEP.data.code != 200){
+                            throw kirimSEP;                            
+                        }
                         let sep = kirimSEP.data.data.sep
+                        
                         let hasilSEP = await sepModel.create({ id: uuid_v4(), no_sep: sep.noSep, nama_dokter, data_sep: sep, antrian_list_id: idAntrian, poli_tujuan }, { transaction: t })
                         hasilSEP.dataValues.status = 200                        
                         hasil.dataValues.idDaftar = idDaftar
@@ -425,9 +429,11 @@ const koneksi_socket = koneksi_socket => {
                 }
             } catch (error) {
                 await t.rollback();
-                console.log(error);
+                console.log(error, "ini error nya");
                 if (error.name = "AxiosError" && error.response) {
                     io.to(room_id).emit("error", { status: error.response.data.code, message: error.response.data.message });
+                }else if(error.data.code != 200){
+                    io.to(room_id).emit("error", { status: error.data.code, message: error.data.message });
                 } else {
                     io.to(room_id).emit("error", { status: 500, message: "gagal" });
                 }
