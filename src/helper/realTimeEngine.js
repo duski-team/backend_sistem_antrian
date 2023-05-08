@@ -615,6 +615,10 @@ const koneksi_socket = koneksi_socket => {
                 let new_kode_booking = moment().format("YYYYMMDDHHmmss") + `${initial}${no}`
 
                 let kirim = await axios.post(purworejo + "/register-bykdbooking", { kdBooking }, config)  //SEP
+                console.log(kirim,'ress kirim')
+                if(kirim.data.code != 200){
+                    throw kirim;                            
+                }
 
                 let hasilSEP = { no_sep: ""}
                 console.log(kirim)
@@ -655,6 +659,8 @@ const koneksi_socket = koneksi_socket => {
                 console.log(error, "ini yang error");
                 if (error.name = "AxiosError" && error.response) {
                     io.to(room_id).emit("error", { status: error.response.data.code, message: error.response.data.message });
+                } else if(error.data.code != 200){
+                    io.to(room_id).emit("error", { status: error.data.code, message: error.data.message });
                 } else {
                     io.to(room_id).emit("error", { status: 500, message: "gagal" });
                 }
