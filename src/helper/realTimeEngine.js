@@ -245,6 +245,7 @@ const koneksi_socket = koneksi_socket => {
                         let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking, nama_pasien }, { transaction: t })
                         hasil.dataValues.sisa_antrian = +sisa[0].total
                         hasil.dataValues.nama_poli = nama_poli
+                        hasil.dataValues.poli_nama = nama_poli
 
                         // console.log(objCreate);
                         // console.log(objUpdate);
@@ -389,6 +390,7 @@ const koneksi_socket = koneksi_socket => {
 
                         hasil.dataValues.sisa_antrian = +sisa[0].total
                         hasil.dataValues.nama_poli = +sisa[0].nama_poli
+                        hasil.dataValues.poli_nama = +sisa[0].nama_poli
                         
                         // console.log(objCreate);
                         // console.log(objUpdate);
@@ -632,6 +634,7 @@ const koneksi_socket = koneksi_socket => {
 
                 hasil.dataValues.sisa_antrian = +sisa[0].total
                 hasil.dataValues.nama_poli = nama_poli
+                hasil.dataValues.poli_nama = nama_poli
                 hasil.dataValues.idDaftar = kirim.data.data.idDaftar
                 
                 if(noSep != ''){
