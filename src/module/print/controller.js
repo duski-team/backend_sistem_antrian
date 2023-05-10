@@ -9,7 +9,7 @@ moment().locale('id')
 class Controller {
 
     static async printAntrian(req, res) {
-        const {no_antrian,tempat,sisa_antrian} = req.query
+        const {no_antrian,tempat,sisa_antrian,poli_nama} = req.query
         try {
             let tgl = `${moment().format('dddd, LL')}`
             let jam = `${moment().format('hh:mm:ss')}`
@@ -63,7 +63,8 @@ class Controller {
                         </section>
                         <section class="contain_nomor">
                         <span class="nomor"> ${no_antrian} </span><br>
-                        <span class="loket">ANTREAN ${tempat}</span><br><br>
+                        <span class="loket">ANTREAN ${tempat}</span><br>
+                        <span class="loket">Poli ${poli_nama}</span><br><br>
                         <small>
                             Jumlah Antrian Yang belum Dipanggil: ${sisa_antrian} <br>
                             <br>
