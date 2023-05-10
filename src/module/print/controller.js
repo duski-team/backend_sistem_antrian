@@ -64,7 +64,7 @@ class Controller {
                         <section class="contain_nomor">
                         <span class="nomor"> ${no_antrian} </span><br>
                         <span class="loket">ANTREAN ${tempat}</span><br>
-                        <span class="loket">Poli ${poli_nama}</span><br><br>
+                        <span class="loket">${poli_nama}</span><br><br>
                         <small>
                             Jumlah Antrian Yang belum Dipanggil: ${sisa_antrian} <br>
                             <br>
