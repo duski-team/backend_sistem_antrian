@@ -21,6 +21,7 @@ router.use("/member",require('../module/member/route'))
 router.use("/registrasi",require('../module/registrasi/route'))
 router.use("/print",require('../module/print/route'))
 router.use("/version",require('../module/version/route'))
+router.use("/mjkn",require('../module/mjkn/route'))
 
 
 module.exports = router;
