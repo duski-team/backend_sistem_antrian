@@ -271,31 +271,31 @@ class Controller {
     }
 
     static checkinMjkn(req, res) {
-        res.status(201).json({ metadata: { code: 201, message: "sedang dalam perbaikan" } });
+        res.status(201).json({ metadata: { code: 201, message: "sedang dalam pengembangan" } });
     }
 
     static statusAntreanMjkn(req, res) {
-        res.status(201).json({ metadata: { code: 201, message: "sedang dalam perbaikan" } });
+        res.status(201).json({ metadata: { code: 201, message: "sedang dalam pengembangan" } });
     }
 
     static sisaAntreanMjkn(req, res) {
-        res.status(201).json({ metadata: { code: 201, message: "sedang dalam perbaikan" } });
+        res.status(201).json({ metadata: { code: 201, message: "sedang dalam pengembangan" } });
     }
 
     static batalAntreanMjkn(req, res) {
-        res.status(201).json({ metadata: { code: 201, message: "sedang dalam perbaikan" } });
+        res.status(201).json({ metadata: { code: 201, message: "sedang dalam pengembangan" } });
     }
 
     static newPasienMjkn(req, res) {
-        res.status(201).json({ metadata: { code: 201, message: "sedang dalam perbaikan" } });
+        res.status(201).json({ metadata: { code: 201, message: "sedang dalam pengembangan" } });
     }
 
     static kodeOperasiMjkn(req, res) {
-        res.status(201).json({ metadata: { code: 201, message: "sedang dalam perbaikan" } });
+        res.status(201).json({ metadata: { code: 201, message: "sedang dalam pengembangan" } });
     }
 
     static jadwalOperasiMjkn(req, res) {
-        res.status(201).json({ metadata: { code: 201, message: "sedang dalam perbaikan" } });
+        res.status(201).json({ metadata: { code: 201, message: "sedang dalam pengembangan" } });
     }
 }
 
