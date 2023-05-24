@@ -192,7 +192,7 @@ class Controller {
                             code: 200 
                         }, 
                         response: {
-                            "nomorantrean": "APMONLINE",
+                            "nomorantrean": kode_booking,
                             "angkaantrean": 1,
                             "kodebooking": kode_booking,
                             "norm": norm,
