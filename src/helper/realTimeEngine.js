@@ -615,7 +615,7 @@ const koneksi_socket = koneksi_socket => {
                 let noRujukan = prep.data.data.noRujukan
                 let estimasi_dilayani = parseInt(moment(new Date()).format("x"))
                 let kdBooking = kode_booking
-                let new_kode_booking = moment().format("YYYYMMDDHHmmss") + `${initial}${no}`
+                let new_kode_booking = kode_booking
 
                 let kirim = await axios.post(purworejo + "/register-bykdbooking", { kdBooking }, config)  //SEP
                 console.log(kirim,'ress kirim')
