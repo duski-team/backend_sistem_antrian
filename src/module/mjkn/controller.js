@@ -180,7 +180,8 @@ class Controller {
                         // foto_ktp 
                     })
                     const kuotaMobile = cekKuota[0].kuota_mobile
-                    const jumDaftar = parseInt(cekJumlah[0].jumlah_booking)
+                    const jumDaftar = parseInt(cekJumlah[0].jumlah_booking) + 1
+
                     const outputRes = { 
                         metadata: { 
                             message: "OK", 
@@ -194,7 +195,7 @@ class Controller {
                             "namapoli": poliNama,
                             "namadokter": dokterNama,
                             "estimasidilayani": konversiEst, // buat jam 8 pagi semua tgl pemeriksaan
-                            "sisakuotajkn": kuotaMobile - (jumDaftar + 1),
+                            "sisakuotajkn": kuotaMobile - jumDaftar,
                             "kuotajkn": cekKuota[0].kuota_mobile,
                             "sisakuotanonjkn": 0,
                             "kuotanonjkn": 0,
