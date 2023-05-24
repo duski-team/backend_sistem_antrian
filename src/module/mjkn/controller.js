@@ -131,7 +131,7 @@ class Controller {
                     }
                 };
             }
-            console.log(cekKuota,' data cek kuota')
+            //console.log(cekKuota,' data cek kuota')
 
             // cek kuota
             let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" 
@@ -179,7 +179,7 @@ class Controller {
                         // foto_kk, 
                         // foto_ktp 
                     })
-                    res.status(200).json({ 
+                    const outputRes = { 
                         metadata: { 
                             message: "OK", 
                             code: 200 
@@ -197,7 +197,9 @@ class Controller {
                             "sisakuotanonjkn": 0,
                             "kuotanonjkn": 0,
                             "keterangan": "Peserta harap 60 menit lebih awal guna pencatatan administrasi."
-                        }})
+                        }}
+                    console.log(outputRes)
+                    res.status(200).json(outputRes)
                 }
             } else {
                 throw {
