@@ -42,6 +42,7 @@ class Controller {
             nomorkartu, tanggalperiksa, kodepoli, nik, nohp, nomorreferensi, 
             norm, jeniskunjungan, kodedokter, jampraktek 
         } = req.body
+        console.log(req.body)
 
         try {
             let k = sha1(uuid_v4())
