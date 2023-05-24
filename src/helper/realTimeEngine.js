@@ -242,7 +242,10 @@ const koneksi_socket = koneksi_socket => {
 
                         let nik = kirim4.data.data[0].nik
                         let no_hp = kirim4.data.data[0].noTelp
-                        let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, no_rm: noRm, kode_booking, nama_pasien }, { transaction: t })
+                        let hasil = await antrian_list.create({ id: uuid_v4(), tanggal_antrian: tgl, is_master: 1, poli_layanan: 1, initial, 
+                            antrian_no: no, sequence: sequence_no[0].total, booking_id, jadwal_dokter_id, poli_id: idPoli, master_loket_id, 
+                            no_rm: noRm, kode_booking, nama_pasien 
+                        }, { transaction: t })
                         hasil.dataValues.sisa_antrian = +sisa[0].total
                         hasil.dataValues.nama_poli = nama_poli
                         hasil.dataValues.poli_nama = nama_poli
@@ -252,7 +255,11 @@ const koneksi_socket = koneksi_socket => {
                         // console.log(kirim2.data, "CREATE-ANTREAN");
                         // console.log(kirim3.data, "UPDATE-ANTREAN");
 
-                        let kirimRajal = await axios.post(purworejo + "/reg-rajal", { noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan }, config)
+                        let kirimRajal = await axios.post(purworejo + "/reg-rajal", { 
+                            noRm, idPoli, idDokter, noTelp, idCaraMasuk, ketCaraMasuk, penanggungjawabNama, penanggungjawabHubungan, 
+                            idJaminan, noBpjs, kelompokBpjs, kelasBpjs, diagAwal, noRujukan, asalRujukan, tglRujukan, idFaskes, namaFaskes, 
+                            tujuanKunjungan, flagProcedure, kdPenunjang, assesmentPelayanan, kode_booking 
+                        }, config)
                         let idDaftar = kirimRajal.data.data.idDaftar
                         hasil.dataValues.idDaftar = idDaftar
 
