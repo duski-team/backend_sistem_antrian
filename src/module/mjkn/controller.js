@@ -289,7 +289,8 @@ class Controller {
     }
 
     static batalAntreanMjkn(req, res) {
-        res.status(201).json({ metadata: { code: 201, message: "sedang dalam pengembangan" } });
+        console.log(req.body)
+        res.status(200).json({ metadata: { code: 200, message: "OK" } });
     }
 
     static newPasienMjkn(req, res) {
