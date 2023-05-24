@@ -73,6 +73,10 @@ class Controller {
 
             let nama_booking = getPasien.data.data[0].namaPasien
 
+            //hari libur / minggu tidak bisa daftar
+
+
+
             // cek jadwal
             let getDokter = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + tanggalperiksa, config)
             let dokter = getDokter.data.data
@@ -188,7 +192,7 @@ class Controller {
                             code: 200 
                         }, 
                         response: {
-                            "nomorantrean": "APMONLINE-1",
+                            "nomorantrean": "OL-1",
                             "angkaantrean": 1,
                             "kodebooking": kode_booking,
                             "norm": norm,
