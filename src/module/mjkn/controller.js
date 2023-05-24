@@ -180,7 +180,7 @@ class Controller {
                         // foto_ktp 
                     })
                     const kuotaMobile = cekKuota[0].kuota_mobile
-                    const jumDaftar = cekJumlah[0].jumlah_booking
+                    const jumDaftar = parseInt(cekJumlah[0].jumlah_booking)
                     const outputRes = { 
                         metadata: { 
                             message: "OK", 
