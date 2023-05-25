@@ -429,7 +429,15 @@ const koneksi_socket = koneksi_socket => {
                         hasilSEP.dataValues.status = 200                        
                         hasil.dataValues.idDaftar = idDaftar
 
-                        let objCreate = { kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: noBpjs, nik: nik, nohp: no_hp, kodepoli: kode_poli, namapoli: nama_poli, pasienbaru: pasien_baru, norm: noRm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: noRujukan, nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan }
+                        let noRef = noSuratKontrol != "" ? noSuratKontrol : noRujukan
+
+                        let objCreate = { 
+                            kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: noBpjs, nik: nik, nohp: no_hp, kodepoli: kode_poli, 
+                            namapoli: nama_poli, pasienbaru: pasien_baru, norm: noRm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, 
+                            namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: noRef, 
+                            nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, 
+                            sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan 
+                        }
                         axios.post(purworejo + "/create-antrean", objCreate, config).then(function (response) {
                             console.log(response);
                             if(response.data.code == 200){
@@ -626,6 +634,7 @@ const koneksi_socket = koneksi_socket => {
                 let kode_dokter = prep.data.data.idDokterBpjs
                 let nama_dokter = prep.data.data.namaDokter
                 let noRujukan = prep.data.data.noRujukan
+                let noKontrol = prep.data.data.noKontrol
                 let estimasi_dilayani = parseInt(moment(new Date()).format("x"))
                 let kdBooking = kode_booking
                 let new_kode_booking = kode_booking
@@ -655,10 +664,12 @@ const koneksi_socket = koneksi_socket => {
                     hasilSEP = await sepModel.create({ id: uuid_v4(), no_sep: noSep, nama_dokter, data_sep: dataSep, antrian_list_id: idAntrian, poli_tujuan }, { transaction: t })
                 }
 
+                let noRef = noKontrol != "" ? noKontrol : noRujukan
+
                 // tembak antrean BPJS
                 let objCreate = { kodebooking: new_kode_booking, jenispasien, nomorkartu: noBpjs, nik: nik, nohp: no_hp, kodepoli: kode_poli, 
                     namapoli: nama_poli, pasienbaru: 0, norm: noRm, tanggalperiksa: tgl, kodedokter: kode_dokter, 
-                    namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: 3, nomorreferensi: noRujukan, 
+                    namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: 3, nomorreferensi: noRef, 
                     nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, 
                     sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: "-" }
                 axios.post(purworejo + "/create-antrean", objCreate, config).then(function (response) {
