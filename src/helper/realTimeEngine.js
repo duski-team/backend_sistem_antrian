@@ -638,7 +638,7 @@ const koneksi_socket = koneksi_socket => {
                     sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: "-" }
                 axios.post(purworejo + "/create-antrean", objCreate, config).then(function (response) {
                     console.log(response);
-                    if(response.data.code == 200){
+                    if(response.data.code == 200 || response.data.code == 208){
                         let objUpdate = { kodebooking: new_kode_booking, waktu: estimasi_dilayani, taskid: 3 }
                         axios.post(purworejo + "/update-antrean", objUpdate, config)
                     }                    
