@@ -102,7 +102,7 @@ class Controller {
         const { id, tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, user_id, tujuan_booking, tanggal_rujukan, jadwal_dokter_id } = req.body
         if(status_booking == 2){
             let asd = await sq.query(`select b.id as "booking_id", b.jenis_booking, b.jadwal_dokter_id, jd.waktu_mulai, 
-            jd.waktu_selesai, b.tanggal_booking, b.no_rm, b.no_hp_booking, b.kode_booking, b.flag_layanan, b.createdAt, 
+            jd.waktu_selesai, b.tanggal_booking, b.no_rm, b.no_hp_booking, b.kode_booking, b.flag_layanan, b."createdAt", 
             jd.dokter_id, jd.poli_id
             from booking b 
             left join jadwal_dokter jd on jd.id = b.jadwal_dokter_id 
