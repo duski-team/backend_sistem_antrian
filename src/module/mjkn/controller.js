@@ -305,8 +305,18 @@ class Controller {
         res.status(201).json({ metadata: { code: 201, message: "sedang dalam pengembangan" } });
     }
 
-    static jadwalOperasiMjkn(req, res) {
-        res.status(201).json({ metadata: { code: 201, message: "sedang dalam pengembangan" } });
+    static async jadwalOperasiMjkn(req, res) {
+        const { 
+            tanggalawal, tanggalakhir
+        } = req.body
+        //console.log(tanggalawal)
+        //console.log(tanggalakhir)
+
+        let operasiList = await axios.post("http://194.169.46.193/rsudapi/rs/operasi-list", { 
+            tanggalawal, tanggalakhir
+        }, config)
+        //console.log(operasiList.data.response,'asdasds')
+        res.status(200).json({ status: 200, message: "sukses", response: operasiList.data.response })
     }
 }
 
