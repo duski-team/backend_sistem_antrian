@@ -317,7 +317,7 @@ class Controller {
         }, config)
         //console.log(operasiList.data.response,'asdasds')
         //res.status(200).json({ status: 200, message: "sukses", response: operasiList.data.response })
-        res.status(200).json({ metadata: operasiList.data.metadata, response: operasiList.data.response })
+        res.status(200).json({ response: operasiList.data.response, metadata: operasiList.data.metadata })
     }
 }
 
