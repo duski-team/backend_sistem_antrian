@@ -316,7 +316,8 @@ class Controller {
             tanggalawal, tanggalakhir
         }, config)
         //console.log(operasiList.data.response,'asdasds')
-        res.status(200).json({ status: 200, message: "sukses", response: operasiList.data.response })
+        //res.status(200).json({ status: 200, message: "sukses", response: operasiList.data.response })
+        res.status(200).json({ metadata: operasiList.data.metadata, response: operasiList.data.response })
     }
 }
 
