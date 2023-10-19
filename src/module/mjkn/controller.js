@@ -74,7 +74,7 @@ class Controller {
             let nama_booking = getPasien.data.data[0].namaPasien
 
             //hari libur / minggu tidak bisa daftar
-            let tgl = moment(tanggal).format('dddd');
+            let tgl = moment().format('dddd');
             if (tgl.toLowerCase() == 'minggu') {
                 throw {
                     "metadata": {
@@ -83,7 +83,7 @@ class Controller {
                     }
                 };
             } else {
-                let kirim = await axios.get(purworejo + `/is-libur?tanggal=${moment(tanggal).format('YYYY-MM-DD')}`, config)
+                let kirim = await axios.get(purworejo + `/is-libur?tanggal=${moment().format('YYYY-MM-DD')}`, config)
                 if(kirim.data.code != 200){
                     throw {
                         "metadata": {
