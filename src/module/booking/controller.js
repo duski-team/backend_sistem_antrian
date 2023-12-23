@@ -36,66 +36,68 @@ class Controller {
 
     static async registerDenganRM(req, res) {
         const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, flag_layanan, jadwal_dokter_id, user_id, tujuan_booking, tanggal_rujukan } = req.body
+        res.status(500).json({ status: 500, message: "System Pendaftaran Online Rumah Sakit Sedang Maintenance"})
 
-        try {
-            let foto_surat_rujukan = ""
-            let foto_kk = ""
-            let foto_ktp = ""
+        // try {
+        //     let foto_surat_rujukan = ""
+        //     let foto_kk = ""
+        //     let foto_ktp = ""
 
-            if (req.files) {
-                if (req.files.file1) {
-                    foto_surat_rujukan = req.files.file1[0].filename
-                }
-                if (req.files.file2) {
-                    foto_kk = req.files.file2[0].filename
-                }
-                if (req.files.file3) {
-                    foto_ktp = req.files.file3[0].filename
-                }
-            }
-            let k = sha1(uuid_v4());
-            let kode_booking = k.substring(k.length - 6).toUpperCase();
-            let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
-            let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}' and b.status_booking > 0 `, s)
+        //     if (req.files) {
+        //         if (req.files.file1) {
+        //             foto_surat_rujukan = req.files.file1[0].filename
+        //         }
+        //         if (req.files.file2) {
+        //             foto_kk = req.files.file2[0].filename
+        //         }
+        //         if (req.files.file3) {
+        //             foto_ktp = req.files.file3[0].filename
+        //         }
+        //     }
+        //     let k = sha1(uuid_v4());
+        //     let kode_booking = k.substring(k.length - 6).toUpperCase();
+        //     let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
+        //     let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}' and b.status_booking > 0 `, s)
 
-            if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
-                let cekBooking = await sq.query(`select * from booking b where b."deletedAt" isnull and b."NIK" = '${NIK}' and date(b.tanggal_booking) = '${tanggal_booking}' and b.flag_layanan = ${flag_layanan}`, s)
+        //     if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
+        //         let cekBooking = await sq.query(`select * from booking b where b."deletedAt" isnull and b."NIK" = '${NIK}' and date(b.tanggal_booking) = '${tanggal_booking}' and b.flag_layanan = ${flag_layanan}`, s)
                 
-                if (cekBooking.length > 0) {
-                    res.status(201).json({ status: 204, message: "data sudah ada" })
-                } else {
-                    let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, flag_layanan, jadwal_dokter_id, user_id, tujuan_booking, foto_surat_rujukan, tanggal_rujukan, foto_kk, foto_ktp })
-                    res.status(200).json({ status: 200, message: "sukses", data: data_booking })
-                }
-            } else {
-                res.status(200).json({ status: 200, message: "kuota penuh" })
-            }
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ status: 500, message: "gagal", data: error })
-        }
+        //         if (cekBooking.length > 0) {
+        //             res.status(201).json({ status: 204, message: "data sudah ada" })
+        //         } else {
+        //             let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, no_rm, kode_booking, flag_layanan, jadwal_dokter_id, user_id, tujuan_booking, foto_surat_rujukan, tanggal_rujukan, foto_kk, foto_ktp })
+        //             res.status(200).json({ status: 200, message: "sukses", data: data_booking })
+        //         }
+        //     } else {
+        //         res.status(200).json({ status: 200, message: "kuota penuh" })
+        //     }
+        // } catch (error) {
+        //     console.log(error);
+        //     res.status(500).json({ status: 500, message: "gagal", data: error })
+        // }
     }
 
     static async registerTanpaRM(req, res) {
         const { tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, jadwal_dokter_id, flag_layanan, user_id, tujuan_booking, tanggal_rujukan } = req.body
+        res.status(500).json({ status: 500, message: "System Pendaftaran Online Rumah Sakit Sedang Maintenance"})
 
-        try {
-            let k = sha1(uuid_v4());
-            let kode_booking = k.substring(k.length - 6).toUpperCase();
-            let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
-            let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}' and b.status_booking > 0 `, s)
+        // try {
+        //     let k = sha1(uuid_v4());
+        //     let kode_booking = k.substring(k.length - 6).toUpperCase();
+        //     let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * from jadwal_dokter jd where jd."deletedAt" isnull and jd.id = '${jadwal_dokter_id}'`, s)
+        //     let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" from booking b where b."deletedAt" isnull and b.jadwal_dokter_id = '${jadwal_dokter_id}' and date(b.tanggal_booking) = '${tanggal_booking}' and b.status_booking > 0 `, s)
 
-            if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
-                let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking, flag_layanan, jadwal_dokter_id, user_id, tujuan_booking, tanggal_rujukan })
-                res.status(200).json({ status: 200, message: "sukses", data: data_booking })
-            } else {
-                res.status(200).json({ status: 200, message: "kuota penuh" })
-            }
-        } catch (error) {
-            console.log(error);
-            console.log(req.body);
-            res.status(500).json({ status: 500, message: "gagal", data: error })
-        }
+        //     if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
+        //         let data_booking = await booking.create({ id: uuid_v4(), tanggal_booking, jenis_booking, NIK, nama_booking, no_hp_booking, no_rujukan, no_kontrol, is_verified, is_registered, status_booking, kode_booking, flag_layanan, jadwal_dokter_id, user_id, tujuan_booking, tanggal_rujukan })
+        //         res.status(200).json({ status: 200, message: "sukses", data: data_booking })
+        //     } else {
+        //         res.status(200).json({ status: 200, message: "kuota penuh" })
+        //     }
+        // } catch (error) {
+        //     console.log(error);
+        //     console.log(req.body);
+        //     res.status(500).json({ status: 500, message: "gagal", data: error })
+        // }
     }
 
     static async update(req, res) {

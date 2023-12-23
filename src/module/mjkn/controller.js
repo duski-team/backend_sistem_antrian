@@ -43,206 +43,207 @@ class Controller {
             norm, jeniskunjungan, kodedokter, jampraktek 
         } = req.body
         console.log(req.body)
+        res.status(201).json({ metadata: { code: 201 ,message: "System Pendaftaran Online Rumah Sakit Sedang Maintenance"} })
+        
+        // try {
+        //     let k = sha1(uuid_v4())
+        //     let kode_booking = k.substring(k.length - 6).toUpperCase()
 
-        try {
-            let k = sha1(uuid_v4())
-            let kode_booking = k.substring(k.length - 6).toUpperCase()
+        //     // norm harus ada
+        //     if(norm == ''){
+        //         throw {
+        //             "metadata": {
+        //                 "message": "Nomor RM kosong",
+        //                 "code": 201,
+        //             }
+        //         };
+        //     }
 
-            // norm harus ada
-            if(norm == ''){
-                throw {
-                    "metadata": {
-                        "message": "Nomor RM kosong",
-                        "code": 201,
-                    }
-                };
-            }
+        //     // cek apakah pasien ada di cokro
+        //     let getPasien = await axios.get(purworejo + "/get-pasien?no=" + norm, config)
+        //     // console.log(getPasien.data.data)
+        //     // cek nik di cokro dan bpjs
+        //     if(getPasien.data.data[0].nik != nik || getPasien.data.data[0].noBpjs != nomorkartu){
+        //         throw {
+        //             "metadata": {
+        //                 "message": "Data Pasien Tidak Valid",
+        //                 "code": 201,
+        //             }
+        //         };
+        //     }
 
-            // cek apakah pasien ada di cokro
-            let getPasien = await axios.get(purworejo + "/get-pasien?no=" + norm, config)
-            // console.log(getPasien.data.data)
-            // cek nik di cokro dan bpjs
-            if(getPasien.data.data[0].nik != nik || getPasien.data.data[0].noBpjs != nomorkartu){
-                throw {
-                    "metadata": {
-                        "message": "Data Pasien Tidak Valid",
-                        "code": 201,
-                    }
-                };
-            }
+        //     let nama_booking = getPasien.data.data[0].namaPasien
 
-            let nama_booking = getPasien.data.data[0].namaPasien
-
-            //hari libur / minggu tidak bisa daftar
-            let tgl = moment().format('dddd');
-            if (tgl.toLowerCase() == 'minggu') {
-                throw {
-                    "metadata": {
-                        "message": "Pendaftaran Online Hanya Senin sd Sabtu",
-                        "code": 201,
-                    }
-                };
-            } else {
-                let kirim = await axios.get(purworejo + `/is-libur?tanggal=${moment().format('YYYY-MM-DD')}`, config)
-                if(kirim.data.code != 200){
-                    throw {
-                        "metadata": {
-                            "message": "Pendaftaran Online Libur",
-                            "code": 201,
-                        }
-                    };
-                }
-            }
+        //     //hari libur / minggu tidak bisa daftar
+        //     let tgl = moment().format('dddd');
+        //     if (tgl.toLowerCase() == 'minggu') {
+        //         throw {
+        //             "metadata": {
+        //                 "message": "Pendaftaran Online Hanya Senin sd Sabtu",
+        //                 "code": 201,
+        //             }
+        //         };
+        //     } else {
+        //         let kirim = await axios.get(purworejo + `/is-libur?tanggal=${moment().format('YYYY-MM-DD')}`, config)
+        //         if(kirim.data.code != 200){
+        //             throw {
+        //                 "metadata": {
+        //                     "message": "Pendaftaran Online Libur",
+        //                     "code": 201,
+        //                 }
+        //             };
+        //         }
+        //     }
 
 
-            // cek jadwal
-            let getDokter = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + tanggalperiksa, config)
-            let dokter = getDokter.data.data
-            let dokterId = ''
-            let poliId = ''
-            let dokterNama = ''
-            let poliNama = ''
-            for (let i = 0; i < dokter.length; i++) {
-                if (kodedokter == dokter[i].idDokterBpjs) {
-                    dokterId = dokter[i].idDokter
-                    poliId = dokter[i].idPoli
-                    dokterNama = dokter[i].namaDokter
-                    poliNama = dokter[i].namaPoli
-                }
-            }
-            if(dokterId == '' && poliId == ''){
-                throw {
-                    "metadata": {
-                        "message": "Jadwal dokter tidak ditemukan",
-                        "code": 201
-                    }
-                };
-            }
+        //     // cek jadwal
+        //     let getDokter = await axios.get(purworejo + "/get-jadwal-per-tgl?tgl=" + tanggalperiksa, config)
+        //     let dokter = getDokter.data.data
+        //     let dokterId = ''
+        //     let poliId = ''
+        //     let dokterNama = ''
+        //     let poliNama = ''
+        //     for (let i = 0; i < dokter.length; i++) {
+        //         if (kodedokter == dokter[i].idDokterBpjs) {
+        //             dokterId = dokter[i].idDokter
+        //             poliId = dokter[i].idPoli
+        //             dokterNama = dokter[i].namaDokter
+        //             poliNama = dokter[i].namaPoli
+        //         }
+        //     }
+        //     if(dokterId == '' && poliId == ''){
+        //         throw {
+        //             "metadata": {
+        //                 "message": "Jadwal dokter tidak ditemukan",
+        //                 "code": 201
+        //             }
+        //         };
+        //     }
 
-            // cek min H-2 
-            let hmin2 = moment().add(2, 'days').format('YYYY-MM-DD')
-            if(tanggalperiksa < hmin2){
-                throw {
-                    "metadata": {
-                        "message": "Minimal H-2",
-                        "code": 201
-                    }
-                };
-            }
+        //     // cek min H-2 
+        //     let hmin2 = moment().add(2, 'days').format('YYYY-MM-DD')
+        //     if(tanggalperiksa < hmin2){
+        //         throw {
+        //             "metadata": {
+        //                 "message": "Minimal H-2",
+        //                 "code": 201
+        //             }
+        //         };
+        //     }
             
-            // cek max jam 14
-            let jamNow = moment().format('H')
-            if(jamNow > 13){
-                throw {
-                    "metadata": {
-                        "message": "Maximal Booking Jam 14:00",
-                        "code": 201
-                    }
-                };
-            }
+        //     // cek max jam 14
+        //     let jamNow = moment().format('H')
+        //     if(jamNow > 13){
+        //         throw {
+        //             "metadata": {
+        //                 "message": "Maximal Booking Jam 14:00",
+        //                 "code": 201
+        //             }
+        //         };
+        //     }
 
-            // cek jadwal            
-            let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * 
-            from jadwal_dokter jd 
-            where jd."deletedAt" isnull and jd.dokter_id = '${dokterId}' and date(jd.waktu_mulai) = '${tanggalperiksa}'`, s)
-            if(cekKuota.length < 1){
-                throw {
-                    "metadata": {
-                        "message": "Jadwal Dokter Tidak Ditemukan",
-                        "code": 201
-                    }
-                };
-            }
-            //console.log(cekKuota,' data cek kuota')
+        //     // cek jadwal            
+        //     let cekKuota = await sq.query(`select jd.id as "jadwal_dokter_id", * 
+        //     from jadwal_dokter jd 
+        //     where jd."deletedAt" isnull and jd.dokter_id = '${dokterId}' and date(jd.waktu_mulai) = '${tanggalperiksa}'`, s)
+        //     if(cekKuota.length < 1){
+        //         throw {
+        //             "metadata": {
+        //                 "message": "Jadwal Dokter Tidak Ditemukan",
+        //                 "code": 201
+        //             }
+        //         };
+        //     }
+        //     //console.log(cekKuota,' data cek kuota')
 
-            // cek kuota
-            let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" 
-            from booking b 
-            where b."deletedAt" isnull and b.jadwal_dokter_id = '${cekKuota[0].jadwal_dokter_id}' and 
-            date(b.tanggal_booking) = '${tanggalperiksa}' and b.status_booking > 0 `, s)
-            if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
-                // cek sudah pernah daftar hari booking ?
-                let cekBooking = await sq.query(`select * from booking b 
-                where b."deletedAt" isnull and b.no_rm = '${norm}' and date(b.tanggal_booking) = '${tanggalperiksa}'`, s)
+        //     // cek kuota
+        //     let cekJumlah = await sq.query(`select count(*) as "jumlah_booking" 
+        //     from booking b 
+        //     where b."deletedAt" isnull and b.jadwal_dokter_id = '${cekKuota[0].jadwal_dokter_id}' and 
+        //     date(b.tanggal_booking) = '${tanggalperiksa}' and b.status_booking > 0 `, s)
+        //     if (cekJumlah[0].jumlah_booking < cekKuota[0].kuota_mobile) {
+        //         // cek sudah pernah daftar hari booking ?
+        //         let cekBooking = await sq.query(`select * from booking b 
+        //         where b."deletedAt" isnull and b.no_rm = '${norm}' and date(b.tanggal_booking) = '${tanggalperiksa}'`, s)
 
-                if (cekBooking.length > 0) {
-                    throw {
-                        "metadata": {
-                            "message": "Sudah Pernah Daftar di Hari yang SAMA",
-                            "code": 201
-                        }
-                    };
-                } else {
-                    let estimasi = tanggalperiksa + " 08:00:00"
-                    let konversiEst = parseInt(moment(estimasi).format("x"))
-                    let tanggal_booking = moment(estimasi).format()
-                    // console.log(konversiEst)
+        //         if (cekBooking.length > 0) {
+        //             throw {
+        //                 "metadata": {
+        //                     "message": "Sudah Pernah Daftar di Hari yang SAMA",
+        //                     "code": 201
+        //                 }
+        //             };
+        //         } else {
+        //             let estimasi = tanggalperiksa + " 08:00:00"
+        //             let konversiEst = parseInt(moment(estimasi).format("x"))
+        //             let tanggal_booking = moment(estimasi).format()
+        //             // console.log(konversiEst)
                     
-                    let data_booking = await booking.create({ 
-                        id: uuid_v4(), 
-                        tanggal_booking, 
-                        jenis_booking: "MJKN", 
-                        NIK: nik, 
-                        nama_booking, 
-                        no_hp_booking: nohp, 
-                        no_rujukan: nomorreferensi, 
-                        no_kontrol:'', 
-                        is_verified:1, 
-                        is_registered:1, 
-                        status_booking:1, 
-                        no_rm: norm, 
-                        kode_booking, 
-                        flag_layanan:1, 
-                        jadwal_dokter_id: cekKuota[0].jadwal_dokter_id, 
-                        user_id: "itbpjs", 
-                        tujuan_booking: jeniskunjungan
-                        // foto_surat_rujukan: '', 
-                        // tanggal_rujukan, 
-                        // foto_kk, 
-                        // foto_ktp 
-                    })
-                    const kuotaMobile = cekKuota[0].kuota_mobile
-                    const jumDaftar = parseInt(cekJumlah[0].jumlah_booking) + 1
+        //             let data_booking = await booking.create({ 
+        //                 id: uuid_v4(), 
+        //                 tanggal_booking, 
+        //                 jenis_booking: "MJKN", 
+        //                 NIK: nik, 
+        //                 nama_booking, 
+        //                 no_hp_booking: nohp, 
+        //                 no_rujukan: nomorreferensi, 
+        //                 no_kontrol:'', 
+        //                 is_verified:1, 
+        //                 is_registered:1, 
+        //                 status_booking:1, 
+        //                 no_rm: norm, 
+        //                 kode_booking, 
+        //                 flag_layanan:1, 
+        //                 jadwal_dokter_id: cekKuota[0].jadwal_dokter_id, 
+        //                 user_id: "itbpjs", 
+        //                 tujuan_booking: jeniskunjungan
+        //                 // foto_surat_rujukan: '', 
+        //                 // tanggal_rujukan, 
+        //                 // foto_kk, 
+        //                 // foto_ktp 
+        //             })
+        //             const kuotaMobile = cekKuota[0].kuota_mobile
+        //             const jumDaftar = parseInt(cekJumlah[0].jumlah_booking) + 1
 
-                    const outputRes = { 
-                        metadata: { 
-                            message: "OK", 
-                            code: 200 
-                        }, 
-                        response: {
-                            "nomorantrean": kode_booking,
-                            "angkaantrean": 1,
-                            "kodebooking": kode_booking,
-                            "norm": norm,
-                            "namapoli": poliNama,
-                            "namadokter": dokterNama,
-                            "estimasidilayani": konversiEst, // buat jam 8 pagi semua tgl pemeriksaan
-                            "sisakuotajkn": kuotaMobile - jumDaftar,
-                            "kuotajkn": cekKuota[0].kuota_mobile,
-                            "sisakuotanonjkn": 0,
-                            "kuotanonjkn": 0,
-                            "keterangan": "Peserta harap 60 menit lebih awal guna pencatatan administrasi."
-                        }}
-                    console.log(outputRes)
-                    res.status(200).json(outputRes)
-                }
-            } else {
-                throw {
-                    "metadata": {
-                        "message": "Kuota Penuh",
-                        "code": 201
-                    }
-                };
-            }
-        } catch (error) {
-            console.log(error);
-            if (error.name = "AxiosError" && error.response) {
-                res.status(201).json({ metadata: { code: 201 ,message: error.response.data.message} })
-            } else {
-                res.status(201).json({ metadata: error.metadata })
-            }
+        //             const outputRes = { 
+        //                 metadata: { 
+        //                     message: "OK", 
+        //                     code: 200 
+        //                 }, 
+        //                 response: {
+        //                     "nomorantrean": kode_booking,
+        //                     "angkaantrean": 1,
+        //                     "kodebooking": kode_booking,
+        //                     "norm": norm,
+        //                     "namapoli": poliNama,
+        //                     "namadokter": dokterNama,
+        //                     "estimasidilayani": konversiEst, // buat jam 8 pagi semua tgl pemeriksaan
+        //                     "sisakuotajkn": kuotaMobile - jumDaftar,
+        //                     "kuotajkn": cekKuota[0].kuota_mobile,
+        //                     "sisakuotanonjkn": 0,
+        //                     "kuotanonjkn": 0,
+        //                     "keterangan": "Peserta harap 60 menit lebih awal guna pencatatan administrasi."
+        //                 }}
+        //             console.log(outputRes)
+        //             res.status(200).json(outputRes)
+        //         }
+        //     } else {
+        //         throw {
+        //             "metadata": {
+        //                 "message": "Kuota Penuh",
+        //                 "code": 201
+        //             }
+        //         };
+        //     }
+        // } catch (error) {
+        //     console.log(error);
+        //     if (error.name = "AxiosError" && error.response) {
+        //         res.status(201).json({ metadata: { code: 201 ,message: error.response.data.message} })
+        //     } else {
+        //         res.status(201).json({ metadata: error.metadata })
+        //     }
             
-        }
+        // }
     }
 
     static loginMjkn(req, res) {
