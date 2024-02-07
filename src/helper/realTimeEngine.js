@@ -417,13 +417,13 @@ const koneksi_socket = koneksi_socket => {
                             nomorantrean: nomor_antrean, angkaantrean: 1, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, 
                             sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan 
                         }
-                        axios.post(purworejo + "/create-antrean", objCreate, config).then(function (response) {
-                            console.log(response);
-                            if(response.data.code == 200){
-                                let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
-                                axios.post(purworejo + "/update-antrean", objUpdate, config)
-                            }                            
-                        })
+                        // axios.post(purworejo + "/create-antrean", objCreate, config).then(function (response) {
+                        //     console.log(response);
+                        //     if(response.data.code == 200){
+                        //         let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
+                        //         axios.post(purworejo + "/update-antrean", objUpdate, config)
+                        //     }                            
+                        // })
                         
                         let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
                         if(kirimSEP.data.code != 200){
