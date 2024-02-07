@@ -376,8 +376,8 @@ const koneksi_socket = koneksi_socket => {
                         let kirim = await axios.get(purworejo + "/get-poli", config)
                         let poli = kirim.data.data
                         let no = antrian_no.length == 0 ? 1 : +antrian_no[0].antrian_no + 1
-                        let kode_booking = moment().format("YYYYMMDDHHmmss") + `${initial}${no}`
-                        let nomor_antrean = `${initial}-${no}`
+                        let kode_booking = Math.random().toString(36).substring(2,8)
+                        let nomor_antrean = kode_booking
                         let kode_poli = ''
                         let nama_poli = ''
                         for (let i = 0; i < poli.length; i++) {
@@ -414,16 +414,16 @@ const koneksi_socket = koneksi_socket => {
                             kodebooking: kode_booking, jenispasien: "JKN", nomorkartu: noBpjs, nik: nik, nohp: no_hp, kodepoli: kode_poli, 
                             namapoli: nama_poli, pasienbaru: pasien_baru, norm: noRm, tanggalperiksa: tgl_periksa, kodedokter: kode_dokter, 
                             namadokter: nama_dokter, jampraktek: jam_praktek, jeniskunjungan: jenis_kunjungan, nomorreferensi: noRef, 
-                            nomorantrean: nomor_antrean, angkaantrean: no, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, 
+                            nomorantrean: nomor_antrean, angkaantrean: 1, estimasidilayani: estimasi_dilayani, sisakuotajkn: 0, kuotajkn: 0, 
                             sisakuotanonjkn: 0, kuotanonjkn: 0, keterangan: keterangan 
                         }
-                        // axios.post(purworejo + "/create-antrean", objCreate, config).then(function (response) {
-                        //     console.log(response);
-                        //     if(response.data.code == 200){
-                        //         let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
-                        //         axios.post(purworejo + "/update-antrean", objUpdate, config)
-                        //     }                            
-                        // })
+                        axios.post(purworejo + "/create-antrean", objCreate, config).then(function (response) {
+                            console.log(response);
+                            if(response.data.code == 200){
+                                let objUpdate = { kodebooking: kode_booking, waktu: estimasi_dilayani, taskid: 3 }
+                                axios.post(purworejo + "/update-antrean", objUpdate, config)
+                            }                            
+                        })
                         
                         let kirimSEP = await axios.post(purworejo + "/create-sep-apm", { idDaftar }, config)  //SEP
                         if(kirimSEP.data.code != 200){
