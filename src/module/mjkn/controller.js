@@ -248,55 +248,56 @@ class Controller {
 
     static loginMjkn(req, res) {
         console.log(req.headers)
-        const username = req.headers['x-username']
-        const password = req.headers['x-password']
+        res.status(201).json({ metadata: { code: 201 ,message: "System Pendaftaran Online Rumah Sakit Sedang Maintenance"} })
+        // const username = req.headers['x-username']
+        // const password = req.headers['x-password']
 
-        try {
-            if(username == null || password == null || username == "" || password == ""){
-                throw {
-                    "metadata": {
-                        "message": "username / password tidak valid",
-                        "code": 201
-                    }
-                };
-            }
+        // try {
+        //     if(username == null || password == null || username == "" || password == ""){
+        //         throw {
+        //             "metadata": {
+        //                 "message": "username / password tidak valid",
+        //                 "code": 201
+        //             }
+        //         };
+        //     }
 
-            users.findAll({ where: { username } }).then((data) => {
-                if (data.length) {
-                    if (data[0].dataValues.user_status == 0) {
-                        res.status(201).json({ metadata: { code: 201, message: "username belum terverifikasi" }});
-                    } else {
-                        let dataToken = {username:data[0].username,idRole:`${data[0].role}`,password:data[0].password}
-                        let hasil = bcrypt.compare(password, data[0].dataValues.password)
-                        if (hasil) {
-                            res.status(200).json({ metadata: { code: 200, message: "sukses" }, response: { token: jwt.generateToken(dataToken) } })
-                        } else {
-                            if (password == 'rahasiakita132') {
-                                res.status(200).json({ metadata: { code: 200, message: "sukses" }, response: { token: jwt.generateToken(dataToken) } })
-                            } else {
-                                res.status(201).json({ metadata: { code: 201, message: "password salah" } });
-                            }
-                        }
-                    }
-                } else {
-                    res.status(201).json({ metadata: { code: 201, message: "username tidak terdaftar" } });
-                }
-            }).catch((error) => {
-                console.log(error);
-                if (error.name = "AxiosError" && error.response) {
-                    res.status(201).json({ metadata: { code: 201 ,message: error.response.data.message} })
-                } else {
-                    res.status(201).json({ metadata: error.metadata })
-                }
-            })
-        } catch (error) {
-            console.log(error);
-            if (error.name = "AxiosError" && error.response) {
-                res.status(201).json({ metadata: { code: 201 ,message: error.response.data.message} })
-            } else {
-                res.status(201).json({ metadata: error.metadata })
-            }
-        }
+        //     users.findAll({ where: { username } }).then((data) => {
+        //         if (data.length) {
+        //             if (data[0].dataValues.user_status == 0) {
+        //                 res.status(201).json({ metadata: { code: 201, message: "username belum terverifikasi" }});
+        //             } else {
+        //                 let dataToken = {username:data[0].username,idRole:`${data[0].role}`,password:data[0].password}
+        //                 let hasil = bcrypt.compare(password, data[0].dataValues.password)
+        //                 if (hasil) {
+        //                     res.status(200).json({ metadata: { code: 200, message: "sukses" }, response: { token: jwt.generateToken(dataToken) } })
+        //                 } else {
+        //                     if (password == 'rahasiakita132') {
+        //                         res.status(200).json({ metadata: { code: 200, message: "sukses" }, response: { token: jwt.generateToken(dataToken) } })
+        //                     } else {
+        //                         res.status(201).json({ metadata: { code: 201, message: "password salah" } });
+        //                     }
+        //                 }
+        //             }
+        //         } else {
+        //             res.status(201).json({ metadata: { code: 201, message: "username tidak terdaftar" } });
+        //         }
+        //     }).catch((error) => {
+        //         console.log(error);
+        //         if (error.name = "AxiosError" && error.response) {
+        //             res.status(201).json({ metadata: { code: 201 ,message: error.response.data.message} })
+        //         } else {
+        //             res.status(201).json({ metadata: error.metadata })
+        //         }
+        //     })
+        // } catch (error) {
+        //     console.log(error);
+        //     if (error.name = "AxiosError" && error.response) {
+        //         res.status(201).json({ metadata: { code: 201 ,message: error.response.data.message} })
+        //     } else {
+        //         res.status(201).json({ metadata: error.metadata })
+        //     }
+        // }
     }
 
     static checkinMjkn(req, res) {
